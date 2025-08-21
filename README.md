@@ -1,1 +1,1 @@
-# ai-whatsapp-chatapp
+# ai-whatsapp-chatbot
