@@ -190,14 +190,7 @@ export default function SignupPage() {
                   complete your registration.
                 </p>
               </div>
-              <div className="items-center px-4 py-3">
-                <button
-                  onClick={handleContinueToOnboarding}
-                  className="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  Continue to Onboarding
-                </button>
-              </div>
+
               <div className="mt-3">
                 <p className="text-xs text-gray-500">
                   Didn't receive the email? Check your spam folder or{" "}
