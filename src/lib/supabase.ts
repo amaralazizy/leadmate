@@ -21,6 +21,7 @@ export interface User {
   subscription_status: "trial" | "active" | "cancelled";
   usage_count: number;
   usage_limit: number;
+  stripe_customer_id: string;
   created_at: string;
   updated_at: string;
 }
