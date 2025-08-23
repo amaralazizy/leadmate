@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -31,13 +32,20 @@ export default function SignupPage() {
 
       if (signUpError) throw signUpError;
 
-      // Redirect to onboarding after successful signup
-      router.push("/onboarding");
+      // Show verification modal instead of redirecting immediately
+      setShowVerificationModal(true);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An unknown error occurred");
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleContinueToOnboarding = () => {
+    setShowVerificationModal(false);
+    router.push("/onboarding");
   };
 
   return (
@@ -150,6 +158,61 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+
+      {/* Email Verification Modal */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mt-4">
+                Check your email
+              </h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">
+                  We've sent a verification email to <strong>{email}</strong>.
+                  Please check your inbox and click the verification link to
+                  complete your registration.
+                </p>
+              </div>
+              <div className="items-center px-4 py-3">
+                <button
+                  onClick={handleContinueToOnboarding}
+                  className="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Continue to Onboarding
+                </button>
+              </div>
+              <div className="mt-3">
+                <p className="text-xs text-gray-500">
+                  Didn't receive the email? Check your spam folder or{" "}
+                  <button
+                    onClick={() => setShowVerificationModal(false)}
+                    className="text-blue-600 hover:text-blue-500"
+                  >
+                    try signing up again
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
