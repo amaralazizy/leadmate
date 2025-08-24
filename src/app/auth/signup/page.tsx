@@ -43,11 +43,6 @@ export default function SignupPage() {
     }
   };
 
-  const handleContinueToOnboarding = () => {
-    setShowVerificationModal(false);
-    router.push("/onboarding");
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -185,15 +180,15 @@ export default function SignupPage() {
               </h3>
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
-                  We've sent a verification email to <strong>{email}</strong>.
-                  Please check your inbox and click the verification link to
-                  complete your registration.
+                  We&apos;ve sent a verification email to{" "}
+                  <strong>{email}</strong>. Please check your inbox and click
+                  the verification link to complete your registration.
                 </p>
               </div>
 
               <div className="mt-3">
                 <p className="text-xs text-gray-500">
-                  Didn't receive the email? Check your spam folder or{" "}
+                  Didn&apos;t receive the email? Check your spam folder or{" "}
                   <button
                     onClick={() => setShowVerificationModal(false)}
                     className="text-blue-600 hover:text-blue-500"

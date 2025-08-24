@@ -55,7 +55,11 @@ export default function KnowledgePage() {
         setMessage(error.message || "Failed to update knowledge base");
       }
     } catch (error) {
-      setMessage("Error updating knowledge base");
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error updating knowledge base";
+      setMessage(errorMessage);
     } finally {
       setLoading(false);
     }
