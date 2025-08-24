@@ -33,9 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Store email in waitlist table
-    const { error } = await supabaseAdmin.from("waitlist").insert({
-      email: email,
-    });
+    const { error } = await supabaseAdmin.from("waitlist").insert(email);
 
     if (error) {
       console.error("Waitlist storage error:", error);
