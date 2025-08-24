@@ -66,7 +66,7 @@ export default function ChatTestPage() {
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
-    } catch {
+    } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         content:

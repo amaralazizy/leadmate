@@ -49,19 +49,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (userId: string): User | null => {
       if (!profileCacheRef.current) return null;
 
-    const cache = profileCacheRef.current;
+      const cache = profileCacheRef.current;
 
-    // Check if cache is valid and for the same user
-    if (
-      cache.data &&
-      cache.userId === userId &&
-      Date.now() - cache.timestamp < CACHE_DURATION
-    ) {
-      return cache.data;
-    }
+      // Check if cache is valid and for the same user
+      if (
+        cache.data &&
+        cache.userId === userId &&
+        Date.now() - cache.timestamp < CACHE_DURATION
+      ) {
+        return cache.data;
+      }
 
-    return null;
-  }, [CACHE_DURATION]);
+      return null;
+    },
+    [CACHE_DURATION]
+  );
 
   const setCachedProfile = (profile: User) => {
     profileCacheRef.current = {
@@ -193,11 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-<<<<<<< HEAD
   }, [fetchUserProfile]);
-=======
-  }, [supabase, fetchUserProfile]);
->>>>>>> sherif
 
   return (
     <AuthContext.Provider
