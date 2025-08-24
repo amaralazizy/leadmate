@@ -7,11 +7,11 @@ export default function WaitlistSuccess() {
             <div className="w-8 h-8 rounded-full bg-dark-bg" />
           </div>
           <h3 className="text-xl font-bold mb-2 text-white">
-            You&apos;re on the list!
+            You're on the list! 🎉
           </h3>
           <p className="text-text-light">
-            We&apos;ll notify you as soon as we launch. Get ready for something
-            amazing!
+            We'll notify you as soon as LeadBuddy launches. Get ready to never
+            miss another lead again!
           </p>
         </div>
       </div>
