@@ -54,7 +54,7 @@ export default function KnowledgePage() {
         const error = await response.json();
         setMessage(error.message || "Failed to update knowledge base");
       }
-    } catch (error) {
+    } catch {
       setMessage("Error updating knowledge base");
     } finally {
       setLoading(false);

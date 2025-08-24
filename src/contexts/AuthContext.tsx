@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, createContext, useRef } from "react";
-import { supabase, User } from "@/lib/supabase/client";
+import { useEffect, useState, createContext, useRef, useCallback } from "react";
+import { supabase } from "@/lib/supabase/client";
+import { User } from "@/lib/supabase/client";
 
 interface AuthState {
   user: User | null;
@@ -44,7 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  const getCachedProfile = (userId: string): User | null => {
+  const getCachedProfile = useCallback(
+    (userId: string): User | null => {
+      if (!profileCacheRef.current) return null;
+
     const cache = profileCacheRef.current;
 
     // Check if cache is valid and for the same user
@@ -57,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return null;
-  };
+  }, [CACHE_DURATION]);
 
   const setCachedProfile = (profile: User) => {
     profileCacheRef.current = {
@@ -71,26 +75,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     profileCacheRef.current = { data: null, timestamp: 0, userId: null };
   };
 
-  const fetchUserProfile = async (userId: string): Promise<User | null> => {
-    // Try in-memory cache first
-    const cached = getCachedProfile(userId);
-    if (cached) {
-      return cached;
-    }
+  const fetchUserProfile = useCallback(
+    async (userId: string): Promise<User | null> => {
+      // Try in-memory cache first
+      const cached = getCachedProfile(userId);
+      if (cached) {
+        return cached;
+      }
 
-    // Fetch from database only if not cached
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .single();
+      // Fetch from database only if not cached
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
-    if (error || !user) return null;
+      if (error || !user) return null;
 
-    const userProfile = user as unknown as User;
-    setCachedProfile(userProfile);
-    return userProfile;
-  };
+      const userProfile = user as unknown as User;
+      setCachedProfile(userProfile);
+      return userProfile;
+    },
+    [getCachedProfile]
+  );
 
   const updateProfile = (updates: Partial<User>) => {
     if (authState.user) {
@@ -186,7 +193,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [fetchUserProfile]);
 
   return (
     <AuthContext.Provider
