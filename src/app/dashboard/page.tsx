@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+// import { useState, useEffect } from "react";
+// import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { User } from "@/lib/supabase";
+// import { User } from "@/lib/supabase/client";
 import {
   MessageSquare,
   Users,

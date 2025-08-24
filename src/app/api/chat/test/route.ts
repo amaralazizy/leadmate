@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase/server";
 import { generateChatResponse, generateEmbedding } from "@/lib/openai";
 
 export async function POST(request: NextRequest) {
@@ -36,7 +37,9 @@ export async function POST(request: NextRequest) {
       });
 
       if (knowledge && knowledge.length > 0) {
-        context = knowledge.map((k: { content: string }) => k.content).join("\n");
+        context = knowledge
+          .map((k: { content: string }) => k.content)
+          .join("\n");
       }
     } catch (error) {
       console.error("Vector search error:", error);

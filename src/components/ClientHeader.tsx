@@ -3,7 +3,7 @@
 import { MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 export default function ClientHeader() {
   const { user, loading } = useAuth();
