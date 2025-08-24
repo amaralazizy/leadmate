@@ -41,6 +41,14 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Dark theme colors for waitlist page */
+  --color-dark-bg: rgb(0 0 0);
+  --color-dark-card: rgb(26 26 26);
+  --color-dark-secondary: rgb(44 44 44);
+  --color-accent-green: rgb(57 255 20);
+  --color-text-white: rgb(255 255 255);
+  --color-text-light: rgb(204 204 204);
 }
 
 :root {
@@ -76,6 +84,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* TODO: make another color scheme for light mode */
+
+  --color-accent-green: var(--color-accent-green);
+  --color-text-white: var(--color-text-white);
+  --color-text-light: var(--color-text-light);
+  --color-dark-bg: var(--color-dark-bg);
+  --color-dark-card: var(--color-dark-card);
+  --color-dark-secondary: var(--color-dark-secondary);
 }
 
 .dark {
@@ -110,6 +127,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --color-accent-green: var(--color-accent-green);
+  --color-text-white: var(--color-text-white);
+  --color-text-light: var(--color-text-light);
+  --color-dark-bg: var(--color-dark-bg);
+  --color-dark-card: var(--color-dark-card);
+  --color-dark-secondary: var(--color-dark-secondary);
 }
 
 @layer base {
