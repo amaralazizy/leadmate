@@ -10,12 +10,14 @@ import WaitlistSocialProof from "@/app/components/WaitlistSocialProof";
 import WaitlistFeatures from "@/app/components/WaitlistFeatures";
 import WaitlistCTA from "@/app/components/WaitlistCTA";
 import WaitlistFooter from "@/app/components/WaitlistFooter";
+import { toast } from "sonner";
 
 export default function WaitlistPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSuccess = () => {
     setIsSubmitted(true);
+    toast.success("You've successfully joined the waitlist");
   };
 
   return (
