@@ -26,11 +26,10 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.toLowerCase() }),
       });
 
       if (response.ok) {
-        console.log("response", response);
         onSuccess();
       } else {
         const error = await response.json();
