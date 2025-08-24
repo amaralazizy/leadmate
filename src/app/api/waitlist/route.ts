@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notification
     await resend.emails.send({
-      from: "amarelazizy@gmail.com",
+      from: "onboarding@resend.dev",
       to: email,
       subject: "Welcome to the waitlist",
       html: "<p>You've successfully joined the waitlist!</p>",
