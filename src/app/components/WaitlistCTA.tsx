@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function WaitlistCTA() {
   return (
     <div className="rounded-3xl border-4 p-8 md:p-12 bg-dark-card border-accent-green shadow-[12px_12px_0px_0px_rgba(57,255,20,0.8)]">

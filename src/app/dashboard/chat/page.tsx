@@ -69,7 +69,10 @@ export default function ChatTestPage() {
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Sorry, I couldn't process your message. Please try again.",
+        content:
+          error instanceof Error
+            ? error.message
+            : "Sorry, I couldn't process your message. Please try again.",
         sender: "bot",
         timestamp: new Date(),
       };

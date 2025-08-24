@@ -186,7 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, fetchUserProfile]);
 
   return (
     <AuthContext.Provider
