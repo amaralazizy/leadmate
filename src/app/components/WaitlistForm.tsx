@@ -57,7 +57,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email..."
+            placeholder="Your business email..."
             className="w-full pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 transition-all bg-dark-secondary border-2 border-accent-green text-white placeholder:text-text-light"
             required
             autoComplete="email"
@@ -76,7 +76,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             </div>
           ) : (
             <div className="flex items-center justify-center">
-              Join The Waitlist
+              Get My AI Sales Agent
               <ArrowRight className="ml-2 w-5 h-5" />
             </div>
           )}

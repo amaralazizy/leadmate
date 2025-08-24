@@ -14,9 +14,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ReplyPro",
+  title: "LeadMate - Smart Lead Management & Automation",
   description:
-    "ReplyPro is a platform that allows you to create a WhatsApp chatbot for your business.",
+    "LeadMate helps businesses capture, manage, and automate leads with ease. Streamline your workflow, increase conversions, and never miss an opportunity.",
+  keywords: [
+    "LeadMate",
+    "lead management software",
+    "CRM alternative",
+    "sales automation",
+    "customer engagement",
+    "business growth",
+    "convert leads",
+    "lead tracking",
+  ],
 };
 
 export default function RootLayout({

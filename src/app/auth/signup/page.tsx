@@ -186,9 +186,8 @@ export default function SignupPage() {
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
                   We&apos;ve sent a verification email to{" "}
-                  <strong>{email}</strong>.
-                  Please check your inbox and click the verification link to
-                  complete your registration.
+                  <strong>{email}</strong>. Please check your inbox and click
+                  the verification link to complete your registration.
                 </p>
               </div>
 
