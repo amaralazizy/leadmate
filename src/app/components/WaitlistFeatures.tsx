@@ -2,18 +2,19 @@ export default function WaitlistFeatures() {
   const features = [
     {
       icon: "🤖",
-      title: "AI-Powered",
-      description: "Advanced language models trained on your business",
+      title: "AI Sales Agent",
+      description:
+        "Natural conversations that answer questions and close deals 24/7",
     },
     {
       icon: "⚡",
-      title: "Instant Setup",
-      description: "Get started in under 10 minutes",
+      title: "5-Minute Setup",
+      description: "Connect WhatsApp, upload your menu, and you're live",
     },
     {
-      icon: "🔒",
-      title: "Enterprise Security",
-      description: "Bank-level encryption and compliance",
+      icon: "📊",
+      title: "Auto Lead Capture",
+      description: "Leads automatically logged to Google Sheets + email alerts",
     },
   ];
 

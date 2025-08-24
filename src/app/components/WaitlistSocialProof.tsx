@@ -1,7 +1,7 @@
 export default function WaitlistSocialProof() {
   return (
     <div className="mb-12">
-      <div className="flex justify-center items-center mb-4">
+      {/* <div className="flex justify-center items-center mb-4">
         <div className="flex -space-x-2">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -14,10 +14,11 @@ export default function WaitlistSocialProof() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       <p className="text-lg font-medium text-text-light">
-        Join the <span className="font-bold text-accent-green">2,000+</span>{" "}
-        members who have already signed up
+        Join <span className="font-bold text-accent-green">100+</span>{" "}
+        restaurant owners, salon managers, and local business owners already
+        waiting
       </p>
     </div>
   );

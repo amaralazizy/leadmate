@@ -193,7 +193,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
+<<<<<<< HEAD
   }, [fetchUserProfile]);
+=======
+  }, [supabase, fetchUserProfile]);
+>>>>>>> sherif
 
   return (
     <AuthContext.Provider
