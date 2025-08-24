@@ -4,7 +4,12 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   //TODO: add the waitlist and its needed routes here ya ammar
-  const allowedPaths = ["/", "/api/waitlist"];
+  // make every time the user visit home redirect to the waitlist page
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/waitlist", request.url));
+  }
+
+  const allowedPaths = ["/", "/api/waitlist", "/waitlist"];
 
   const publicPaths = ["/_next", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
 
