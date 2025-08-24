@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import resend from "@/lib/resend";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { readFile } from "fs/promises";
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +41,6 @@ export async function POST(request: NextRequest) {
       .insert([{ email }])
       .select();
 
-
     if (error) {
       console.error("Waitlist storage error:", error);
       return NextResponse.json(
@@ -50,12 +50,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email notification
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
+    const { error: emailError } = await resend.emails.send({
+      from: "Sherif Elamir<info@soar-ny.com>",
       to: email,
       subject: "Welcome to the waitlist",
-      html: "<p>You've successfully joined the waitlist!</p>",
+      html: await readFile(
+        new URL("../../../lib/emails/waitlist-welcome.html", import.meta.url),
+        "utf-8"
+      ),
     });
+
+    if (emailError) {
+      console.error("Email sending error:", emailError);
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       message: "Successfully joined waitlist",
