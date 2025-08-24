@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/client";
 import { generateChatResponse, extractLead } from "@/lib/openai";
 import twilio from "twilio";
 

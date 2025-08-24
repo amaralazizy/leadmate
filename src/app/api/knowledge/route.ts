@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase/client";
 import { generateEmbedding } from "@/lib/openai";
 
 export async function POST(request: NextRequest) {
