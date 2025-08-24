@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import resend from "@/lib/resend";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
+    console.log("email", email);
 
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -33,7 +35,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Store email in waitlist table
-    const { error } = await supabaseAdmin.from("waitlist").insert(email);
+    const { data, error } = await supabaseAdmin
+      .from("waitlist")
+      .insert([{ email }])
+      .select();
+
 
     if (error) {
       console.error("Waitlist storage error:", error);
@@ -43,9 +49,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Send email notification
+    await resend.emails.send({
+      from: "amarelazizy@gmail.com",
+      to: email,
+      subject: "Welcome to the waitlist",
+      html: "<p>You've successfully joined the waitlist!</p>",
+    });
+
     return NextResponse.json({
       message: "Successfully joined waitlist",
-      email: email,
+      email: data[0].email,
     });
   } catch (error) {
     console.error("Waitlist API error:", error);

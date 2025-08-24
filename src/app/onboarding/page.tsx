@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Check, ArrowRight, Upload, Phone, MessageSquare } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
