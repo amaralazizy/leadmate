@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
+
 interface WaitlistFormProps {
   onSuccess: () => void;
 }
@@ -19,6 +20,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
     setIsLoading(true);
 
     try {
+      // console.log("email", JSON.stringify({ email }));
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: {
@@ -28,6 +30,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       });
 
       if (response.ok) {
+        console.log("response", response);
         onSuccess();
       } else {
         const error = await response.json();
