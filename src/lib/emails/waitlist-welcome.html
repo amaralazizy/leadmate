@@ -42,10 +42,11 @@
       }
 
       .logo {
-        font-size: 32px;
-        font-weight: 900;
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        scale: 3;
         margin-bottom: 20px;
-        color: #39ff14;
       }
 
       .welcome-title {
@@ -244,7 +245,11 @@
     <div class="email-container">
       <!-- Header -->
       <header>
-        <img class="logo" src="../../public/logo.png" alt="LeadMate" />
+        <img
+          class="logo"
+          src="https://cyaawadbniikvjyhjclv.supabase.co/storage/v1/object/public/leadmate/logo.png"
+          alt="LeadMate"
+        />
         <h1 class="welcome-title">Welcome to the Future!</h1>
         <p class="welcome-subtitle">
           You're now part of an exclusive community of innovators
@@ -325,8 +330,6 @@
         <p class="footer-text">
           Questions? Just reply to this email - we'd love to hear from you!
         </p>
-
-        <a href="#" class="unsubscribe">Unsubscribe</a>
       </div>
     </div>
   </body>
