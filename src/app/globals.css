@@ -143,4 +143,67 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Ensure all clickable elements have pointer cursor */
+  button,
+  [role="button"],
+  .cursor-pointer,
+  .btn,
+  .button {
+    cursor: pointer !important;
+  }
+
+  /* Force pointer cursor on all interactive elements */
+  *[onclick],
+  *[onClick],
+  *[onmouseover],
+  *[onmouseenter],
+  *[onfocus],
+  *[tabindex] {
+    cursor: pointer !important;
+  }
+
+  /* Also target common button-like elements */
+  a[href],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
+
+  /* Target any element with onClick or similar interactive attributes */
+  [onclick],
+  [onClick],
+  [onmouseover],
+  [onmouseenter],
+  [onfocus] {
+    cursor: pointer !important;
+  }
+
+  /* Target interactive elements */
+  .interactive,
+  .clickable,
+  .btn-like {
+    cursor: pointer;
+  }
+
+  /* Disable pointer for disabled elements */
+  button:disabled,
+  input:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed !important;
+  }
+
+  /* Utility classes for cursor control */
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  .cursor-default {
+    cursor: default !important;
+  }
+
+  .cursor-not-allowed {
+    cursor: not-allowed !important;
+  }
 }
