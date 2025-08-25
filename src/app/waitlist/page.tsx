@@ -10,6 +10,7 @@ import WaitlistSocialProof from "@/app/components/WaitlistSocialProof";
 import WaitlistFeatures from "@/app/components/WaitlistFeatures";
 import WaitlistCTA from "@/app/components/WaitlistCTA";
 import WaitlistFooter from "@/app/components/WaitlistFooter";
+import ContactForm from "@/app/components/ContactForm";
 import { toast } from "sonner";
 
 export default function WaitlistPage() {
@@ -32,27 +33,28 @@ export default function WaitlistPage() {
           }}
         />
       </div>
+        <WaitlistHeader />
 
-      <WaitlistHeader />
+        {/* Main Content */}
+        <main className="relative z-10 px-6 pt-16 pb-20">
+          <div className="max-w-4xl mx-auto text-center">
+            <WaitlistBadge />
+            <WaitlistHero />
 
-      {/* Main Content */}
-      <main className="relative z-10 px-6 pt-16 pb-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <WaitlistBadge />
-          <WaitlistHero />
+            {/* Waitlist Form or Success */}
+            {!isSubmitted ? (
+              <WaitlistForm onSuccess={handleSuccess} />
+            ) : (
+              <WaitlistSuccess />
+            )}
 
-          {/* Waitlist Form or Success */}
-          {!isSubmitted ? (
-            <WaitlistForm onSuccess={handleSuccess} />
-          ) : (
-            <WaitlistSuccess />
-          )}
-
-          <WaitlistSocialProof />
-          <WaitlistFeatures />
-          <WaitlistCTA />
-        </div>
-      </main>
+            <WaitlistSocialProof />
+            <WaitlistFeatures />
+            <WaitlistCTA />
+          </div>
+        </main>
+      {/* Contact Form Section */}
+      <ContactForm />
 
       <WaitlistFooter />
     </div>
