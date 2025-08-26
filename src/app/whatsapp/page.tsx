@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [to, setTo] = useState("");
@@ -31,7 +32,7 @@ export default function Home() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <Button type="submit">Send</Button>
       </form>
     </div>
   );

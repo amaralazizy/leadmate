@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, FileText, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function KnowledgePage() {
   const [content, setContent] = useState("");
@@ -71,12 +72,12 @@ export default function KnowledgePage() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center py-6">
-            <button
+            <Button
               onClick={() => router.push("/dashboard")}
               className="mr-4 p-2 rounded-md text-gray-400 hover:text-gray-600"
             >
               <ArrowLeft className="h-5 w-5" />
-            </button>
+            </Button>
             <h1 className="text-2xl font-bold text-gray-900">Knowledge Base</h1>
           </div>
         </div>
@@ -182,13 +183,13 @@ export default function KnowledgePage() {
 
               {/* Submit Button */}
               <div className="flex justify-end">
-                <button
+                <Button
                   type="submit"
                   disabled={loading || !content.trim()}
                   className="bg-blue-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                 >
                   {loading ? "Processing..." : "Save Knowledge Base"}
-                </button>
+                </Button>
               </div>
             </div>
           </form>

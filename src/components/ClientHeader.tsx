@@ -4,6 +4,7 @@ import { MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export default function ClientHeader() {
   const { user, loading } = useAuth();
@@ -51,12 +52,12 @@ export default function ClientHeader() {
                 <span className="text-sm text-gray-700">
                   Welcome, {user.business_name || user.email}
                 </span>
-                <button
+                <Button
                   onClick={handleLogout}
                   className="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded text-sm text-gray-700 transition-colors"
                 >
                   Logout
-                </button>
+                </Button>
               </>
             ) : (
               <span className="text-sm text-gray-500">Not authenticated</span>

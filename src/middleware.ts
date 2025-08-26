@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Handle Supabase session update and authentication
+  const supabaseResponse = await updateSession(request);
+
+  // If updateSession redirected (e.g., to login), return that response
+  if (supabaseResponse.status !== 200) {
+    return supabaseResponse;
+  }
 
   //TODO: add the waitlist and its needed routes here ya ammar
   // make every time the user visit home redirect to the waitlist page
@@ -11,6 +20,8 @@ export function middleware(request: NextRequest) {
 
   const allowedPaths = [
     "/",
+    "/auth",
+    "/dashboard",
     "/api/waitlist",
     "/waitlist",
     "/whatsapp",
@@ -20,10 +31,12 @@ export function middleware(request: NextRequest) {
 
   const publicPaths = ["/_next", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
 
+  // Allow public paths
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
+  // Allow allowed paths
   if (
     allowedPaths.some(
       (path) => pathname === path || pathname.startsWith(path + "/")
@@ -32,6 +45,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Redirect to home if not in allowed paths
   return NextResponse.redirect(new URL("/", request.url));
 }
 
