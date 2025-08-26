@@ -12,6 +12,8 @@ import {
   Globe,
 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface OnboardingData {
   businessName: string;
@@ -24,8 +26,10 @@ interface OnboardingData {
 }
 
 export default function OnboardingPage() {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [data, setData] = useState<OnboardingData>({
     businessName: "",
     industry: "",
@@ -46,10 +50,13 @@ export default function OnboardingPage() {
     }[]
   >([]);
   const [searching, setSearching] = useState(false);
-  const webhookUrl = useMemo(
-    () => `${window.location.origin}/api/twilio/webhook`,
-    []
-  );
+  const webhookUrl = useMemo(() => {
+    // Use environment variable if available, otherwise fallback to window.location
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (typeof window !== "undefined" ? window.location.origin : "");
+    return `${baseUrl}/api/twilio/webhook`;
+  }, []);
 
   const handleNext = async () => {
     if (step === 1) {
@@ -71,17 +78,11 @@ export default function OnboardingPage() {
   const completeOnboarding = async () => {
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/auth/login");
-        return;
-      }
-
       router.push("/dashboard");
     } catch (error) {
-      console.error("Onboarding error:", error);
+      toast.error("Failed to complete onboarding", {
+        description: error as string,
+      });
     } finally {
       setLoading(false);
     }
@@ -90,22 +91,18 @@ export default function OnboardingPage() {
   const saveBusinessInfo = async () => {
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
       await supabase
         .from("users")
         .update({
           business_name: data.businessName || "My Business",
           business_type: data.industry || null,
-          business_industry: data.industry || null,
           business_logo_url: data.logoUrl || null,
         })
-        .eq("id", user.id);
+        .eq("id", user?.id);
     } catch (e) {
-      console.error(e);
+      toast.error("Failed to save business info", {
+        description: e as string,
+      });
     } finally {
       setLoading(false);
     }
@@ -120,10 +117,21 @@ export default function OnboardingPage() {
         body: JSON.stringify({ country: data.selectedCountry }),
       });
       const json = await res.json();
+
       if (res.ok) setAvailableNumbers(json.numbers || []);
-      else console.error(json.error);
+      else {
+        if (json.error.includes("was not found"))
+          toast.error("No available numbers", {
+            description: "Please try a different country",
+          });
+        else toast.error(json.error);
+        setAvailableNumbers([]);
+      }
     } catch (e) {
-      console.error(e);
+      toast.error("Failed to search numbers", {
+        description: e as string,
+      });
+      setAvailableNumbers([]);
     } finally {
       setSearching(false);
     }
@@ -132,17 +140,12 @@ export default function OnboardingPage() {
   const purchaseAndRegister = async () => {
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
       // Buy number
       const buyRes = await fetch("/api/twilio/buy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user.id,
+          userId: user?.id,
           phoneNumber: data.selectedNumber,
         }),
       });
@@ -161,7 +164,7 @@ export default function OnboardingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user.id,
+          userId: user?.id,
           phoneNumber: data.selectedNumber,
           profile,
         }),
@@ -180,7 +183,7 @@ export default function OnboardingPage() {
           twilio_sender_sid: senderSid,
           whatsapp_status: regJson?.sender?.status || "CREATING",
         })
-        .eq("id", user.id);
+        .eq("id", user?.id);
 
       setData((d) => ({
         ...d,
@@ -197,6 +200,9 @@ export default function OnboardingPage() {
         });
       }
     } catch (e) {
+      // toast.error("Failed to purchase number", {
+      //   description: e as string,
+      // });
       console.error(e);
     } finally {
       setLoading(false);
@@ -232,12 +238,77 @@ export default function OnboardingPage() {
             }
           }
         } catch (e) {
-          console.error(e);
+          toast.error("Failed to check status", {
+            description: e as string,
+          });
         }
       }, 5000);
     }
     return () => interval && clearInterval(interval);
   }, [step, data.senderSid, data.selectedNumber, supabase]);
+
+  // Fetch existing user data and determine starting step
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user || initialized) return;
+
+      try {
+        const { data: userData, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (error) {
+          toast.error("Failed to fetch user data", {
+            description: error.message,
+          });
+          return;
+        }
+
+        if (userData) {
+          const updatedData = { ...data };
+          let startingStep = 1;
+
+          // Check business info
+          if (userData.business_name && userData.business_type) {
+            updatedData.businessName = userData.business_name;
+            updatedData.industry = userData.business_type;
+            updatedData.logoUrl = userData.business_logo_url || "";
+            startingStep = 2;
+          }
+
+          // Check if number is selected
+          if (userData.twilio_phone_number) {
+            updatedData.selectedNumber = userData.twilio_phone_number;
+            startingStep = 3;
+          }
+
+          // Check if WhatsApp is activated
+          if (userData.whatsapp_status === "ONLINE") {
+            updatedData.activationStatus = "ONLINE";
+            startingStep = 4;
+          } else if (userData.twilio_sender_sid) {
+            updatedData.senderSid = userData.twilio_sender_sid;
+            updatedData.activationStatus =
+              userData.whatsapp_status || "CREATING";
+            startingStep = 3;
+          }
+
+          setData(updatedData);
+          setStep(startingStep);
+        }
+      } catch (error) {
+        toast.error("Failed to initialize onboarding", {
+          description: error as string,
+        });
+      } finally {
+        setInitialized(true);
+      }
+    };
+
+    fetchUserData();
+  }, [user, initialized, data, supabase]);
 
   const steps = [
     { number: 1, title: "Business Info", icon: Phone },
@@ -245,6 +316,26 @@ export default function OnboardingPage() {
     { number: 3, title: "Activate", icon: Upload },
     { number: 4, title: "Done", icon: MessageSquare },
   ];
+
+  // Show loading while fetching user data
+  if (!initialized) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+          <div className="sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-4 text-sm text-gray-600">
+                  Loading your setup...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute>
@@ -259,7 +350,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Progress Steps */}
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
           <div className="flex items-center justify-center space-x-8">
             {steps.map((s) => {
               const Icon = s.icon;
@@ -375,6 +466,15 @@ export default function OnboardingPage() {
                 <h3 className="text-lg font-medium text-gray-900">
                   Pick a WhatsApp Number
                 </h3>
+
+                {/* Show selected number if already exists */}
+                {data.selectedNumber && (
+                  <div className="bg-green-50 p-4 rounded-md">
+                    <p className="text-sm text-green-700">
+                      <strong>Selected:</strong> {data.selectedNumber}
+                    </p>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label
@@ -403,14 +503,14 @@ export default function OnboardingPage() {
                       type="button"
                       onClick={searchNumbers}
                       disabled={searching}
-                      className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                      className="px-3 py-2 mx-auto text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
                     >
                       {searching ? "Searching..." : "Search Numbers"}
                     </button>
                   </div>
 
                   {availableNumbers.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[300px]">
                       {availableNumbers.map((n) => (
                         <button
                           key={n.phoneNumber}
