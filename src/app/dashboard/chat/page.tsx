@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, ArrowLeft, Bot, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Message {
   id: string;
@@ -88,12 +89,12 @@ export default function ChatTestPage() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center py-6">
-            <button
+            <Button
               onClick={() => router.push("/dashboard")}
               className="mr-4 p-2 rounded-md text-gray-400 hover:text-gray-600"
             >
               <ArrowLeft className="h-5 w-5" />
-            </button>
+            </Button>
             <h1 className="text-2xl font-bold text-gray-900">Test Your Bot</h1>
           </div>
         </div>
@@ -175,13 +176,13 @@ export default function ChatTestPage() {
                 placeholder="Type your message..."
                 className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={loading || !input.trim()}
                 className="bg-blue-600 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="h-4 w-4" />
-              </button>
+              </Button>
             </form>
           </div>
         </div>

@@ -13,6 +13,7 @@ import {
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/hooks/useAuth";
 import ClientHeader from "@/components/ClientHeader";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -109,7 +110,7 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-            <button
+            <Button
               onClick={() => router.push("/dashboard/knowledge")}
               className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
             >
@@ -124,9 +125,9 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => router.push("/dashboard/chat")}
               className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
             >
@@ -141,9 +142,9 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => router.push("/dashboard/settings")}
               className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
             >
@@ -156,7 +157,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-500">Configure your bot</p>
                 </div>
               </div>
-            </button>
+            </Button>
           </div>
 
           {/* Recent Activity */}

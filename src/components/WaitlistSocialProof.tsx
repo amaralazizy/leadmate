@@ -6,7 +6,7 @@ export default function WaitlistSocialProof() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="w-12 h-12 rounded-full border-3 border-black shadow-lg flex items-center justify-center bg-accent-green"
+              className="w-12 h-12 rounded-full border-3 border-black shadow-lg flex items-center justify-center bg-main"
             >
               <span className="font-bold text-sm text-dark-bg">
                 {String.fromCharCode(65 + i)}
@@ -16,9 +16,8 @@ export default function WaitlistSocialProof() {
         </div>
       </div> */}
       <p className="text-lg font-medium text-text-light">
-        Join <span className="font-bold text-accent-green">100+</span>{" "}
-        restaurant owners, salon managers, and local business owners already
-        waiting
+        Join <span className="font-bold text-main">100+</span> restaurant
+        owners, salon managers, and local business owners already waiting
       </p>
     </div>
   );

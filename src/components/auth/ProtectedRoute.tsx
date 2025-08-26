@@ -4,6 +4,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "../ui/button";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -97,12 +98,12 @@ export default function ProtectedRoute({
             Authentication Error
           </h2>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button
+          <Button
             onClick={() => router.push("/auth/login")}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
           >
             Sign In
-          </button>
+          </Button>
         </div>
       </div>
     );

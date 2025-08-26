@@ -1,6 +1,6 @@
 export default function WaitlistCTA() {
   return (
-    <div className="rounded-3xl border-4 p-8 md:p-12 bg-dark-card border-accent-green shadow-[12px_12px_0px_0px_rgba(57,255,20,0.8)]">
+    <div className="rounded-3xl border-4 p-8 md:p-12 bg-dark-card border-main shadow-[12px_12px_0px_0px_rgba(57,255,20,0.8)]">
       <h2 className="text-3xl md:text-4xl font-black mb-4 text-white">
         Tired of missing leads at 2 AM?
       </h2>

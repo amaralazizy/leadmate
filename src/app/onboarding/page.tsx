@@ -12,6 +12,7 @@ import {
   Globe,
 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { Button } from "@/components/ui/button";
 
 interface OnboardingData {
   businessName: string;
@@ -399,20 +400,20 @@ export default function OnboardingPage() {
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
+                    <Button
                       type="button"
                       onClick={searchNumbers}
                       disabled={searching}
                       className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
                     >
                       {searching ? "Searching..." : "Search Numbers"}
-                    </button>
+                    </Button>
                   </div>
 
                   {availableNumbers.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {availableNumbers.map((n) => (
-                        <button
+                        <Button
                           key={n.phoneNumber}
                           type="button"
                           onClick={() =>
@@ -428,7 +429,7 @@ export default function OnboardingPage() {
                           <div className="text-xs text-gray-500">
                             {n.friendlyName || n.isoCountry}
                           </div>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -476,16 +477,16 @@ export default function OnboardingPage() {
 
             {/* Navigation */}
             <div className="mt-8 flex justify-between">
-              <button
+              <Button
                 type="button"
                 onClick={() => setStep(step - 1)}
                 disabled={step === 1}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Back
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={handleNext}
                 disabled={
@@ -503,7 +504,7 @@ export default function OnboardingPage() {
                     ? "Complete Setup"
                     : "Activating..."
                   : "Next"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
