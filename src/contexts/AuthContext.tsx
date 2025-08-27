@@ -86,11 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Fetch from database only if not cached
-      const { data: user, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .single();
+      const { data: user, error } = await supabase.auth.getUser();
 
       if (error || !user) return null;
 

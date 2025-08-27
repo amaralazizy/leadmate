@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // const { pathname } = request.nextUrl;
 
   // Handle Supabase session update and authentication
   const supabaseResponse = await updateSession(request);
@@ -18,35 +18,40 @@ export async function middleware(request: NextRequest) {
   //   return NextResponse.redirect(new URL("/waitlist", request.url));
   // }
 
-  const allowedPaths = [
-    "/",
-    "/auth",
-    "/dashboard",
-    "/api/waitlist",
-    "/waitlist",
-    "/whatsapp",
-    "/api/whatsapp",
-    "/api/webhook/whatsapp",
-  ];
+  // const allowedPaths = [
+  //   "/",
+  //   "/auth",
+  //   "/dashboard",
+  //   "/api/waitlist",
+  //   "/waitlist",
+  //   "/whatsapp",
+  //   "/api/whatsapp",
+  //   "/api/webhook/whatsapp",
+  // ];
 
-  const publicPaths = ["/_next", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
+  // const publicPaths = ["/_next", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
 
-  // Allow public paths
-  if (publicPaths.some((path) => pathname.startsWith(path))) {
-    return NextResponse.next();
-  }
+  // // Allow public paths
+  // if (publicPaths.some((path) => pathname.startsWith(path))) {
+  //   return NextResponse.next();
+  // }
 
   // Allow allowed paths
-  if (
-    allowedPaths.some(
-      (path) => pathname === path || pathname.startsWith(path + "/")
-    )
-  ) {
-    return NextResponse.next();
-  }
+  // if (
+  //   allowedPaths.some(
+  //     (path) => pathname === path || pathname.startsWith(path)
+  //   )
+  // ) {
+  //   console.log("Middleware - Stay in the same page");
+  //   return NextResponse.next();
+  // }
 
   // Redirect to home if not in allowed paths
-  return NextResponse.redirect(new URL("/", request.url));
+  // if (request.nextUrl.pathname !== "/") {
+  //   console.log("Middleware - Redirecting to home");
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
+  // return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {

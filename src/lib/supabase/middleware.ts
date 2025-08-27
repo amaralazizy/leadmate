@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
@@ -39,11 +39,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("Middleware - Path:", request.nextUrl.pathname);
-  console.log(
-    "Middleware - User:",
-    user ? "Authenticated" : "Not authenticated"
-  );
+  // console.log("Middleware - Path:", request.nextUrl.pathname);
+  // console.log(
+  //   "Middleware - User:",
+  //   user ? "Authenticated" : "Not authenticated"
+  // );
 
   // Check if current path requires authentication
   const protectedPaths = ["/dashboard"];
@@ -54,9 +54,7 @@ export async function updateSession(request: NextRequest) {
   // If it's a protected path and no user, redirect to login
   if (isProtectedPath && !user) {
     console.log("Middleware - Redirecting to login");
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
