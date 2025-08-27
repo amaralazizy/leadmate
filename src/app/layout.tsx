@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ScrollToTop";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,15 +42,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster
-          position="bottom-right"
-          theme="dark"
-          duration={4000}
-          expand={true}
-          richColors={false}
-        />
-        <ScrollToTop />
+        <AuthProvider>
+          {children}
+          <Toaster
+            position="bottom-right"
+            theme="dark"
+            duration={4000}
+            expand={true}
+            richColors={false}
+          />
+          <ScrollToTop />
+        </AuthProvider>
       </body>
     </html>
   );

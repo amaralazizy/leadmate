@@ -37,7 +37,6 @@ export default function LoginPage() {
       });
 
       if (error) throw error;
-
       router.push("/dashboard");
     } catch (error: unknown) {
       setError(
@@ -59,92 +58,6 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="border-2 border-main py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="text-center mb-6">
-            <h3 className="text-2xl font-semibold text-main">
-              Login to your account
-            </h3>
-            <p className="text-sm text-main mt-1">
-              Enter your email below to login to your account
-            </p>
-          </div>
-
-          <form className="space-y-6" onSubmit={handleLogin}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-
-            <div className="grid gap-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-main"
-              >
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setEmail(e.target.value)
-                }
-                className="text-main"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-main"
-                >
-                  Password
-                </label>
-                <Link
-                  href="/auth/reset-password"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline text-main"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPassword(e.target.value)
-                }
-                className="text-main"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Signing in..." : "Login"}
-              </Button>
-              <Button variant="neutral" className="w-full" disabled>
-                Login with Google
-              </Button>
-            </div>
-          </form>
-
-          <div className="mt-6 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/auth/signup"
-              className="underline underline-offset-4 text-main hover:text-main/70"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </div> */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card className="w-full max-w-md mx-auto">
           <CardHeader>
@@ -154,7 +67,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <form className="space-y-6" onSubmit={handleLogin}>
-            {error && (
+            {error && error !== "" && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
                 {error}
               </div>
