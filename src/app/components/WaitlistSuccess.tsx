@@ -10,7 +10,7 @@ export default function WaitlistSuccess() {
             You&apos;re on the list! 🎉
           </h3>
           <p className="text-text-light">
-            We&apos;ll notify you as soon as LaedMate launches. Get ready to
+            We&apos;ll notify you as soon as LeadMate launches. Get ready to
             never miss another lead again!
           </p>
         </div>
