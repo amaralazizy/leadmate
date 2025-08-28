@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { supabase } from "@/lib/supabase/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,14 +29,19 @@ export async function POST(req: NextRequest) {
       phoneNumber,
     });
 
-    //TODO: Check if the phone number is purchased before updating database
-    await supabaseAdmin
-      .from("users")
-      .update({
-        twilio_phone_sid: purchased.sid,
-        twilio_phone_number: purchased.phoneNumber,
-      })
-      .eq("id", userId);
+    //TODO: check response of create endpoint for twilio
+
+    // if (purchased.phoneNumber) {
+    //   const { error } = await supabase
+    //     .from("users")
+    //     .update({ phoneNumber: purchased.phoneNumber })
+    //     .eq("id", userId)
+    //     .select();
+
+    //   if (error) {
+    //     return NextResponse.json({ error: error.message }, { status: 500 });
+    //   }
+    // }
 
     return NextResponse.json({
       success: true,
