@@ -1,7 +1,10 @@
-// import ClientHeader from "@/components/ClientHeader";
-import { AppSidebar } from "@/components/SideBar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { AppSidebar } from "@/components/AppSidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import AppBreadcrumb from "@/components/AppBreadcrumb";
 
 export default function DashboardLayout({
   children,
@@ -9,11 +12,17 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
-    </ProtectedRoute>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+              <AppBreadcrumb />
+          </div>
+        </header>
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
