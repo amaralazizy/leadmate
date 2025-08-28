@@ -171,14 +171,14 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          "bg-secondary-background text-foreground flex h-full w-(--sidebar-width) flex-col",
-          className,
+          "bg-background text-foreground flex h-full w-(--sidebar-width) flex-col",
+          className
         )}
         {...props}
       >
         {children}
       </div>
-    )
+    );
   }
 
   if (isMobile) {
@@ -188,7 +188,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-secondary-background text-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-background text-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -245,7 +245,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-secondary-background flex h-full w-full flex-col"
+          className="bg-background flex h-full w-full flex-col"
         >
           {children}
         </div>
@@ -310,7 +310,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "bg-secondary-background relative flex w-full flex-1 flex-col",
+        "bg-background relative flex w-full flex-1 flex-col",
         "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-base md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
         className,
       )}
@@ -328,7 +328,7 @@ function SidebarInput({
       data-slot="sidebar-input"
       data-sidebar="input"
       className={cn(
-        "bg-secondary-background h-8 w-full shadow-none",
+        "bg-background h-8 w-full shadow-none",
         className,
       )}
       {...props}
