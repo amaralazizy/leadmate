@@ -10,7 +10,7 @@
   --foreground: oklch(92.49% 0 0);
   --main-foreground: oklch(0% 0 0);
   --main: oklch(0.8714 0.286 141.53 / 80%);
-  --border: oklch(0.8714 0.286 141.53 / 60%);
+  --border: oklch(0.55 0.286 141.53 / 100%);
   --color-shadow: oklch(0.8714 0.286 141.53 / 60%);
   --ring: oklch(100% 0 0);
   --shadow: 4px 4px 0px 0px var(--color-shadow);

@@ -1,10 +1,8 @@
 import {
   Sidebar,
   SidebarContent,
-  // SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  // SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Image from "next/image";

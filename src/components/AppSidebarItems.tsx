@@ -18,9 +18,13 @@ export function AppSidebarItems() {
     return (
       <>
         {pages.map((item, index) => (
-          <SidebarMenuItem key={index} className={cn({
-            "bg-main text-black": pathname === item.href,
-          })}>
+          <SidebarMenuItem
+            key={index}
+            className={cn({
+              "bg-main text-black border-border border-2":
+                pathname === item.href,
+            })}
+          >
             <SidebarMenuButton asChild>
               <Link href={item.href}>
                 {item.icon && <item.icon />}
