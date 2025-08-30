@@ -13,8 +13,9 @@ export default function LogoutButton() {
   };
 
   return (
-    <Button onClick={handleLogout} className="h-full">
-      <LogOut className="ml-auto size-4" />
+    <Button onClick={handleLogout} className="w-full">
+      {"Logout"}
+      <LogOut className="size-4" />
     </Button>
   );
 }
