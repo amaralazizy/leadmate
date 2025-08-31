@@ -13,8 +13,11 @@ export default function LogoutButton() {
   };
 
   return (
-    <Button onClick={handleLogout} className="w-full">
-      {"Logout"}
+    <Button
+      onClick={handleLogout}
+      className="w-full"
+    >
+      <span className="group-data-[collapsible=icon]:hidden">Logout</span>
       <LogOut className="size-4" />
     </Button>
   );
