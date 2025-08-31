@@ -162,12 +162,12 @@ export default function SignupPage() {
 
       {/* Email Verification Modal */}
       {showVerificationModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-background overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border border-border w-96 shadow-lg rounded-md bg-background">
             <div className="mt-3 text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-main">
                 <svg
-                  className="h-6 w-6 text-green-600"
+                  className="h-6 w-6 text-main-foreground"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -181,11 +181,11 @@ export default function SignupPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mt-4">
+              <h3 className="text-lg font-medium text-main mt-4">
                 Check your email
               </h3>
               <div className="mt-2 px-7 py-3">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-main">
                   We&apos;ve sent a verification email to{" "}
                   <strong>{email}</strong>. Please check your inbox and click
                   the verification link to complete your registration.
@@ -193,11 +193,11 @@ export default function SignupPage() {
               </div>
 
               <div className="mt-3">
-                <p className="text-xs text-gray-500">
-                  Didn&apos;t receive the email? Check your spam folder or{" "}
+                <p className="text-xs text-main flex flex-col gap-2">
+                  <span>Didn&apos;t receive the email?</span>
+                  Check your spam folder or
                   <Button
                     onClick={() => setShowVerificationModal(false)}
-                    className="text-blue-600 hover:text-blue-500"
                   >
                     try signing up again
                   </Button>
