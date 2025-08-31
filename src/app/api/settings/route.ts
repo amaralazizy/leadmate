@@ -79,8 +79,7 @@ export async function GET() {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    console.log(user);
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -89,8 +88,8 @@ export async function GET() {
     const { data, error } = await supabase
       .from("users")
       .select("*")
-      .eq("id", user.id)
-      .single();
+      .eq("id", user.id);
+    console.log("user", user.id);
 
     if (error) {
       console.error("Error fetching user settings:", error);
