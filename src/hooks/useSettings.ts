@@ -48,9 +48,10 @@ export function useSettings() {
       if (!response.ok) {
         throw new Error("Failed to fetch settings");
       }
-
+      
       const { data } = await response.json();
-      setSettings(data);
+      console.log("data", data);
+      setSettings(data[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch settings");
     } finally {

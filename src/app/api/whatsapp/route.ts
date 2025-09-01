@@ -1,6 +1,9 @@
 import { getErrorMessage } from "@/lib/utils";
+import { supabase } from "@/lib/services/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { userSchema } from "@/lib/schemas/user";
+import { conversationSchema } from "@/lib/schemas/conversation";
 
 export async function POST(req: NextRequest) {
   const { to, message } = await req.json();
@@ -27,6 +30,54 @@ export async function POST(req: NextRequest) {
       to: `whatsapp:${to}`,
       body: message,
     });
+
+    const { data: conversation } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("customer_phone", to);
+
+      let parsedConversation = conversationSchema.pick({ id: true }).parse(conversation);
+
+    if (!conversation) {
+      const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("whatsapp_number", to);
+
+      const parsedUser = userSchema.pick({ id: true }).parse(user);
+
+      if (userError || !user) {
+        throw userError;
+      }
+
+      const { data: newConversation, error: newConversationError } =
+        await supabase
+          .from("conversations")
+          .insert({
+            user_id: parsedUser.id,
+            customer_phone: to,
+            status: "active",
+          })
+          .select();
+
+      if (newConversationError || !newConversation) {
+        throw newConversationError;
+      }
+
+       parsedConversation = conversationSchema
+        .pick({ id: true })
+        .parse(newConversation[0]);
+    }
+
+    const { error: messageError } = await supabase.from("messages").insert({
+      conversation_id: parsedConversation.id,
+      content: message,
+      sender: "bot",
+    });
+
+    if (messageError) {
+      throw messageError;
+    }
 
     return NextResponse.json({ success: true, sid: msg.sid });
   } catch (error) {

@@ -2,10 +2,20 @@
 
 import { useState } from "react";
 
-type Props = { onSend?: (text: string) => void };
+// type Props = { onSend?: (text: string) => void };
 
-export default function ChatInput({ onSend }: Props) {
+export default function ChatInput() {
   const [text, setText] = useState("");
+
+  const handleSend = async (text: string) => {
+    const res = await fetch("/api/whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to: "+201129451762", message: text }),
+    });
+    const data = await res.json();
+    alert(data.success ? "Message sent!" : "Error: " + data.error);
+  };
 
   return (
     <form
@@ -13,8 +23,7 @@ export default function ChatInput({ onSend }: Props) {
         e.preventDefault();
         const value = text.trim();
         if (!value) return;
-        onSend?.(value);
-        setText("");
+        handleSend(value);
       }}
       className="border-t p-3 flex gap-2"
     >
