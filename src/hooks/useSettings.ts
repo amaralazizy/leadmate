@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/services/supabase/client";
 
 export interface UserSettings {
   id: string;
