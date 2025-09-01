@@ -1,7 +1,8 @@
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
-import { supabaseAdmin } from "@/lib/supabase/server";
-import { supabase } from "@/lib/supabase/client";
+// import { supabaseAdmin } from "@/lib/services/supabase/server";
+// import { supabase } from "@/lib/services/supabase/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
       sid: purchased.sid,
       phoneNumber: purchased.phoneNumber,
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 });
   }
 }

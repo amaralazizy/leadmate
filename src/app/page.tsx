@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MessageSquare, Zap, Shield, BarChart3 } from "lucide-react";
-import LandingHeader from "@/components/LandingHeader";
+import LandingHeader from "@/components/layout/LandingHeader";
 
 export default function Home() {
   return (

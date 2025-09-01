@@ -1,3 +1,4 @@
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, sid: msg.sid });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: getErrorMessage(error) });
   }
 }

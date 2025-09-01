@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
+import { NextRequest/*,NextResponse*/ } from "next/server";
+import { updateSession } from "@/lib/services/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   // const { pathname } = request.nextUrl;
