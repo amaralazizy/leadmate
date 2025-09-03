@@ -11,7 +11,11 @@ export default function ChatInput() {
     const res = await fetch("/api/whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to: "+201129451762", message: text }),
+      body: JSON.stringify({
+        to: "+201129451762",
+        message: text,
+        customerName: "Customer", // This will create lead automatically for new customers
+      }),
     });
     const data = await res.json();
     alert(data.success ? "Message sent!" : "Error: " + data.error);

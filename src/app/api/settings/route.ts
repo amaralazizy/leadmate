@@ -102,7 +102,7 @@ export async function GET() {
 
     console.log("data", data);
 
-    return NextResponse.json({ data });
+    return NextResponse.json({data});
   } catch (error) {
     console.error("Error in settings fetch:", error);
     return NextResponse.json(

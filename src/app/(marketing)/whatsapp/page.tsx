@@ -11,7 +11,11 @@ export default function Home() {
     const res = await fetch("/api/whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to, message }),
+      body: JSON.stringify({
+        to,
+        message,
+        customerName: "Test Customer", // This will create lead automatically for new customers
+      }),
     });
     const data = await res.json();
     alert(data.success ? "Message sent!" : "Error: " + data.error);
