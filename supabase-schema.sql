@@ -94,6 +94,55 @@ CREATE INDEX idx_messages_conversation_id ON public.messages(conversation_id);
 CREATE INDEX idx_leads_user_id ON public.leads(user_id);
 CREATE INDEX idx_leads_status ON public.leads(status);
 
+-- RPC function for atomic lead and conversation creation
+CREATE OR REPLACE FUNCTION create_lead_with_conversation(
+  p_user_id UUID,
+  p_customer_phone TEXT,
+  p_customer_name TEXT,
+  p_lead_type TEXT,
+  p_details TEXT DEFAULT NULL,
+  p_conversation_status TEXT DEFAULT 'active',
+  p_lead_status TEXT DEFAULT 'new'
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_conversation_id UUID;
+  v_lead_id UUID;
+  v_result JSON;
+BEGIN
+  -- Start transaction (implicit in function)
+  
+  -- Create conversation first
+  INSERT INTO public.conversations (user_id, customer_phone, status)
+  VALUES (p_user_id, p_customer_phone, p_conversation_status)
+  RETURNING id INTO v_conversation_id;
+  
+  -- Create lead with the conversation_id
+  INSERT INTO public.leads (user_id, conversation_id, type, customer_name, customer_phone, details, status)
+  VALUES (p_user_id, v_conversation_id, p_lead_type, p_customer_name, p_customer_phone, p_details, p_lead_status)
+  RETURNING id INTO v_lead_id;
+  
+  -- Return both IDs as JSON
+  v_result := json_build_object(
+    'conversation_id', v_conversation_id,
+    'lead_id', v_lead_id,
+    'success', true
+  );
+  
+  RETURN v_result;
+  
+EXCEPTION WHEN OTHERS THEN
+  -- If any error occurs, the transaction is automatically rolled back
+  RETURN json_build_object(
+    'success', false,
+    'error', SQLERRM
+  );
+END;
+$$;
+
 -- Row Level Security (RLS) policies
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.knowledge_base ENABLE ROW LEVEL SECURITY;

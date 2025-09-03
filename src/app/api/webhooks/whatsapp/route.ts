@@ -1,171 +1,229 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { supabaseAdmin } from "@/lib/services/supabase/server";
-// import { generateChatResponse, extractLead } from "@/lib/services/openai";
-// import twilio from "twilio";
-
-// const twilioClient = twilio(
-//   process.env.TWILIO_ACCOUNT_SID,
-//   process.env.TWILIO_AUTH_TOKEN
-// );
-
-// export async function POST(request: NextRequest) {
-//   try {
-//     const body = await request.text();
-//     const params = new URLSearchParams(body);
-
-//     const from = params.get("From");
-//     const messageBody = params.get("Body");
-//     const to = params.get("To");
-
-//     if (!from || !messageBody || !to) {
-//       return NextResponse.json(
-//         { error: "Missing required fields" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Find the business user by WhatsApp number
-//     const { data: user } = await supabaseAdmin
-//       .from("users")
-//       .select("*")
-//       .eq("whatsapp_number", to.replace("whatsapp:", ""))
-//       .single();
-
-//     if (!user) {
-//       return NextResponse.json(
-//         { error: "Business not found" },
-//         { status: 404 }
-//       );
-//     }
-
-//     // Check usage quota
-//     if (user.usage_count >= user.usage_limit) {
-//       await twilioClient.messages.create({
-//         body: "This business has reached their monthly quota. Please try again next month.",
-//         from: to,
-//         to: from,
-//       });
-//       return NextResponse.json({ message: "Quota exceeded" }, { status: 200 });
-//     }
-
-//     // Find or create conversation
-//     let conversation;
-//     const { data: existingConversation } = await supabaseAdmin
-//       .from("conversations")
-//       .select("*")
-//       .eq("user_id", user.id)
-//       .eq("customer_phone", from)
-//       .eq("status", "active")
-//       .single();
-
-//     if (existingConversation) {
-//       conversation = existingConversation;
-//     } else {
-//       const { data: newConversation } = await supabaseAdmin
-//         .from("conversations")
-//         .insert({
-//           user_id: user.id,
-//           customer_phone: from,
-//           status: "active",
-//         })
-//         .select()
-//         .single();
-
-//       conversation = newConversation;
-//     }
-
-//     // Save customer message
-//     await supabaseAdmin.from("messages").insert({
-//       conversation_id: conversation.id,
-//       content: messageBody,
-//       sender: "customer",
-//     });
-
-//     // Get relevant knowledge base content
-//     const { data: knowledge } = await supabaseAdmin
-//       .from("knowledge_base")
-//       .select("content")
-//       .eq("user_id", user.id)
-//       .limit(5);
-
-//     const context = knowledge?.map((k) => k.content).join("\n") || "";
-
-//     // Generate AI response
-//     const aiResponse = await generateChatResponse(
-//       [{ role: "user", content: messageBody }],
-//       context
-//     );
-
-//     // Extract lead if present
-//     const lead = extractLead(aiResponse);
-//     if (lead) {
-//       await supabaseAdmin.from("leads").insert({
-//         user_id: user.id,
-//         conversation_id: conversation.id,
-//         type: lead.type,
-//         customer_name: lead.customer.name,
-//         customer_phone: from,
-//         details: lead.details,
-//         status: "new",
-//       });
-//     }
-
-//     // Clean response for WhatsApp (remove lead markers)
-//     const cleanResponse = aiResponse.replace(/\[LEAD:.*?\]/g, "").trim();
-
-//     // Send AI response
-//     await twilioClient.messages.create({
-//       body: cleanResponse,
-//       from: to,
-//       to: from,
-//     });
-
-//     // Save bot message
-//     await supabaseAdmin.from("messages").insert({
-//       conversation_id: conversation.id,
-//       content: cleanResponse,
-//       sender: "bot",
-//     });
-
-//     // Update usage count
-//     await supabaseAdmin
-//       .from("users")
-//       .update({ usage_count: user.usage_count + 1 })
-//       .eq("id", user.id);
-
-//     return NextResponse.json({ message: "Message processed" }, { status: 200 });
-//   } catch (error) {
-//     console.error("Webhook error:", error);
-//     return NextResponse.json(
-//       { error: "Internal server error" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/services/supabase/server";
+import { conversationSchema } from "@/lib/schemas/conversation";
+import { leadSchema } from "@/lib/schemas/lead";
+import { messageSchema } from "@/lib/schemas/message";
+import { getErrorMessage } from "@/lib/utils";
 import twilio from "twilio";
 
-export async function POST(req: Request) {
-  const twiml = new twilio.twiml.MessagingResponse();
-  const body = await req.formData();
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
-  const incomingMsg = body.get("Body") as string;
-  const from = body.get("From") as string;
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = createAdminClient();
+    const body = await request.text();
+    const params = new URLSearchParams(body);
 
-  console.log("📩 Incoming message:", incomingMsg, "from:", from);
+    const from = params.get("From");
+    const messageBody = params.get("Body");
+    const to = params.get("To");
 
-  // Example: simple reply logic
-  let reply = "👋 Hello! Thanks for messaging LeadMate.";
-  if (incomingMsg?.toLowerCase().includes("pricing")) {
-    reply = "💰 Our plans start free with 1000 WhatsApp convos per month!";
-  } else if (incomingMsg?.toLowerCase().includes("help")) {
-    reply = "🤖 You can ask me about features, setup, or pricing.";
+    if (!from || !messageBody || !to) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Clean phone numbers (remove whatsapp: prefix)
+    const customerPhone = from.replace("whatsapp:", "");
+    const businessPhone = to.replace("whatsapp:", "");
+
+    // Find the business user by WhatsApp number
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("whatsapp_number", businessPhone)
+      .single();
+
+    if (userError || !user) {
+      console.error("Business user not found:", userError);
+      return NextResponse.json(
+        { error: "Business not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check usage quota
+    if (user.usage_count >= user.usage_limit) {
+      const twiml = new twilio.twiml.MessagingResponse();
+      twiml.message(
+        "This business has reached their monthly quota. Please try again next month."
+      );
+      return new Response(twiml.toString(), {
+        headers: { "Content-Type": "text/xml" },
+      });
+    }
+
+    // Find or create conversation and lead atomically for new customers
+    let conversation;
+    const { data: existingConversation } = await supabase
+      .from("conversations")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("customer_phone", customerPhone)
+      .eq("status", "active")
+      .single();
+
+    if (existingConversation) {
+      conversation = existingConversation;
+    } else {
+      // ALWAYS create lead for ANY new customer who messages the business
+      const { data: result, error: rpcError } = await supabase.rpc(
+        "create_lead_with_conversation",
+        {
+          p_user_id: user.id,
+          p_customer_phone: customerPhone,
+          p_customer_name: "Unknown", // Will be updated when we get customer info
+          p_lead_type: "inquiry", // Default type for new leads from WhatsApp
+          p_details: `First message: ${messageBody}`,
+          p_conversation_status: "active",
+          p_lead_status: "new",
+        }
+      );
+
+      if (rpcError) {
+        throw rpcError;
+      }
+
+      // Get the created conversation
+      const { data: newConversation, error: conversationError } = await supabase
+        .from("conversations")
+        .select("*")
+        .eq("id", result.conversation_id)
+        .single();
+
+      if (conversationError) {
+        throw conversationError;
+      }
+      
+      conversation = newConversation;
+    }
+
+    // Save customer message with schema validation
+    const parsedMessage = messageSchema
+      .omit({ id: true, timestamp: true })
+      .parse({
+        conversation_id: conversation.id,
+        content: messageBody,
+        sender: "customer",
+      });
+
+    const { error: messageError } = await supabase
+      .from("messages")
+      .insert(parsedMessage);
+
+    if (messageError) {
+      throw messageError;
+    }
+
+    // Generate AI-powered response
+    let reply =
+      "👋 Hello! Thanks for messaging us. We'll get back to you shortly.";
+
+    try {
+      // Get business knowledge base for context
+      const { data: knowledgeData } = await supabase
+        .from("knowledge_base")
+        .select("content")
+        .eq("user_id", user.id)
+        .limit(5);
+
+      const context = knowledgeData?.map((k) => k.content).join("\n") || "";
+
+      // Get previous messages for conversation context
+      const { data: previousMessages } = await supabase
+        .from("messages")
+        .select("content, sender")
+        .eq("conversation_id", conversation.id)
+        .order("timestamp", { ascending: true })
+        .limit(10);
+
+      // Build conversation history
+      const conversationHistory =
+        previousMessages?.map((msg) => ({
+          role: msg.sender === "customer" ? "user" : ("assistant" as const),
+          content: msg.content,
+        })) || [];
+
+      // Add current message
+      conversationHistory.push({
+        role: "user",
+        content: messageBody,
+      });
+
+      // Use OpenAI for intelligent response
+      const { generateChatResponse, extractLead } = await import(
+        "@/lib/services/openai/openai"
+      );
+
+      const aiResponse = await generateChatResponse(
+        conversationHistory,
+        context
+      );
+      reply = aiResponse;
+
+      // Check if AI detected a lead
+      const leadInfo = extractLead(aiResponse);
+      if (leadInfo && leadInfo.customer.name && leadInfo.customer.phone) {
+        // Update the lead with extracted information
+        await supabase
+          .from("leads")
+          .update({
+            customer_name: leadInfo.customer.name,
+            type: leadInfo.type,
+            details: leadInfo.details,
+            status: "contacted",
+          })
+          .eq("conversation_id", conversation.id);
+      }
+    } catch (aiError) {
+      console.error("AI response failed:", aiError);
+      // Fallback to simple response if AI fails
+      if (messageBody.toLowerCase().includes("pricing")) {
+        reply =
+          "💰 Thanks for your interest in pricing. Someone will contact you soon with details!";
+      } else if (messageBody.toLowerCase().includes("help")) {
+        reply =
+          "🤖 Thank you for reaching out! We're here to help. Someone will be with you shortly.";
+      }
+    }
+
+    // Send auto-response
+    const twiml = new twilio.twiml.MessagingResponse();
+    twiml.message(reply);
+
+    // Save bot response message
+    const botMessageParsed = messageSchema
+      .omit({ id: true, timestamp: true })
+      .parse({
+        conversation_id: conversation.id,
+        content: reply,
+        sender: "bot",
+      });
+
+    await supabase.from("messages").insert(botMessageParsed);
+
+    // Update usage count
+    await supabase
+      .from("users")
+      .update({ usage_count: user.usage_count + 1 })
+      .eq("id", user.id);
+
+    return new Response(twiml.toString(), {
+      headers: { "Content-Type": "text/xml" },
+    });
+  } catch (error) {
+    console.error("Webhook error:", error);
+    const twiml = new twilio.twiml.MessagingResponse();
+    twiml.message(
+      "Sorry, we're experiencing technical difficulties. Please try again later."
+    );
+    return new Response(twiml.toString(), {
+      headers: { "Content-Type": "text/xml" },
+    });
   }
-
-  twiml.message(reply);
-
-  return new Response(twiml.toString(), {
-    headers: { "Content-Type": "text/xml" },
-  });
 }

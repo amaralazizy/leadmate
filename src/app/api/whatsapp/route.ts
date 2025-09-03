@@ -1,16 +1,16 @@
 import { getErrorMessage } from "@/lib/utils";
 import { supabase } from "@/lib/services/supabase/client";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
+import { env } from "@/lib/config/env";
 import twilio from "twilio";
-import { userSchema } from "@/lib/schemas/user";
-import { conversationSchema } from "@/lib/schemas/conversation";
+// import { conversationSchema } from "@/lib/schemas/conversation";
 
 export async function POST(req: NextRequest) {
-  const { to, message } = await req.json();
+  const { to, message, customerName } = await req.json();
 
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const whatsappFrom = process.env.TWILIO_WHATSAPP_FROM; // e.g. "whatsapp:+14155238886"
+  const accountSid = env.TWILIO_ACCOUNT_SID;
+  const authToken = env.TWILIO_AUTH_TOKEN;
+  const whatsappFrom = env.TWILIO_WHATSAPP_FROM; // e.g. "whatsapp:+14155238886"
 
   if (!accountSid || !authToken || !whatsappFrom) {
     return NextResponse.json(
@@ -25,52 +25,75 @@ export async function POST(req: NextRequest) {
   const client = twilio(accountSid, authToken);
 
   try {
+    // Get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    console.log("user", user);
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    // Send WhatsApp message
     const msg = await client.messages.create({
       from: whatsappFrom,
       to: `whatsapp:${to}`,
       body: message,
     });
 
-    const { data: conversation } = await supabase
+    // Find or create conversation (with optional lead creation)
+    const { data: existingConversation } = await supabase
       .from("conversations")
-      .select("id")
-      .eq("customer_phone", to);
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("customer_phone", to)
+      .eq("status", "active")
+      .single();
 
-      let parsedConversation = conversationSchema.pick({ id: true }).parse(conversation);
+    let conversation = existingConversation;
+    if (!existingConversation) {
+      // ALWAYS create lead when business initiates contact with new customer
+      const { data: result, error: rpcError } = await supabase.rpc(
+        "create_lead_with_conversation",
+        {
+          p_user_id: user.id,
+          p_customer_phone: to,
+          p_customer_name: customerName || "Unknown",
+          p_lead_type: "inquiry",
+          p_details: `Business initiated contact: ${message}`,
+          p_conversation_status: "active",
+          p_lead_status: "new",
+        }
+      );
 
-    if (!conversation) {
-      const { data: user, error: userError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("whatsapp_number", to);
-
-      const parsedUser = userSchema.pick({ id: true }).parse(user);
-
-      if (userError || !user) {
-        throw userError;
+      if (rpcError || !result?.success) {
+        throw new Error(
+          result?.error ||
+            rpcError?.message ||
+            "Failed to create conversation and lead"
+        );
       }
 
-      const { data: newConversation, error: newConversationError } =
-        await supabase
-          .from("conversations")
-          .insert({
-            user_id: parsedUser.id,
-            customer_phone: to,
-            status: "active",
-          })
-          .select();
+      // Get the created conversation
+      const { data: newConversation, error: conversationError } = await supabase
+        .from("conversations")
+        .select("*")
+        .eq("id", result.conversation_id)
+        .single();
 
-      if (newConversationError || !newConversation) {
-        throw newConversationError;
+      if (conversationError) {
+        throw conversationError;
       }
-
-       parsedConversation = conversationSchema
-        .pick({ id: true })
-        .parse(newConversation[0]);
+      conversation = newConversation;
     }
 
+    // Save bot message
     const { error: messageError } = await supabase.from("messages").insert({
-      conversation_id: parsedConversation.id,
+      conversation_id: conversation.id,
       content: message,
       sender: "bot",
     });
