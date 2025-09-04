@@ -128,8 +128,6 @@ export async function POST(request: NextRequest) {
     const messageBody = params.get("Body") || "";
     const to = params.get("To");
 
-  try {
-
     // Clean phone numbers (remove whatsapp: prefix)
     const customerPhone = from?.replace("whatsapp:", "");
     const businessPhone = to?.replace("whatsapp:", "");
@@ -201,7 +199,7 @@ export async function POST(request: NextRequest) {
       if (conversationError) {
         throw conversationError;
       }
-      
+
       conversation = newConversation;
     }
 
@@ -217,108 +215,106 @@ export async function POST(request: NextRequest) {
     const { error: messageError } = await supabase
       .from("messages")
       .insert(parsedMessage);
-      
-      if (messageError) {
-        throw messageError;
-      }
-        
-          // Get business knowledge base for context
-          const { data: knowledgeData } = await supabase
-            .from("knowledge_base")
-            .select("content")
-            .eq("user_id", user.id)
-            .limit(5);
-     
-          const context = knowledgeData?.map((k) => k.content).join("\n") || "";
-     
-          // Get previous messages for conversation context
-          const { data: previousMessages } = await supabase
-            .from("messages")
-            .select("content, sender")
-            .eq("conversation_id", conversation?.id)
-            .order("timestamp", { ascending: true })
-            .limit(10);
-     
-          // Build conversation history
-          const conversationHistory =
-            previousMessages?.map((msg) => ({
-              role: msg.sender === "customer" ? "user" : ("assistant" as const),
-              content: msg.content,
-            })) || [];
-     
-          // Add current message
-          conversationHistory.push({
-            role: "user",
-            content: messageBody,
-          });
+
+    if (messageError) {
+      throw messageError;
+    }
+
+    // Get business knowledge base for context
+    const { data: knowledgeData } = await supabase
+      .from("knowledge_base")
+      .select("content")
+      .eq("user_id", user.id)
+      .limit(5);
+
+    const context = knowledgeData?.map((k) => k.content).join("\n") || "";
+
+    // Get previous messages for conversation context
+    const { data: previousMessages } = await supabase
+      .from("messages")
+      .select("content, sender")
+      .eq("conversation_id", conversation?.id)
+      .order("timestamp", { ascending: true })
+      .limit(10);
+
+    // Build conversation history
+    const conversationHistory =
+      previousMessages?.map((msg) => ({
+        role: msg.sender === "customer" ? "user" : ("assistant" as const),
+        content: msg.content,
+      })) || [];
+
+    // Add current message
+    conversationHistory.push({
+      role: "user",
+      content: messageBody,
+    });
+
+    let aiResponse = "";
+
     try {
-      
-      
       // Generate AI response using the LLM
       const completion = await openai.chat.completions.create({
         model: "meta-llama/llama-4-scout:free",
         messages: [
           {
             role: "system",
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: conversationHistory.map((msg) => msg.content).join("\n"),
-        },
-      ],
-      max_tokens: 300,
-      temperature: 0.7,
-    });
-    
-    let aiResponse = "";
-    completion.choices[0]?.message?.content ||
-    "I apologize, but I'm having trouble processing your message right now. Please try again in a moment.";
-    
-    console.log("🤖 AI Response:", aiResponse);
-    
-    
-    
-    
-    
-    
-    // Check if AI detected a lead
-    const leadInfo = extractLead(aiResponse);
-    if (leadInfo && leadInfo.customer.name && leadInfo.customer.phone) {
-      // Update the lead with extracted information
-      await supabase
-      .from("leads")
-      .update({
-        customer_name: leadInfo.customer.name,
-        type: leadInfo.type,
-        details: leadInfo.details,
-        status: "contacted",
-      })
-      .eq("conversation_id", conversation?.id);
-    }
-  } catch (aiError) {
+            content: SYSTEM_PROMPT,
+          },
+          {
+            role: "user",
+            content: conversationHistory.map((msg) => msg.content).join("\n"),
+          },
+        ],
+        max_tokens: 300,
+        temperature: 0.7,
+      });
+
+      aiResponse =
+        completion.choices[0]?.message?.content ||
+        "I apologize, but I'm having trouble processing your message right now. Please try again in a moment.";
+
+      console.log("🤖 AI Response:", aiResponse);
+
+      // Check if AI detected a lead
+      const leadInfo = extractLead(aiResponse);
+      if (leadInfo && leadInfo.customer.name && leadInfo.customer.phone) {
+        // Update the lead with extracted information
+        await supabase
+          .from("leads")
+          .update({
+            customer_name: leadInfo.customer.name,
+            type: leadInfo.type,
+            details: leadInfo.details,
+            status: "contacted",
+          })
+          .eq("conversation_id", conversation?.id);
+      }
+    } catch (aiError) {
       console.error("AI response failed:", aiError);
       // Fallback to simple response if AI fails
       if (messageBody.toLowerCase().includes("pricing")) {
-        aiResponse = "💰 Thanks for your interest in pricing. Someone will contact you soon with details!";
+        aiResponse =
+          "💰 Thanks for your interest in pricing. Someone will contact you soon with details!";
       } else if (messageBody.toLowerCase().includes("help")) {
-        aiResponse = "🤖 Thank you for reaching out! We're here to help. Someone will be with you shortly.";
-      }
-        reply =
+        aiResponse =
+          "🤖 Thank you for reaching out! We're here to help. Someone will be with you shortly.";
+      } else {
+        aiResponse =
           "🤖 Thank you for reaching out! We're here to help. Someone will be with you shortly.";
       }
     }
 
     // Send auto-response
     const twiml = new twilio.twiml.MessagingResponse();
-    twiml.message(reply);
+    twiml.message(aiResponse);
 
     // Save bot response message
     const botMessageParsed = messageSchema
       .omit({ id: true, timestamp: true })
       .parse({
-        conversation_id: conversation.id,
-        content: reply,
+        conversation_id: conversation!.id,
+        content: aiResponse,
         sender: "bot",
       });
 
@@ -334,16 +330,17 @@ export async function POST(request: NextRequest) {
       headers: { "Content-Type": "text/xml" },
     });
   } catch (error) {
-    console.error("❌ Error generating AI response:", error);
+    console.error("❌ Error in webhook:", error);
 
     // Fallback response in case of error
     const fallbackResponse =
       "I apologize, but I'm experiencing some technical difficulties right now. Please try messaging again in a few moments, or contact our support team directly.";
 
+    const twiml = new twilio.twiml.MessagingResponse();
     twiml.message(fallbackResponse);
 
-      return new Response(twiml.toString(), {
-        headers: { "Content-Type": "text/xml" },
-      });
-    }
+    return new Response(twiml.toString(), {
+      headers: { "Content-Type": "text/xml" },
+    });
   }
+}
