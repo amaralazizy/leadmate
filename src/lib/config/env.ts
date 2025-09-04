@@ -11,7 +11,7 @@ export const env = {
   // WhatsApp (Twilio)
   TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID!,
   TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN!,
-  TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER!,
+  TWILIO_WHATSAPP_FROM: process.env.TWILIO_WHATSAPP_FROM!,
 
   // Stripe
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY!,
