@@ -18,29 +18,17 @@ export default function Home() {
 
   async function sendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("/api/whatsapp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to, message }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        alert("Message sent successfully!");
-        setTo("");
-        setMessage("");
-      } else {
-        console.log("data", data);
-        alert("Error: " + data.error);
-      }
-    } catch (error) {
-      alert("Failed to send message. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    const res = await fetch("/api/whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to,
+        message,
+        customerName: "Test Customer", // This will create lead automatically for new customers
+      }),
+    });
+    const data = await res.json();
+    alert(data.success ? "Message sent!" : "Error: " + data.error);
   }
 
   return (

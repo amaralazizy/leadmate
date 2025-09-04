@@ -99,7 +99,10 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ data });
+
+    console.log("data", data);
+
+    return NextResponse.json({data});
   } catch (error) {
     console.error("Error in settings fetch:", error);
     return NextResponse.json(
