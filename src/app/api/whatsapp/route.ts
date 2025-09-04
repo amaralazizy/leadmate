@@ -5,9 +5,13 @@ import twilio from "twilio";
 export async function POST(req: NextRequest) {
   const { to, message } = await req.json();
 
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const whatsappFrom = process.env.TWILIO_WHATSAPP_FROM; // e.g. "whatsapp:+14155238886"
+  // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  // const authToken = process.env.TWILIO_AUTH_TOKEN;
+  //const whatsappFrom = process.env.TWILIO_WHATSAPP_FROM; // e.g. "whatsapp:+14155238886"
+
+  const whatsappFrom = "whatsapp:+14155238886";
+  const accountSid = "ACb30e2f1b22778215c72a3edf3b90192c";
+  const authToken = "f3e731126f32a6437269e240af5b8fea";
 
   if (!accountSid || !authToken || !whatsappFrom) {
     return NextResponse.json(
