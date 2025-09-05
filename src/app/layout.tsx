@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { Toaster } from "sonner";
 import ScrollToTop from "@/components/shared/ScrollToTop";
 
@@ -41,17 +42,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-          <Toaster
-            position="bottom-right"
-            theme="dark"
-            duration={4000}
-            expand={true}
-            richColors={false}
-          />
-          <ScrollToTop />
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            {children}
+            <Toaster
+              position="bottom-right"
+              theme="dark"
+              duration={4000}
+              expand={true}
+              richColors={false}
+            />
+            <ScrollToTop />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
