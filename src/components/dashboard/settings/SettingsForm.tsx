@@ -255,7 +255,7 @@ export default function SettingsForm() {
         </Card>
 
         {/* Save Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <Button type="submit" disabled={saving} className="min-w-[120px]">
             {saving ? "Saving..." : "Save Changes"}
           </Button>

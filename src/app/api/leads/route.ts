@@ -2,7 +2,7 @@ import { supabase } from "@/lib/services/supabase/client";
 import { getErrorMessage } from "@/lib/utils/utils";
 import { NextResponse, NextRequest } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";
-import { conversationSchema } from "@/lib/schemas/conversation";
+// import { conversationSchema } from "@/lib/schemas/conversation";
 
 // type User = z.infer<typeof userSchema>;
 
