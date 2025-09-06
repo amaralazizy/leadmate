@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-
+import { Button } from "@/components/ui/button";
 
 interface WaitlistFormProps {
   onSuccess: () => void;
@@ -46,10 +46,10 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
-      <div className="rounded-2xl border-2 p-6 bg-dark-card border-accent-green shadow-[8px_8px_0px_0px_rgba(57,255,20,0.8)]">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12 w-full">
+      <div className="rounded-2xl border-2 p-6 bg-dark-card border-main shadow-shadow">
         <div className="relative mb-4">
-          <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-accent-green" />
+          <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-main" />
           <input
             name="email"
             id="email"
@@ -57,17 +57,13 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Your business email..."
-            className="w-full pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 transition-all bg-dark-secondary border-2 border-accent-green text-white placeholder:text-text-light"
+            className="w-full pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 transition-all bg-dark-secondary border-2 border-main text-white placeholder:text-foreground"
             required
             autoComplete="email"
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full font-bold py-4 px-6 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-accent-green text-dark-bg"
-        >
+        <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? (
             <div className="flex items-center justify-center">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
@@ -79,7 +75,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               <ArrowRight className="ml-2 w-5 h-5" />
             </div>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

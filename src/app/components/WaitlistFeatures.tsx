@@ -23,11 +23,11 @@ export default function WaitlistFeatures() {
       {features.map((feature, index) => (
         <div
           key={index}
-          className="rounded-2xl border-2 p-6 hover:-translate-x-1 hover:-translate-y-1 transition-all bg-dark-card border-accent-green shadow-[6px_6px_0px_0px_rgba(57,255,20,0.8)] hover:shadow-[8px_8px_0px_0px_rgba(57,255,20,1)]"
+          className="rounded-2xl border-2 p-6 hover:-translate-x-1 hover:-translate-y-1 transition-all bg-dark-card border-main"
         >
           <div className="text-4xl mb-4">{feature.icon}</div>
           <h3 className="text-xl font-bold mb-2 text-white">{feature.title}</h3>
-          <p className="text-text-light">{feature.description}</p>
+          <p className="text-fore">{feature.description}</p>
         </div>
       ))}
     </div>

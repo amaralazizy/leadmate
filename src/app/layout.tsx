@@ -16,19 +16,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LeadMate - Smart Lead Management & Automation",
+  title: "LeadMate — Smarter WhatsApp Conversations",
   description:
-    "LeadMate helps businesses capture, manage, and automate leads with ease. Streamline your workflow, increase conversions, and never miss an opportunity.",
+    "LeadMate helps businesses provide AI-powered responses on WhatsApp, improving customer engagement and support.",
   keywords: [
     "LeadMate",
-    "lead management software",
-    "CRM alternative",
-    "sales automation",
+    "WhatsApp AI",
+    "customer support automation",
+    "AI-powered responses",
+    "WhatsApp Business",
     "customer engagement",
-    "business growth",
-    "convert leads",
-    "lead tracking",
+    "smart replies",
+    "24/7 support",
+    "streamlined communication",
   ],
+  openGraph: {
+    title: "LeadMate — Smarter WhatsApp Conversations",
+    description:
+      "LeadMate helps businesses provide AI-powered responses on WhatsApp, improving customer engagement and support.",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LeadMate — Smarter WhatsApp Conversations",
+    description:
+      "LeadMate helps businesses provide AI-powered responses on WhatsApp, improving customer engagement and support.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
@@ -39,8 +53,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-bg min-h-screen relative`}
       >
+        {/* Global Background Pattern */}
+        <div className="fixed inset-0 opacity-10 pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-main) 1px, transparent 0)`,
+              backgroundSize: "40px 40px",
+            }}
+          />
+        </div>
+
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" richColors closeButton theme="dark" />
         <ScrollToTop />
