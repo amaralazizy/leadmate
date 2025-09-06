@@ -22,41 +22,31 @@ export default function WaitlistPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-dark-bg">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(var(--color-accent-green)) 1px, transparent 0)`,
-            backgroundSize: "40px 40px",
-          }}
-        />
-      </div>
-        <WaitlistHeader />
+    <>
+      <WaitlistHeader />
 
-        {/* Main Content */}
-        <main className="relative z-10 px-6 pt-16 pb-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <WaitlistBadge />
-            <WaitlistHero />
+      {/* Main Content */}
+      <main className="relative z-10 px-6 pt-16 pb-20">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
+          <WaitlistBadge />
+          <WaitlistHero />
 
-            {/* Waitlist Form or Success */}
-            {!isSubmitted ? (
-              <WaitlistForm onSuccess={handleSuccess} />
-            ) : (
-              <WaitlistSuccess />
-            )}
+          {/* Waitlist Form or Success */}
+          {!isSubmitted ? (
+            <WaitlistForm onSuccess={handleSuccess} />
+          ) : (
+            <WaitlistSuccess />
+          )}
 
-            <WaitlistSocialProof />
-            <WaitlistFeatures />
-            <WaitlistCTA />
-          </div>
-        </main>
+          <WaitlistSocialProof />
+          <WaitlistFeatures />
+          <WaitlistCTA />
+        </div>
+      </main>
       {/* Contact Form Section */}
       <ContactForm />
 
       <WaitlistFooter />
-    </div>
+    </>
   );
 }
