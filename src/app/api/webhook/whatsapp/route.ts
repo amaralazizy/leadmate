@@ -143,7 +143,6 @@
 //   }
 // }
 
-import { NextResponse } from "next/server";
 import twilio from "twilio";
 
 export async function POST(req: Request) {

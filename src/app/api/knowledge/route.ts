@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { generateEmbedding } from "@/lib/openai";
 
 export async function POST(request: NextRequest) {
@@ -15,6 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current user
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       .map((chunk) => chunk.trim());
 
     // Clear existing knowledge base for this user
-    await supabaseAdmin.from("knowledge_base").delete().eq("user_id", user.id);
+    await supabase.from("knowledge_base").delete().eq("user_id", user.id);
 
     // Process each chunk
     for (const chunk of chunks) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         const embedding = await generateEmbedding(chunk);
 
         // Store in database
-        await supabaseAdmin.from("knowledge_base").insert({
+        await supabase.from("knowledge_base").insert({
           user_id: user.id,
           content: chunk,
           embedding: embedding,
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     // Get current user
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -79,7 +80,7 @@ export async function GET() {
     }
 
     // Get user's knowledge base
-    const { data: knowledge, error } = await supabaseAdmin
+    const { data: knowledge, error } = await supabase
       .from("knowledge_base")
       .select("id, content, metadata, created_at")
       .eq("user_id", user.id)
