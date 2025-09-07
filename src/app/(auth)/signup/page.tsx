@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 // import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -20,6 +22,7 @@ export default function SignupPage() {
     setError("");
 
     try {
+      const supabase = createClient();
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -49,18 +52,18 @@ export default function SignupPage() {
   // };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold">
           Create your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm">
           Start building your AI WhatsApp Bot
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-background py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSignup}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
@@ -71,19 +74,18 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="businessName"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
               >
                 Business Name
               </label>
               <div className="mt-1">
-                <input
+                <Input
                   id="businessName"
                   name="businessName"
                   type="text"
                   required
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Your Business Name"
                 />
               </div>
@@ -92,20 +94,20 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
               >
                 Email address
               </label>
               <div className="mt-1">
-                <input
+                <Input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
+                  placeholder="Your Email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -113,12 +115,12 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
               >
                 Password
               </label>
               <div className="mt-1">
-                <input
+                <Input
                   id="password"
                   name="password"
                   type="password"
@@ -126,30 +128,29 @@ export default function SignupPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Minimum 6 characters"
                 />
               </div>
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="w-full flex justify-center py-2 px-4  text-sm font-medium"
               >
                 {loading ? "Creating account..." : "Create account"}
-              </button>
+              </Button>
             </div>
           </form>
 
           <div className="mt-6">
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm">
                 Already have an account?{" "}
                 <Link
-                  href="/auth/login"
-                  className="font-medium text-blue-600 hover:text-blue-500"
+                  href="/login"
+                  className="font-medium text-main hover:text-main/80"
                 >
                   Sign in
                 </Link>

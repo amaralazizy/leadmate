@@ -19,7 +19,7 @@ export default function ProtectedRoute({
   requireOnboarding = false,
   requireSubscription = false,
   requireVerification = false,
-  redirectTo = "/auth/login",
+  redirectTo = "/login",
   allowedRoles = [],
 }: ProtectedRouteProps) {
   const { user, loading, error } = useAuth();
@@ -98,7 +98,7 @@ export default function ProtectedRoute({
           </h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
-            onClick={() => router.push("/auth/login")}
+            onClick={() => router.push("/login")}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
           >
             Sign In

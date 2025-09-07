@@ -56,6 +56,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-bg min-h-screen relative`}
       >
         {/* Global Background Pattern */}
+        <AuthProvider>
+          <ScrollToTop />
+          <Toaster position="top-right" richColors closeButton theme="dark" />
+          {children}
+        </AuthProvider>
         <div className="fixed inset-0 opacity-10 pointer-events-none">
           <div
             className="absolute inset-0"
@@ -65,10 +70,6 @@ export default function RootLayout({
             }}
           />
         </div>
-
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster position="top-right" richColors closeButton theme="dark" />
-        <ScrollToTop />
       </body>
     </html>
   );

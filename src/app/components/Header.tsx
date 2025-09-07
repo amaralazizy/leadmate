@@ -20,13 +20,13 @@ export default function Header() {
               Waitlist
             </Link>
             <Link
-              href="/auth/login"
+              href="/login"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
               Sign In
             </Link>
             <Link
-              href="/auth/signup"
+              href="/signup"
               className="bg-primary hover:bg-primary/80 text-black px-4 py-2 rounded-md text-sm font-medium"
             >
               Get Started

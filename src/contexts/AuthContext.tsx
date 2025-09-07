@@ -1,208 +1,60 @@
 "use client";
+import { createContext } from "react";
+import { User } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 
-import { useEffect, useState, createContext, useRef, useCallback } from "react";
-import { supabase } from "@/lib/supabase/client";
-import { User } from "@/lib/supabase/client";
+const supabase = createClient();
 
-interface AuthState {
+type AuthContextType = {
   user: User | null;
   loading: boolean;
   error: string | null;
-}
+};
 
-// Global Auth Context to prevent multiple DB calls
-export const AuthContext = createContext<
-  AuthState & {
-    updateProfile: (updates: Partial<User>) => void;
-    refreshProfile: () => Promise<void>;
-  }
->({
+export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   error: null,
-  updateProfile: () => {},
-  refreshProfile: async () => {},
 });
 
-// Auth Provider - wrap your entire app with this
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    error: null,
-  });
-
-  // In-memory cache only (secure)
-  const profileCacheRef = useRef<{
-    data: User | null;
-    timestamp: number;
-    userId: string | null;
-  }>({
-    data: null,
-    timestamp: 0,
-    userId: null,
-  });
-
-  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-  const getCachedProfile = useCallback(
-    (userId: string): User | null => {
-      if (!profileCacheRef.current) return null;
-
-      const cache = profileCacheRef.current;
-
-      // Check if cache is valid and for the same user
-      if (
-        cache.data &&
-        cache.userId === userId &&
-        Date.now() - cache.timestamp < CACHE_DURATION
-      ) {
-        return cache.data;
-      }
-
-      return null;
-    },
-    [CACHE_DURATION]
-  );
-
-  const setCachedProfile = (profile: User) => {
-    profileCacheRef.current = {
-      data: profile,
-      timestamp: Date.now(),
-      userId: profile.id,
-    };
-  };
-
-  const invalidateCache = () => {
-    profileCacheRef.current = { data: null, timestamp: 0, userId: null };
-  };
-
-  const fetchUserProfile = useCallback(
-    async (userId: string): Promise<User | null> => {
-      // Try in-memory cache first
-      const cached = getCachedProfile(userId);
-      if (cached) {
-        return cached;
-      }
-
-      // Fetch from database only if not cached
-      const { data: user, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .single();
-
-      if (error || !user) return null;
-
-      const userProfile = user as unknown as User;
-      setCachedProfile(userProfile);
-      return userProfile;
-    },
-    [getCachedProfile]
-  );
-
-  const updateProfile = (updates: Partial<User>) => {
-    if (authState.user) {
-      const updatedUser = { ...authState.user, ...updates };
-      setAuthState((prev) => ({ ...prev, user: updatedUser }));
-      setCachedProfile(updatedUser);
-    }
-  };
-
-  const refreshProfile = async () => {
-    if (authState.user) {
-      // Clear in-memory cache to force refresh
-      profileCacheRef.current = { data: null, timestamp: 0, userId: null };
-      const user = await fetchUserProfile(authState.user.id);
-      setAuthState((prev) => ({ ...prev, user: user as unknown as User }));
-    }
-  };
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
-
-    const initializeAuth = async () => {
+    setLoading(true);
+    const fetchUser = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (!mounted) return;
-
-        if (!session?.user) {
-          setAuthState({
-            user: null,
-            loading: false,
-            error: null,
-          });
-          // Clear cache if no session
-          invalidateCache();
-          return;
+        const { data: AuthUser, error } = await supabase.auth.getUser();
+        // console.log("AuthUser", AuthUser);
+        if (error) throw error;
+        if (AuthUser && AuthUser.user) {
+          const { data: userData, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", AuthUser.user.id);
+          if (error) throw error;
+          setUser(userData[0] as User | null);
         }
-
-        // Use cached profile or fetch new one
-        const user = await fetchUserProfile(session.user.id);
-
-        if (!mounted) return;
-
-        setAuthState({
-          user: user as unknown as User,
-
-          loading: false,
-          error: user ? null : "Failed to load user profile",
-        });
       } catch (error) {
-        if (!mounted) return;
-
-        console.error("Auth initialization error:", error);
-        setAuthState({
-          user: null,
-          loading: false,
-          error:
-            error instanceof Error ? error.message : "Authentication error",
-        });
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      } finally {
+        setLoading(false);
       }
     };
-
-    initializeAuth();
-
-    // Listen for auth changes (only session changes, not profile changes)
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
-
-      if (event === "SIGNED_OUT" || !session) {
-        setAuthState({
-          user: null,
-
-          loading: false,
-          error: null,
-        });
-        invalidateCache();
-      } else if (event === "SIGNED_IN" && session.user) {
-        const user = await fetchUserProfile(session.user.id);
-        setAuthState({
-          user: user as unknown as User,
-
-          loading: false,
-          error: user ? null : "Failed to load user profile",
-        });
-      }
-    });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, [fetchUserProfile]);
+    fetchUser();
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        ...authState,
-        updateProfile,
-        refreshProfile,
+        user,
+        loading,
+        error,
       }}
     >
       {children}

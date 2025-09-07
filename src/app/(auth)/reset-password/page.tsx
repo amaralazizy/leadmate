@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -16,6 +16,7 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     // Check if user has a valid session for password reset
     const checkSession = async () => {
+      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -46,6 +47,7 @@ export default function ResetPasswordPage() {
     setError("");
 
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.updateUser({
         password: password,
       });
@@ -55,7 +57,7 @@ export default function ResetPasswordPage() {
       setSuccess(true);
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/login");
       }, 3000);
     } catch (error: unknown) {
       setError(
@@ -94,7 +96,7 @@ export default function ResetPasswordPage() {
               redirected to the login page shortly.
             </p>
             <Link
-              href="/auth/login"
+              href="login"
               className="text-green-600 hover:text-green-500 font-medium"
             >
               Go to login now
@@ -185,7 +187,7 @@ export default function ResetPasswordPage() {
               <span className="text-sm text-gray-600">
                 Remember your password?{" "}
                 <Link
-                  href="/auth/login"
+                  href="/login"
                   className="font-medium text-green-600 hover:text-green-500"
                 >
                   Sign in

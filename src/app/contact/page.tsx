@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MessageSquare, Send, CheckCircle } from "lucide-react";
+import { Mail, ClipboardList, Send, CheckCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import logo from "../../../public/logo.png";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+
 
 // Note: This would normally be in a separate metadata file, but we're using a client component
 // so we'll add the metadata in the layout or move this to a server component wrapper
@@ -19,6 +21,7 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -92,8 +95,26 @@ export default function ContactPage() {
                     For technical support, billing questions, or general
                     inquiries:
                   </p>
-                  <div className="bg-dark-bg p-4 rounded-lg border border-gray-700">
-                    <p className="text-main font-mono">support@leadmate.ai</p>
+                  <div className="bg-dark-bg p-4 rounded-lg border border-gray-700 flex items-center justify-between">
+                    <p className="text-main font-mono whitespace-nowrap overflow-hidden text-ellipsis">
+                      {isCopied
+                        ? "Email copied to clipboard"
+                        : "support@leadmate.ai"}
+                    </p>
+                    <Button
+                      variant="default"
+                      size="icon"
+                      onClick={() => {
+                        setIsCopied(true);
+                        navigator.clipboard.writeText("support@leadmate.ai");
+                        toast.success("Email copied to clipboard");
+                        setTimeout(() => {
+                          setIsCopied(false);
+                        }, 2000);
+                      }}
+                    >
+                      <ClipboardList />
+                    </Button>
                   </div>
                 </div>
 
@@ -122,7 +143,7 @@ export default function ContactPage() {
             </div>
 
             {/* Quick Links */}
-            <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+            {/* <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
               <div className="flex items-center mb-6">
                 <MessageSquare className="h-8 w-8 text-main mr-3" />
                 <h2 className="text-2xl font-bold text-white">Quick Links</h2>
@@ -148,7 +169,7 @@ export default function ContactPage() {
                     Learn About Us
                   </h3>
                   <p className="text-foreground text-sm">
-                    Discover LeadMate's mission and values
+                    Discover LeadMate&apos;s mission and values
                   </p>
                 </Link>
 
@@ -164,7 +185,7 @@ export default function ContactPage() {
                   </p>
                 </Link>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Contact Form */}
@@ -252,13 +273,13 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-main text-dark-bg font-bold py-3 px-6 rounded-lg text-lg hover:bg-green-400 transform hover:-translate-y-1 transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                  className="w-full font-bold py-3 px-6 text-lg"
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
-                </button>
+                </Button>
               </form>
             )}
           </div>
@@ -270,7 +291,7 @@ export default function ContactPage() {
             Frequently Asked Questions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+            {/* <div>
               <h3 className="text-lg font-semibold text-white mb-2">
                 When will LeadMate be available?
               </h3>
@@ -278,7 +299,7 @@ export default function ContactPage() {
                 We&apos;re currently in development and accepting waitlist
                 signups. Join our waitlist to be notified as soon as we launch.
               </p>
-            </div>
+            </div> */}
 
             <div>
               <h3 className="text-lg font-semibold text-white mb-2">
@@ -296,8 +317,8 @@ export default function ContactPage() {
                 Do you support other messaging platforms?
               </h3>
               <p className="text-foreground">
-                Currently, we're focused on WhatsApp Business API. We may expand
-                to other platforms based on customer demand.
+                Currently, we&apos;re focused on WhatsApp Business API. We may
+                expand to other platforms based on customer demand.
               </p>
             </div>
 
@@ -307,7 +328,8 @@ export default function ContactPage() {
               </h3>
               <p className="text-foreground">
                 LeadMate is designed specifically for customer support, adhering
-                to WhatsApp's business policies and data protection standards.
+                to WhatsApp&apos;s business policies and data protection
+                standards.
               </p>
             </div>
           </div>

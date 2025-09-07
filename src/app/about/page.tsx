@@ -164,17 +164,16 @@ export default function AboutPage() {
               Ready to Transform Your Customer Support?
             </h2>
             <p className="text-foreground text-lg mb-6">
-              Join the waitlist to be among the first to experience
+              Join us to be among the first to experience
               LeadMate&apos;s intelligent customer engagement.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <NavigationButton href="/waitlist">Join the Waitlist</NavigationButton>
-                <Link
+                <NavigationButton
                 href="/contact"
-                className="border-2 border-main text-main font-bold py-3 px-6 rounded-lg text-lg hover:bg-main hover:text-dark-bg transition-all duration-300"
+                className="font-bold py-3 px-6 text-lg"
               >
                 Contact Us
-              </Link>
+              </NavigationButton>
             </div>
           </div>
         </section>
