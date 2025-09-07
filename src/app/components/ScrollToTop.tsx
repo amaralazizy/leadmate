@@ -17,7 +17,7 @@ export default function ScrollToTop() {
     }, []);
     return (
         isVisible ? (
-            <Button onClick={scrollToTop} className="fixed bottom-8 right-8 size-10">
+            <Button onClick={scrollToTop} className="fixed bottom-8 right-8 size-10 z-50">
                 <ArrowUp className="w-5 h-10" />
             </Button>
         ) : null

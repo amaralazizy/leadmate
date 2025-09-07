@@ -8,7 +8,6 @@ import logo from "../../../public/logo.png";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-
 // Note: This would normally be in a separate metadata file, but we're using a client component
 // so we'll add the metadata in the layout or move this to a server component wrapper
 
@@ -62,22 +61,22 @@ export default function ContactPage() {
 
   return (
     <PageLayout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <div className="flex justify-center mb-8">
             <Image src={logo} alt="LeadMate" height={80} width={120} />
           </div>
-          <h1 className="text-4xl font-extrabold text-white sm:text-5xl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
             <span className="text-main">Contact</span> Us
           </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-xl text-foreground">
+          <p className="mt-4 md:mt-6 max-w-2xl mx-auto text-lg md:text-xl text-foreground px-4">
             Get in touch with our team. We&apos;re here to help with any
             questions about LeadMate.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Information */}
           <div className="space-y-8">
             <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">

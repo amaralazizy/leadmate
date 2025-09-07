@@ -19,16 +19,16 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <PageLayout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <div className="flex justify-center mb-8">
             <Image src={logo} alt="LeadMate" height={80} width={120} />
           </div>
-          <h1 className="text-4xl font-extrabold text-white sm:text-5xl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
             <span className="text-main">Terms</span> of Service
           </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-xl text-foreground">
+          <p className="mt-4 md:mt-6 max-w-2xl mx-auto text-lg md:text-xl text-foreground px-4">
             Fair and transparent terms for using LeadMate&apos;s services.
           </p>
           <p className="mt-4 text-foreground">
@@ -121,8 +121,8 @@ export default function TermsPage() {
                     <strong className="text-white">
                       Spam or bulk messaging:
                     </strong>{" "}
-                    Sending unsolicited messages to users who haven&apos;t initiated
-                    contact
+                    Sending unsolicited messages to users who haven&apos;t
+                    initiated contact
                   </li>
                   <li>
                     <strong className="text-white">Abusive content:</strong>{" "}
@@ -260,8 +260,8 @@ export default function TermsPage() {
                   of these Terms or non-payment
                 </li>
                 <li>
-                  <strong className="text-white">By us:</strong> With 30 days&apos;
-                  notice for any reason
+                  <strong className="text-white">By us:</strong> With 30
+                  days&apos; notice for any reason
                 </li>
               </ul>
               <p>Upon termination:</p>

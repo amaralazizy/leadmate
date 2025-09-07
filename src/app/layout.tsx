@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import ScrollToTop from "./components/ScrollToTop";
+import TanstackProvider from "@/components/tanstack/TanstackProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,11 +57,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-bg min-h-screen relative`}
       >
         {/* Global Background Pattern */}
-        <AuthProvider>
-          <ScrollToTop />
-          <Toaster position="top-right" richColors closeButton theme="dark" />
-          {children}
-        </AuthProvider>
+        <TanstackProvider>
+          <AuthProvider>
+            <ScrollToTop />
+            <Toaster
+              position="bottom-right"
+              richColors
+              closeButton
+              theme="dark"
+            />
+            {children}
+          </AuthProvider>
+        </TanstackProvider>
         <div className="fixed inset-0 opacity-10 pointer-events-none">
           <div
             className="absolute inset-0"
