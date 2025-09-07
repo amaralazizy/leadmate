@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { FileText, Scale, AlertTriangle, CheckCircle } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -122,7 +121,7 @@ export default function TermsPage() {
                     <strong className="text-white">
                       Spam or bulk messaging:
                     </strong>{" "}
-                    Sending unsolicited messages to users who haven't initiated
+                    Sending unsolicited messages to users who haven&apos;t initiated
                     contact
                   </li>
                   <li>
@@ -261,7 +260,7 @@ export default function TermsPage() {
                   of these Terms or non-payment
                 </li>
                 <li>
-                  <strong className="text-white">By us:</strong> With 30 days'
+                  <strong className="text-white">By us:</strong> With 30 days&apos;
                   notice for any reason
                 </li>
               </ul>

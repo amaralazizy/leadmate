@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { Shield, Lock, Eye, FileText } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -289,7 +288,7 @@ export default function PrivacyPage() {
               <p>
                 We may update this Privacy Policy from time to time. We will
                 notify you of any changes by posting the new Privacy Policy on
-                this page and updating the "Last updated" date.
+                this page and updating the &quot;Last updated&quot; date.
               </p>
               <p>
                 We recommend reviewing this Privacy Policy periodically for any

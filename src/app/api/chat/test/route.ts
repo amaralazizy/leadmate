@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { generateChatResponse, generateEmbedding } from "@/lib/openai";
 
 export async function POST(request: NextRequest) {
@@ -15,6 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current user
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       const queryEmbedding = await generateEmbedding(message);
 
       // Search for similar content in knowledge base
-      const { data: knowledge } = await supabaseAdmin.rpc("match_knowledge", {
+      const { data: knowledge } = await supabase.rpc("match_knowledge", {
         query_embedding: queryEmbedding,
         match_threshold: 0.7,
         match_count: 3,
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       console.error("Vector search error:", error);
 
       // Fallback: get recent knowledge base entries
-      const { data: fallbackKnowledge } = await supabaseAdmin
+      const { data: fallbackKnowledge } = await supabase
         .from("knowledge_base")
         .select("content")
         .eq("user_id", user.id)

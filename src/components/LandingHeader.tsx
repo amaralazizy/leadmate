@@ -13,8 +13,8 @@ import { toast } from "sonner";
 
 export default function LandingHeader() {
   const { user, loading } = useAuth();
-  console.log("user", user);
-  console.log("loading", loading);
+  // console.log("user", user);
+  // console.log("loading", loading);
   const router = useRouter();
 
   const handleLogout = async () => {

@@ -10,7 +10,6 @@ import {
   Upload,
   Phone,
 } from "lucide-react";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/hooks/useAuth";
 import ClientHeader from "@/components/ClientHeader";
 

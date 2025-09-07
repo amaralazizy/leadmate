@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { MessageSquare, Target, Shield, Users } from "lucide-react";
 import PageLayout from "@/components/PageLayout";

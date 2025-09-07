@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import resend from "@/lib/resend";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { readFile } from "fs/promises";
 
 export async function POST(request: NextRequest) {
@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if email already exists
-    const { data: existingEmail } = await supabaseAdmin
+    const supabase = await createClient();
+    const { data: existingEmail } = await supabase
       .from("waitlist")
       .select("email")
       .eq("email", email)
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Store email in waitlist table
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("waitlist")
       .insert([{ email }])
       .select();
@@ -84,7 +85,8 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     // Get waitlist count
-    const { count, error } = await supabaseAdmin
+    const supabase = await createClient();
+    const { count, error } = await supabase
       .from("waitlist")
       .select("*", { count: "exact", head: true });
 
