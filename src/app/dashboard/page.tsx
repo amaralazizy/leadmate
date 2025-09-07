@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <ClientHeader />
@@ -177,6 +177,6 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
-    </ProtectedRoute>
+    // </ProtectedRoute>
   );
 }

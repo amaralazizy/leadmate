@@ -3,6 +3,7 @@
 import { scrollToTop } from "@/lib/utils/smoothScroll";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function ScrollToTop() {
     const [isVisible, setIsVisible] = useState(false);
@@ -16,9 +17,9 @@ export default function ScrollToTop() {
     }, []);
     return (
         isVisible ? (
-            <button onClick={scrollToTop} className="cursor-pointer fixed bottom-8 right-8 bg-main text-dark-bg px-4 py-2 rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.4)] transition-all duration-300">
+            <Button onClick={scrollToTop} className="fixed bottom-8 right-8 size-10">
                 <ArrowUp className="w-5 h-10" />
-            </button>
+            </Button>
         ) : null
     )
 }

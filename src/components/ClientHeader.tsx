@@ -3,7 +3,7 @@
 import { MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ClientHeader() {
   const { user, loading } = useAuth();
@@ -12,6 +12,7 @@ export default function ClientHeader() {
   const handleLogout = async () => {
     // Redirect first, then sign out
     router.push("/");
+    const supabase = createClient();
     await supabase.auth.signOut();
   };
 
