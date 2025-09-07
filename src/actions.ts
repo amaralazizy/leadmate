@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 // import { redirect } from "next/navigation";
 
 export const handleSignUp = async (formData: FormData) => {
@@ -26,6 +27,7 @@ export const handleLogout = async () => {
     const supabase = await createClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    revalidatePath("/");
     return { message: "User logged out successfully" };
   } catch (error) {
     return { message: getErrorMessage(error) };
