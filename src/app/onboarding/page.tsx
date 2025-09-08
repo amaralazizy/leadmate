@@ -7,6 +7,7 @@ import { supabase } from "@/lib/services/supabase/client";
 import {
   OnboardingProgress,
   BusinessInfoStep,
+  KnowledgeUploadStep,
   PhoneNumberStep,
   ActivationStep,
   CompletionStep,
@@ -27,6 +28,7 @@ export default function OnboardingPage() {
 
   const {
     saveBusinessInfo,
+    uploadKnowledge,
     purchaseAndRegister,
     isLoading: mutationsLoading,
   } = useOnboardingMutations();
@@ -35,7 +37,7 @@ export default function OnboardingPage() {
 
   // Use polling query for activation status
   const { data: activationStatus, isLoading: statusLoading } =
-    useActivationStatus(data.senderSid, step === 3 && !!data.senderSid);
+    useActivationStatus(data.senderSid, step === 4 && !!data.senderSid);
 
   const webhookUrl = useMemo(() => {
     if (typeof window !== "undefined") {
@@ -50,10 +52,14 @@ export default function OnboardingPage() {
       return;
     }
     if (step === 2) {
-      await handlePurchaseAndRegister();
+      await handleUploadKnowledge();
       return;
     }
     if (step === 3) {
+      await handlePurchaseAndRegister();
+      return;
+    }
+    if (step === 4) {
       await completeOnboarding();
       return;
     }
@@ -80,7 +86,7 @@ export default function OnboardingPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user){ 
+      if (!user) {
         router.push("/login");
         return;
       }
@@ -94,6 +100,20 @@ export default function OnboardingPage() {
       setStep(2);
     } catch (error) {
       console.error("Failed to save business info:", error);
+    }
+  };
+
+  const handleUploadKnowledge = async () => {
+    try {
+      // Knowledge content is required
+      if (!data.knowledgeContent?.trim()) {
+        return; // Button should be disabled, but just in case
+      }
+
+      await uploadKnowledge.mutateAsync(data.knowledgeContent);
+      setStep(3);
+    } catch (error) {
+      console.error("Failed to upload knowledge:", error);
     }
   };
 
@@ -128,7 +148,7 @@ export default function OnboardingPage() {
         })
         .eq("id", user.id);
 
-      setStep(3);
+      setStep(4);
     } catch (error) {
       console.error("Failed to purchase and register:", error);
     }
@@ -182,9 +202,10 @@ export default function OnboardingPage() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* Render step content based on current step */}
           {step === 1 && <BusinessInfoStep data={data} setData={setData} />}
-          {step === 2 && <PhoneNumberStep data={data} setData={setData} />}
-          {step === 3 && <ActivationStep data={data} setData={setData} />}
-          {step === 4 && <CompletionStep />}
+          {step === 2 && <KnowledgeUploadStep data={data} setData={setData} />}
+          {step === 3 && <PhoneNumberStep data={data} setData={setData} />}
+          {step === 4 && <ActivationStep data={data} setData={setData} />}
+          {step === 5 && <CompletionStep />}
 
           {/* Navigation */}
           <OnboardingNavigation

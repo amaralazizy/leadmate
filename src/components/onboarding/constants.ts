@@ -1,10 +1,11 @@
-import { Phone, Globe, Upload, MessageSquare } from "lucide-react";
+import { Phone, Brain, Globe, Upload, MessageSquare } from "lucide-react";
 
 export const ONBOARDING_STEPS = [
   { number: 1, title: "Business Info", icon: Phone },
-  { number: 2, title: "Pick WhatsApp Number", icon: Globe },
-  { number: 3, title: "Activate", icon: Upload },
-  { number: 4, title: "Done", icon: MessageSquare },
+  { number: 2, title: "Upload Knowledge", icon: Brain },
+  { number: 3, title: "Pick WhatsApp Number", icon: Globe },
+  { number: 4, title: "Activate", icon: Upload },
+  { number: 5, title: "Done", icon: MessageSquare },
 ];
 
 export const COUNTRIES = [
@@ -29,6 +30,7 @@ export const INITIAL_ONBOARDING_DATA = {
   businessName: "",
   businessType: "",
   logoUrl: "",
+  knowledgeContent: "",
   selectedCountry: "US",
   selectedNumber: "",
   senderSid: "",

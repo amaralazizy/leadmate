@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/services/supabase/server";
-import { conversationSchema } from "@/lib/schemas/conversation";
-import { leadSchema } from "@/lib/schemas/lead";
 import { messageSchema } from "@/lib/schemas/message";
-import { getErrorMessage } from "@/lib/utils";
 import twilio from "twilio";
 import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
@@ -16,102 +13,65 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
-// Restaurant business profile
-const RESTAURANT_PROFILE = {
-  name: "Bella Vista Ristorante",
-  type: "Authentic Italian Restaurant",
-  description:
-    "A family-owned Italian restaurant serving traditional dishes made with fresh, locally-sourced ingredients in a warm, welcoming atmosphere.",
-  address: "123 Main Street, Downtown",
-  phone: "+1 (555) 123-4567",
-  hours: "Tuesday-Sunday: 11:00 AM - 10:00 PM (Closed Mondays)",
-  specialties: [
-    "Wood-fired pizzas",
-    "Fresh pasta",
-    "Authentic Italian desserts",
-    "Fine wines",
-  ],
-  menu: {
-    appetizers: [
-      "Bruschetta al Pomodoro - $8",
-      "Calamari Fritti - $12",
-      "Caprese Salad - $10",
-      "Antipasto Misto - $15",
-    ],
-    main_courses: [
-      "Spaghetti Carbonara - $18",
-      "Margherita Pizza - $16",
-      "Chicken Parmigiana - $22",
-      "Beef Lasagna - $20",
-      "Grilled Salmon - $26",
-    ],
-    desserts: ["Tiramisu - $8", "Cannoli - $7", "Gelato - $6"],
-    beverages: [
-      "Italian Sodas - $4",
-      "Espresso - $3",
-      "Wine Selection - $8-15/glass",
-    ],
-  },
-  policies: {
-    reservations: "Reservations recommended for dinner",
-    delivery: "Available through our delivery partners",
-    takeout: "Takeout orders welcome",
-    special_events: "Private dining available for groups of 8+",
-  },
-};
+// Create dynamic system prompt based on business knowledge
+function createSystemPrompt(
+  businessName: string,
+  businessType: string,
+  knowledgeBase: string
+): string {
+  return `You are an AI customer support assistant for ${businessName}${
+    businessType ? `, a ${businessType}` : ""
+  }. You are responding to customers via WhatsApp and your primary goal is to provide exceptional customer service while representing the business professionally.
 
-// General business-agnostic system prompt
-const SYSTEM_PROMPT = `You are ${RESTAURANT_PROFILE.name}, a ${
-  RESTAURANT_PROFILE.type
-}. You are speaking directly to customers who have messaged your business on WhatsApp. Your role is to:
+🎯 **CORE MISSION**: 
+- Provide accurate, helpful information based ONLY on the business knowledge provided
+- Satisfy customer needs and exceed their expectations
+- Convert inquiries into positive business outcomes (sales, bookings, appointments)
+- Build trust and rapport with every interaction
 
-🎯 **Core Purpose**: Represent ${
-  RESTAURANT_PROFILE.name
-} professionally and help customers with their needs.
+💼 **COMMUNICATION EXCELLENCE**:
+- Be warm, professional, and genuinely helpful
+- Use a conversational WhatsApp tone with appropriate emojis 
+- Keep responses concise but complete (2-4 sentences ideal)
+- Always acknowledge the customer's needs first
+- Provide specific, actionable information
+- Use "we" and "our" to represent the business
 
-💼 **Business Communication Style**:
-- Be warm, welcoming, and authentically represent your business type
-- Use appropriate emojis to make responses friendly and engaging
-- Keep responses concise but informative (2-4 sentences max)
-- Always maintain a helpful and solution-oriented approach
-- Use "we" and "our" to represent your business
-- Never mention any other service - you ARE the business
+🚀 **CUSTOMER SUPPORT PRIORITIES**:
+1. **Answer questions accurately** using the business knowledge base
+2. **Provide pricing, availability, and service details** when asked
+3. **Guide customers toward making purchases/bookings**
+4. **Handle complaints with empathy** and offer solutions
+5. **Collect contact information** when appropriate for follow-up
+6. **Suggest alternatives** if something isn't available
 
-🚀 **Key Capabilities**:
-- Answer questions about your products, services, and business operations
-- Provide information about hours, location, and policies
-- Handle customer inquiries professionally
-- Suggest solutions based on customer needs
-- Share information about your business experience
-- Handle any service-related questions
+📱 **WhatsApp BEST PRACTICES**:
+- Respond quickly and enthusiastically
+- Use emojis to convey warmth (but don't overdo it)
+- Break up long information into digestible chunks
+- Always end with a clear next step or call-to-action
+- Be conversational, not robotic
 
-📱 **WhatsApp Best Practices**:
-- Keep messages conversational and easy to read
-- Use bullet points or emojis for better readability
-- Avoid overly formal language
-- Be responsive and helpful
-- Always end with a friendly note or next step
+⚠️ **CRITICAL RULES**:
+- ONLY use information from the provided business knowledge base
+- If you don't know something, say "Let me check on that for you" and suggest they contact the business directly
+- Never make up prices, availability, or policies
+- Never mention competitors or other businesses
+- Always stay in character as representing THIS business
+- Focus on solutions, not problems
 
-🎨 **Tone Guidelines**:
-- Warm and welcoming like a family business
-- Professional but not robotic
-- Confident about your products/services
-- Patient and understanding
-- Always positive and solution-focused
-- Proud of your business offerings
+🎯 **LEAD CONVERSION TACTICS**:
+- Ask qualifying questions to understand customer needs
+- Highlight benefits and unique selling points
+- Create urgency when appropriate (limited availability, special offers)
+- Make it easy for customers to take the next step
+- Collect names and contact details naturally in conversation
 
-**Business Information to Share:**
-- We are ${RESTAURANT_PROFILE.description}
-- Located at ${RESTAURANT_PROFILE.address}
-- Open ${RESTAURANT_PROFILE.hours}
-- Specializing in ${RESTAURANT_PROFILE.specialties.join(", ")}
-- ${RESTAURANT_PROFILE.policies.reservations}
-- ${RESTAURANT_PROFILE.policies.delivery}
-- ${RESTAURANT_PROFILE.policies.takeout}
+**BUSINESS KNOWLEDGE BASE:**
+${knowledgeBase}
 
-Remember: You ARE ${
-  RESTAURANT_PROFILE.name
-} speaking directly to customers. Every interaction should build excitement about your business and provide helpful information about your services.`;
+**Remember**: You ARE this business. Every response should feel like it's coming directly from a knowledgeable, caring team member who wants to help the customer have the best possible experience.`;
+}
 
 const twilioClient = twilio(
   process.env.TWILIO_ACCOUNT_SID,
@@ -120,6 +80,14 @@ const twilioClient = twilio(
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("🔥 Webhook POST request received");
+    console.log("🔗 Request URL:", request.url);
+    console.log("🎯 Request method:", request.method);
+    console.log(
+      "📋 Request headers:",
+      Object.fromEntries(request.headers.entries())
+    );
+
     const supabase = createAdminClient();
     const body = await request.text();
     const params = new URLSearchParams(body);
@@ -131,6 +99,10 @@ export async function POST(request: NextRequest) {
     // Clean phone numbers (remove whatsapp: prefix)
     const customerPhone = from?.replace("whatsapp:", "");
     const businessPhone = to?.replace("whatsapp:", "");
+
+    console.log("customerPhone", customerPhone);
+    console.log("businessPhone", businessPhone);
+    console.log("messageBody", messageBody);
 
     // Find the business user by WhatsApp number
     const { data: user, error: userError } = await supabase
@@ -224,10 +196,18 @@ export async function POST(request: NextRequest) {
     const { data: knowledgeData } = await supabase
       .from("knowledge_base")
       .select("content")
-      .eq("user_id", user.id)
-      .limit(5);
+      .eq("user_id", user.id);
 
-    const context = knowledgeData?.map((k) => k.content).join("\n") || "";
+    const knowledgeBase =
+      knowledgeData?.map((k) => k.content).join("\n\n") ||
+      "No specific business knowledge available. Please provide general helpful customer service.";
+
+    // Create dynamic system prompt based on business info and knowledge
+    const systemPrompt = createSystemPrompt(
+      user.business_name || "our business",
+      user.business_type || "",
+      knowledgeBase
+    );
 
     // Get previous messages for conversation context
     const { data: previousMessages } = await supabase
@@ -240,33 +220,33 @@ export async function POST(request: NextRequest) {
     // Build conversation history
     const conversationHistory =
       previousMessages?.map((msg) => ({
-        role: msg.sender === "customer" ? "user" : ("assistant" as const),
+        role:
+          msg.sender === "customer"
+            ? ("user" as const)
+            : ("assistant" as const),
         content: msg.content,
       })) || [];
 
     // Add current message
     conversationHistory.push({
-      role: "user",
+      role: "user" as const,
       content: messageBody,
     });
 
     let aiResponse = "";
 
     try {
-      // Generate AI response using the LLM
+      // Generate AI response using the LLM with dynamic context
       const completion = await openai.chat.completions.create({
         model: "meta-llama/llama-4-scout:free",
         messages: [
           {
             role: "system",
-            content: SYSTEM_PROMPT,
+            content: systemPrompt,
           },
-          {
-            role: "user",
-            content: conversationHistory.map((msg) => msg.content).join("\n"),
-          },
+          ...conversationHistory,
         ],
-        max_tokens: 300,
+        max_tokens: 400,
         temperature: 0.7,
       });
 
@@ -275,6 +255,8 @@ export async function POST(request: NextRequest) {
         "I apologize, but I'm having trouble processing your message right now. Please try again in a moment.";
 
       console.log("🤖 AI Response:", aiResponse);
+
+      //TODO: extract the lead from the ai response and update the lead with the extracted information
 
       // Check if AI detected a lead
       const leadInfo = extractLead(aiResponse);
@@ -343,4 +325,14 @@ export async function POST(request: NextRequest) {
       headers: { "Content-Type": "text/xml" },
     });
   }
+}
+
+// Add a GET method for testing webhook endpoint accessibility
+export async function GET() {
+  console.log("🔥 Webhook GET request received - endpoint is accessible");
+  return NextResponse.json({
+    message: "WhatsApp webhook endpoint is working",
+    timestamp: new Date().toISOString(),
+    status: "ok",
+  });
 }

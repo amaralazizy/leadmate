@@ -67,12 +67,12 @@ export function useActivationStatus(
     enabled: enabled && !!senderSid,
     refetchInterval: (data) => {
       // Stop polling if status is ONLINE or FAILED
-      return data === "ONLINE" || data === "FAILED" ? false : 5000;
+      return (data as unknown as string) === "ONLINE" ||
+        (data as unknown as string) === "FAILED"
+        ? false
+        : 5000;
     },
     refetchIntervalInBackground: true,
-    onError: (error: Error) => {
-      console.error("Failed to check activation status:", error);
-    },
   });
 }
 
@@ -92,21 +92,54 @@ export function useUpdateWhatsAppStatus() {
   });
 }
 
+// Hook for uploading knowledge content
+export function useUploadKnowledge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (content: string) => {
+      const response = await fetch("/api/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to upload knowledge");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("Knowledge uploaded successfully");
+      // Invalidate knowledge-related queries
+      queryClient.invalidateQueries({ queryKey: ["knowledge"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to upload knowledge");
+    },
+  });
+}
+
 // Convenience hook that combines all onboarding mutations
 export function useOnboardingMutations() {
   const searchNumbers = useSearchNumbers();
   const saveBusinessInfo = useSaveBusinessInfo();
+  const uploadKnowledge = useUploadKnowledge();
   const purchaseAndRegister = usePurchaseAndRegister();
   const updateWhatsAppStatus = useUpdateWhatsAppStatus();
 
   return {
     searchNumbers,
     saveBusinessInfo,
+    uploadKnowledge,
     purchaseAndRegister,
     updateWhatsAppStatus,
     isLoading:
       searchNumbers.isPending ||
       saveBusinessInfo.isPending ||
+      uploadKnowledge.isPending ||
       purchaseAndRegister.isPending ||
       updateWhatsAppStatus.isPending,
   };

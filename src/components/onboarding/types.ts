@@ -2,6 +2,7 @@ export interface OnboardingData {
   businessName: string;
   businessType: string;
   logoUrl: string;
+  knowledgeContent: string;
   selectedCountry: string;
   selectedNumber: string;
   senderSid: string;
