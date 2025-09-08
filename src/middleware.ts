@@ -1,10 +1,8 @@
-import { NextRequest/*,NextResponse*/ } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/services/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  // const { pathname } = request.nextUrl;
-
-  // Handle Supabase session update and authentication
+  // Handle Supabase session update and authentication for other routes
   const supabaseResponse = await updateSession(request);
 
   // If updateSession redirected (e.g., to login), return that response

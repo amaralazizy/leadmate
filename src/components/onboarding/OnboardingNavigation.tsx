@@ -15,8 +15,11 @@ export default function OnboardingNavigation({
       case 1:
         return !data.businessName;
       case 2:
-        return !data.selectedNumber;
+        // Knowledge step is required
+        return !data.knowledgeContent?.trim();
       case 3:
+        return !data.selectedNumber;
+      case 4:
         return data.activationStatus !== "ONLINE";
       default:
         return false;
@@ -26,7 +29,11 @@ export default function OnboardingNavigation({
   const getNextButtonText = () => {
     if (loading) return "Working...";
 
-    if (step === 3) {
+    if (step === 2) {
+      return "Upload Knowledge";
+    }
+
+    if (step === 4) {
       return data.activationStatus === "ONLINE"
         ? "Complete Setup"
         : "Activating...";
