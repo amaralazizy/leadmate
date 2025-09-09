@@ -1,32 +1,100 @@
 "use server";
-import { createClient } from "./lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
-export async function getChats() {
+export async function getChats(user_id: string) {
   const supabase = await createClient();
-  const { data: chats, error } = await supabase.from("conversations").select("*");
+  const { data: chats, error } = await supabase
+    .from("conversations")
+    .select(
+      `
+      id,
+      customer_phone,
+      status,
+      created_at,
+      updated_at,
+      messages (
+        content,
+        timestamp, 
+        sender
+      )
+    `
+    )
+    .eq("user_id", user_id)
+    .order("updated_at", { ascending: false });
+
   if (error) {
     throw error;
   }
-  return chats;
+
+  // Transform the data to match what the UI expects
+  return (
+    chats?.map((chat) => ({
+      id: chat.id,
+      name: chat.customer_phone, // Use phone as name for now
+      lastMessage:
+        chat.messages?.[chat.messages.length - 1]?.content || "No messages yet",
+      time: new Date(chat.updated_at).toLocaleTimeString(),
+      customer_phone: chat.customer_phone,
+      status: chat.status,
+    })) || []
+  );
 }
 
 export async function getChatById(id: string) {
   const supabase = await createClient();
-  const { data: chat, error } = await supabase.from("conversations").select("*").eq("id", id).single();
+  const { data: chat, error } = await supabase
+    .from("conversations")
+    .select(
+      `
+      id,
+      customer_phone,
+      status,
+      created_at,
+      updated_at,
+      messages (
+        id,
+        content,
+        timestamp,
+        sender
+      )
+    `
+    )
+    .eq("id", id)
+    .single();
+
   if (error) {
     throw error;
   }
   return chat;
 }
 
-export async function storeMessage(message: string, conversationId: string) {
+export async function getMessagesByConversationId(conversationId: string) {
+  const supabase = await createClient();
+  const { data: messages, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("timestamp", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+  return messages;
+}
+
+export async function storeMessage(
+  message: string,
+  conversationId: string,
+  sender: "customer" | "bot" = "customer"
+) {
   const supabase = await createClient();
   const { data: newMessage, error } = await supabase.from("messages").insert({
     content: message,
     conversation_id: conversationId,
+    sender: sender,
   });
   if (error) {
     throw error;
   }
-  return message;
+  return newMessage;
 }

@@ -1,11 +1,10 @@
 "use client";
-
-import { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
+import  Form from "next/form";
+import { toast } from "sonner";
 
 import {
   Card,
@@ -17,35 +16,45 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { handleLogin } from "./action";
+import { useActionState } from "react";
+
+type Tstate = {
+  success: boolean;
+  errors?: {
+    email?: string[];
+    password?: string[];
+    supabase?: string[];
+  };
+  inputs: {
+    email: string;
+    password: string;
+  };
+};
+
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
+  async function loginAction(prevState: Tstate, formData: FormData) {
+    toast.loading("Logging in...");
+    const result = await handleLogin(prevState, formData);
+    if (result.success) {
+      toast.dismiss();
+      toast.success("Logged in successfully");
       router.push("/dashboard");
-    } catch (error: unknown) {
-      setError(
-        error instanceof Error ? error.message : "An unknown error occurred"
-      );
-    } finally {
-      setLoading(false);
+    } else {
+      toast.dismiss();
+      toast.error("Failed to log in");
     }
-  };
+    return result;
+  }
+
+  const [state, formAction, pending] = useActionState(loginAction, {
+    success: false,
+    errors: undefined,
+    inputs: { email: "", password: "" },
+  });
 
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -66,12 +75,7 @@ export default function LoginPage() {
               Enter your email below to login to your account
             </CardDescription>
           </CardHeader>
-          <form className="space-y-6" onSubmit={handleLogin}>
-            {error && error !== "" && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
+          <Form className="space-y-6" action={formAction}>
             <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
@@ -80,15 +84,20 @@ export default function LoginPage() {
                   </Label>
                   <Input
                     id="email"
-                    type="email"
+                    name="email"
+                    type="text"
                     placeholder="m@example.com"
                     required
-                    value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setEmail(e.target.value)
-                    }
-                    className="text-main"
+                    defaultValue={state.inputs.email}
+                    // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    //   setEmail(e.target.value)
+                    // }
+                    className="text-main disabled:cursor-not-allowed"
+                    disabled={pending}
                   />
+                  {state?.errors && !("supabase" in state.errors) && (
+                    <div className="text-red-500">{state.errors.email}</div>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -104,27 +113,32 @@ export default function LoginPage() {
                   </div>
                   <Input
                     id="password"
+                    name="password"
                     type="password"
                     required
-                    value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setPassword(e.target.value)
-                    }
-                    className="text-main"
+                    defaultValue={state.inputs.password}
+                    className="text-main disabled:cursor-not-allowed"
+                    disabled={pending}
                   />
+                  {state?.errors && !("supabase" in state.errors) && (
+                    <div className="text-red-500">{state.errors.password}</div>
+                  )}
                 </div>
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Signing in..." : "Login"}
+              {state?.errors && "supabase" in state.errors && (
+                <div className="text-red-500">{state.errors.supabase}</div>
+              )}
+              <Button type="submit" disabled={pending} className="w-full">
+                {pending ? "Logging in..." : "Login"}
               </Button>
-              <Button variant="neutral" className="w-full" disabled={loading}>
+              <Button variant="neutral" className="w-full" disabled={pending}>
                 <FaGoogle className="w-4 h-4" />
-                {loading ? "Signing in..." : "Login with Google"}
+                {pending ? "Logging in..." : "Login with Google"}
               </Button>
             </CardFooter>
-          </form>
+          </Form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link
