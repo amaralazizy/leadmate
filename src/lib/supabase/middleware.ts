@@ -35,38 +35,68 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
 
-  const protectedRoutes = [
-    "/dashboard",
-    "/settings",
-    "/billing",
-    "/unauthorized",
-    "/auth/verify-email",
+  const allowedRoutes = [
+    "/contact",
+    "/about",
+    "/privacy",
+    "/terms",
+    "/signup",
+    "/reset-password",
+    "/login",
+    "/coming-soon",
   ];
 
   if (
-    !user &&
-    protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  if (
-    user &&
-    (request.nextUrl.pathname.startsWith("/login") ||
-      request.nextUrl.pathname.startsWith("/signup") ||
-      request.nextUrl.pathname.startsWith("/auth"))
+    !allowedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+    && request.nextUrl.pathname !== "/"
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
   }
+
+  // const protectedRoutes = [
+  //   "/dashboard",
+  //   "/settings",
+  //   "/billing",
+  //   "/unauthorized",
+  //   "/auth/verify-email",
+  // ];
+
+  // const prohibitedRoutes = ["/dashboard"];
+
+  // if (
+  //   prohibitedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+  // ) {
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/";
+  //   return NextResponse.redirect(url);
+  // }
+
+  // if (
+  //   !user &&
+  //   protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/login";
+  //   return NextResponse.redirect(url);
+  // }
+
+  // if (
+  //   user &&
+  //   (request.nextUrl.pathname.startsWith("/login") ||
+  //     request.nextUrl.pathname.startsWith("/signup") ||
+  //     request.nextUrl.pathname.startsWith("/auth"))
+  // ) {
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/";
+  //   return NextResponse.redirect(url);
+  // }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

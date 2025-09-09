@@ -10,27 +10,46 @@ import { NavigationButton } from "@/components/JoinWaitlistButton";
 import { Button } from "@/components/ui/button";
 import MobileSidebar from "@/components/MobileSidebar";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LandingHeader() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLogout = async () => {
+  const handleClientLogout = async () => {
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      toast.success("Logged out successfully");
-      if(pathname !== "/") router.push("/");
-      else router.refresh();
-    } catch {
-      toast.error("Failed to logout");
+      return { message: "User logged out successfully" };
+    } catch (error) {
+      throw new Error(
+        error instanceof Error ? error.message : "Failed to logout"
+      );
     }
   };
 
+  const { mutate: logout } = useMutation({
+    mutationKey: ["logout"],
+    onMutate: () => {
+      toast.loading("Logging out...");
+    },
+    mutationFn: handleClientLogout,
+    onSuccess: () => {
+      toast.dismiss(); // Clear loading toast
+      toast.success("Logged out successfully");
+      if (pathname !== "/") router.push("/");
+      else router.refresh();
+    },
+    onError: (error) => {
+      toast.dismiss(); // Clear loading toast
+      toast.error(error.message || "Failed to logout");
+    },
+  });
+
   return (
-    <header className="relative z-10 bg-dark-bg border-b border-gray-800">
+    <header className="z-10 bg-background border-b border-gray-800 sticky top-0">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">
@@ -63,7 +82,7 @@ export default function LandingHeader() {
                 <span className="text-foreground px-3 py-2 text-sm">
                   Welcome, {user?.email}
                 </span>
-                <Button onClick={handleLogout} size="sm">
+                <Button onClick={() => logout()} size="sm">
                   Logout
                 </Button>
               </>

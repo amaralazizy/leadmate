@@ -29,15 +29,14 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      router.push("/");
-      toast("Logged in successfully", {
-        description: "Access your AI WhatsApp Bot dashboard",
-      });
+      router.push("/coming-soon");
+      toast.success("Logged in successfully");
 
     } catch (error: unknown) {
       setError(
         error instanceof Error ? error.message : "An unknown error occurred"
       );
+      toast.error(error instanceof Error ? error.message : "An unknown error occurred");
     } finally {
       setLoading(false);
     }
@@ -118,7 +117,7 @@ export default function LoginPage() {
 
           <div className="mt-6">
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm">
                 Don&apos;t have an account?{" "}
                 <Link
                   href="signup"

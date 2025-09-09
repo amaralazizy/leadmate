@@ -27,7 +27,7 @@ export const handleLogout = async () => {
     const supabase = await createClient();
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    revalidatePath("/");
+    revalidatePath("/", "layout");
     return { message: "User logged out successfully" };
   } catch (error) {
     return { message: getErrorMessage(error) };
