@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 // import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import {
   OnboardingProgress,

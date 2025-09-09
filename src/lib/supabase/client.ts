@@ -10,8 +10,6 @@ export function createClient() {
 
 export const supabase = createClient();
 
-
-
 // Database types
 export interface User {
   id: string;

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 
 export interface UserSettings {
   id: string;
@@ -48,7 +48,7 @@ export function useSettings() {
       if (!response.ok) {
         throw new Error("Failed to fetch settings");
       }
-      
+
       const { data } = await response.json();
       console.log("data", data);
       setSettings(data[0]);

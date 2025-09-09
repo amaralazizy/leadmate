@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { getErrorMessage } from "@/lib/utils/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,4 +23,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-

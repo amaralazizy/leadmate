@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { getErrorMessage } from "@/lib/utils/utils";
 import { NextResponse, NextRequest } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";

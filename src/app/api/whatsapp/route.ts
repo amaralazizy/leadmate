@@ -1,5 +1,5 @@
 import { getErrorMessage } from "@/lib/utils";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { NextRequest, NextResponse, userAgent } from "next/server";
 import { env } from "@/lib/config/env";
 import twilio from "twilio";

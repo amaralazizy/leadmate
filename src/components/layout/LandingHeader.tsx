@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export default function LandingHeader() {
