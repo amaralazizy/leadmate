@@ -17,7 +17,7 @@ export default function GlobalFooter() {
           ))}
         </div>
         <div className="text-center pb-8 text-foreground">
-          <p>&copy; 2024 LeadMate. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} LeadMate. All rights reserved.</p>
         </div>
       </div>
     </footer>
