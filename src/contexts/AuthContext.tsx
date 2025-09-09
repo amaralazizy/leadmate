@@ -2,7 +2,7 @@
 
 import { useEffect, useState, createContext, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { User } from "@/lib/services/supabase/client";
+import { User } from "@/lib/supabase/client";
 
 interface AuthState {
   user: User | null;
