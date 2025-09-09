@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 // import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -196,9 +196,7 @@ export default function SignupPage() {
                 <p className="text-xs text-main flex flex-col gap-2">
                   <span>Didn&apos;t receive the email?</span>
                   Check your spam folder or
-                  <Button
-                    onClick={() => setShowVerificationModal(false)}
-                  >
+                  <Button onClick={() => setShowVerificationModal(false)}>
                     try signing up again
                   </Button>
                 </p>

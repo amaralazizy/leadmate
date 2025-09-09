@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import resend from "@/lib/services/resend/resend";
 // import { supabaseAdmin } from "@/lib/services/supabase/server";
-import { supabase } from "@/lib/services/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { readFile } from "fs/promises";
 
 export async function POST(request: NextRequest) {
@@ -56,7 +56,10 @@ export async function POST(request: NextRequest) {
       to: email,
       subject: "Welcome to the waitlist",
       html: await readFile(
-        new URL("../../../styles/emails/waitlist-welcome.html", import.meta.url),
+        new URL(
+          "../../../styles/emails/waitlist-welcome.html",
+          import.meta.url
+        ),
         "utf-8"
       ),
     });

@@ -21,3 +21,7 @@ export function getErrorMessage(error: unknown): string {
   }
   return "An unknown error occurred";
 }
+
+export function getUserName(email: string) {
+  return email.split("@")[0];
+}

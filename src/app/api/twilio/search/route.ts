@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const client = twilio(accountSid, authToken);
+    const client = twilio(accountSid, authToken);   
 
     const numbers = await client
       .availablePhoneNumbers(country)
