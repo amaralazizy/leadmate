@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const messageSchema = z.object({
-  id: z.uuid(),
-  conversation_id: z.uuid(),
+  id: z.string().uuid(),
+  conversation_id: z.string().uuid(),
   content: z.string().min(1),
   sender: z.enum(["customer", "bot"]),
-  timestamp: z.iso.datetime(),
+  timestamp: z.string().datetime(),
 });
