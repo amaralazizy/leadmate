@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { OnboardingNavigationProps } from "./types";
+import { ArrowLeft, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 
 export default function OnboardingNavigation({
   step,
@@ -39,28 +40,73 @@ export default function OnboardingNavigation({
         : "Activating...";
     }
 
-    return "Next";
+    if (step === 5) {
+      return "Go to Dashboard";
+    }
+
+    return "Continue";
+  };
+
+  const getNextButtonIcon = () => {
+    if (loading) return <Loader2 className="h-4 w-4 animate-spin" />;
+
+    if (step === 4 && data.activationStatus === "ONLINE") {
+      return <CheckCircle className="h-4 w-4" />;
+    }
+
+    if (step === 5) {
+      return <CheckCircle className="h-4 w-4" />;
+    }
+
+    return <ArrowRight className="h-4 w-4" />;
   };
 
   return (
-    <div className="mt-8 flex justify-between">
-      <Button
-        type="button"
-        onClick={onBack}
-        disabled={step === 1}
-        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Back
-      </Button>
+    <div className="mt-12 pt-6 border-t-2 border-border">
+      <div className="flex items-center justify-between gap-4">
+        <Button
+          type="button"
+          onClick={onBack}
+          disabled={step === 1}
+          variant="neutral"
+          size="lg"
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
 
-      <Button
-        type="button"
-        onClick={onNext}
-        disabled={isDisabled()}
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {getNextButtonText()}
-      </Button>
+        <div className="flex items-center gap-3">
+          {/* Step indicator */}
+          <div className="hidden sm:flex items-center gap-2 text-sm text-foreground/60">
+            <span>Step {step} of 5</span>
+          </div>
+
+          <Button
+            type="button"
+            onClick={onNext}
+            disabled={isDisabled()}
+            variant="default"
+            size="lg"
+            className="flex items-center gap-2 min-w-[140px] justify-center"
+          >
+            <span>{getNextButtonText()}</span>
+            {getNextButtonIcon()}
+          </Button>
+        </div>
+      </div>
+
+      {/* Progress hint */}
+      {isDisabled() && !loading && (
+        <div className="mt-4 text-center">
+          <p className="text-sm text-foreground/60">
+            {step === 1 && "Please enter your business name to continue"}
+            {step === 2 && "Please add your business knowledge to continue"}
+            {step === 3 && "Please select a phone number to continue"}
+            {step === 4 && "Waiting for WhatsApp activation..."}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

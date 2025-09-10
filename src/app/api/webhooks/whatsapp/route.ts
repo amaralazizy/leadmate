@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/services/supabase/server";
 import { messageSchema } from "@/lib/schemas/message";
 import twilio from "twilio";
 import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
 import { extractLead } from "@/lib/services/openai/openai";
+import { createClient } from "@/lib/supabase/server";
 
 const apiKey = process.env.OPENROUTER_API_KEY!;
 
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       Object.fromEntries(request.headers.entries())
     );
 
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const body = await request.text();
     const params = new URLSearchParams(body);
 
