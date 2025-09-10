@@ -10,7 +10,9 @@ interface ChatMessageItemProps {
 export const ChatMessageItem = ({ message, isOwnMessage, showHeader }: ChatMessageItemProps) => {
   return (
     <div
-      className={`flex mt-2 ${isOwnMessage ? "justify-end" : "justify-start"}`}
+      className={`flex mt-2 ${
+        isOwnMessage ? "justify-end" : "justify-start"
+      }`}
     >
       <div
         className={cn("max-w-[75%] w-fit flex flex-col gap-1", {
@@ -28,20 +30,20 @@ export const ChatMessageItem = ({ message, isOwnMessage, showHeader }: ChatMessa
         )}
         <div
           className={cn(
-            "py-2 px-3 rounded-xl text-sm w-fit flex gap-2",
+            "py-2 px-3 rounded-xl text-sm w-fit grid grid-cols-2",
             isOwnMessage
               ? "bg-main text-main-foreground"
               : "bg-muted text-foreground"
           )}
         >
           <span className="text-md">{message.content}</span>
-          <span className="text-main-foreground/50 text-[10px] self-end">
+          <div className="text-main-foreground/75 text-xs col-span-2 justify-self-end">
             {new Date(message.createdAt).toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
               hour12: true,
             })}
-          </span>
+          </div>
         </div>
       </div>
     </div>
