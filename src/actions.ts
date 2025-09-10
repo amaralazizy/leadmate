@@ -94,7 +94,7 @@ export async function storeMessage(
     sender: sender,
   });
   if (error) {
-    throw error;
+    return error;
   }
   return newMessage;
 }

@@ -1,23 +1,20 @@
-'use client'
+"use client";
 
-import { cn } from '@/lib/utils/index'
-import { ChatMessageItem } from '@/components/dashboard/chats/chat-message'
-import { useChatScroll } from '@/hooks/use-chat-scroll'
-import {
-  type ChatMessage,
-  useRealtimeChat,
-} from '@/hooks/use-realtime-chat'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Send } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { cn } from "@/lib/utils/index";
+import { ChatMessageItem } from "@/components/dashboard/chats/chat-message";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
+import { type ChatMessage, useRealtimeChat } from "@/hooks/use-realtime-chat";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Send } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-interface RealtimeChatProps {
-  roomName: string
-  username: string
-  onMessage?: (messages: ChatMessage[]) => void
-  messages?: ChatMessage[]
-}
+type RealtimeChatProps = {
+  roomName: string;
+  username: string;
+  onMessage?: (messages: ChatMessage[]) => void;
+  messages?: ChatMessage[];
+};
 
 /**
  * Realtime chat component
@@ -33,7 +30,7 @@ export const RealtimeChat = ({
   onMessage,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
-  const { containerRef, scrollToBottom } = useChatScroll()
+  const { containerRef, scrollToBottom } = useChatScroll();
 
   const {
     messages: realtimeMessages,
@@ -42,43 +39,48 @@ export const RealtimeChat = ({
   } = useRealtimeChat({
     roomName,
     username,
-  })
-  const [newMessage, setNewMessage] = useState('')
+  });
+  const [newMessage, setNewMessage] = useState("");
 
   // Merge realtime messages with initial messages
   const allMessages = useMemo(() => {
-    const mergedMessages = [...initialMessages, ...realtimeMessages]
+    const mergedMessages = [...initialMessages, ...realtimeMessages];
+    console.log("mergedMessages", mergedMessages);
     // Remove duplicates based on message id
     const uniqueMessages = mergedMessages.filter(
-      (message, index, self) => index === self.findIndex((m) => m.id === message.id)
-    )
+      (message, index, self) =>
+        index === self.findIndex((m) => m.id === message.id)
+    );
     // Sort by creation date
-    const sortedMessages = uniqueMessages.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    const sortedMessages = uniqueMessages.sort((a, b) =>
+      a.createdAt.localeCompare(b.createdAt)
+    );
 
-    return sortedMessages
-  }, [initialMessages, realtimeMessages])
+    return sortedMessages;
+  }, [initialMessages, realtimeMessages]);
 
   useEffect(() => {
     if (onMessage) {
-      onMessage(allMessages)
+      onMessage(allMessages);
     }
-  }, [allMessages, onMessage])
+  }, [allMessages, onMessage]);
 
   useEffect(() => {
     // Scroll to bottom whenever messages change
-    scrollToBottom()
-  }, [allMessages, scrollToBottom])
+    scrollToBottom();
+  }, [allMessages, scrollToBottom]);
 
   const handleSendMessage = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault()
-      if (!newMessage.trim() || !isConnected) return
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!newMessage.trim() || !isConnected) return;
 
-      sendMessage(newMessage)
-      setNewMessage('')
+      // Send message - this will automatically store in DB and update UI via realtime
+      await sendMessage(newMessage, "bot");
+      setNewMessage("");
     },
     [newMessage, isConnected, sendMessage]
-  )
+  );
 
   return (
     <div className="flex flex-col h-full w-full bg-background text-foreground antialiased">
@@ -91,8 +93,9 @@ export const RealtimeChat = ({
         ) : null}
         <div className="space-y-1">
           {allMessages.map((message, index) => {
-            const prevMessage = index > 0 ? allMessages[index - 1] : null
-            const showHeader = !prevMessage || prevMessage.user.name !== message.user.name
+            const prevMessage = index > 0 ? allMessages[index - 1] : null;
+            const showHeader =
+              !prevMessage || prevMessage.user.name !== message.user.name;
 
             return (
               <div
@@ -106,16 +109,19 @@ export const RealtimeChat = ({
                 />
                 {/* <span className="text-sm text-muted-foreground">{message.createdAt}</span> */}
               </div>
-            )
+            );
           })}
         </div>
       </div>
 
-      <form onSubmit={handleSendMessage} className="flex w-full gap-2 border-t border-border p-4">
+      <form
+        onSubmit={handleSendMessage}
+        className="flex w-full gap-2 border-t border-border p-4"
+      >
         <Input
           className={cn(
-            'rounded-full bg-background text-sm transition-all duration-300',
-            isConnected && newMessage.trim() ? 'w-[calc(100%-36px)]' : 'w-full'
+            "bg-background text-sm transition-all duration-300 outline-none",
+            isConnected && newMessage.trim() ? "w-[calc(100%-36px)]" : "w-full"
           )}
           type="text"
           value={newMessage}
@@ -134,5 +140,5 @@ export const RealtimeChat = ({
         )}
       </form>
     </div>
-  )
-}
+  );
+};

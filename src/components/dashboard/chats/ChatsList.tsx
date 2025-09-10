@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getChats } from "@/actions";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 type Chat = {
@@ -15,16 +15,22 @@ type Chat = {
 // const supabase = await createClient();
 
 export default async function ChatsList() {
-  // const chats: Chat[] = [
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     redirect("/login");
   }
   const chats: Chat[] = await getChats(user.id);
+  console.log("chats", chats);
   return (
     <section className="p-4 md:p-6">
       <h1 className="text-xl font-heading mb-4">Chats</h1>
       <div className="rounded-base border divide-y">
+        {chats.length === 0 && (
+          <div className="p-4">
+            <p className="text-sm text-muted-foreground">No chats found</p>
+          </div>
+        )}
         {chats.map((c) => (
           <Link
             key={c.id}
