@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import { Bot, Sparkles } from "lucide-react";
 // import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import {
   OnboardingProgress,
@@ -20,6 +21,7 @@ import {
   useActivationStatus,
   useUpdateWhatsAppStatus,
 } from "@/hooks/useOnboarding";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
@@ -184,37 +186,79 @@ export default function OnboardingPage() {
 
   return (
     // <ProtectedRoute>
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Set up your AI Bot
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Just a few steps to get your WhatsApp bot ready
-        </p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b-2 border-border bg-secondary-background">
+        <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-main rounded-base border-2 border-border shadow-shadow">
+                <Bot className="h-6 w-6 text-main-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl font-heading text-foreground">
+                  ReplyPro Setup
+                </h1>
+                <p className="text-sm text-foreground/70">
+                  Configure your AI WhatsApp assistant
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-foreground/60">
+              <Sparkles className="h-4 w-4" />
+              Step {step} of 5
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Progress Steps */}
-      <OnboardingProgress currentStep={step} />
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Progress Steps */}
+        <OnboardingProgress currentStep={step} />
 
-      {/* Step Content */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {/* Render step content based on current step */}
-          {step === 1 && <BusinessInfoStep data={data} setData={setData} />}
-          {step === 2 && <KnowledgeUploadStep data={data} setData={setData} />}
-          {step === 3 && <PhoneNumberStep data={data} setData={setData} />}
-          {step === 4 && <ActivationStep data={data} setData={setData} />}
-          {step === 5 && <CompletionStep />}
+        {/* Step Content */}
+        <div className="mt-8">
+          <Card className="max-w-2xl mx-auto transition-all duration-300 ease-in-out">
+            <CardContent className="p-8">
+              {/* Render step content based on current step with fade transitions */}
+              <div className="transition-all duration-500 ease-in-out">
+                {step === 1 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <BusinessInfoStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 2 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <KnowledgeUploadStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <PhoneNumberStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 4 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <ActivationStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 5 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <CompletionStep />
+                  </div>
+                )}
+              </div>
 
-          {/* Navigation */}
-          <OnboardingNavigation
-            step={step}
-            loading={mutationsLoading || statusLoading}
-            data={data}
-            onNext={handleNext}
-            onBack={() => setStep(step - 1)}
-          />
+              {/* Navigation */}
+              <OnboardingNavigation
+                step={step}
+                loading={mutationsLoading || statusLoading}
+                data={data}
+                onNext={handleNext}
+                onBack={() => setStep(step - 1)}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
