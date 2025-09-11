@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
     && request.nextUrl.pathname !== "/"
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/coming-soon";
     return NextResponse.redirect(url);
   }
 
