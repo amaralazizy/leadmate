@@ -52,9 +52,11 @@ export const RealtimeChat = ({
         index === self.findIndex((m) => m.id === message.id)
     );
     // Sort by creation date
-    const sortedMessages = uniqueMessages.sort((a, b) =>
-      a.timestamp?.localeCompare(b.timestamp)
-    );
+    const sortedMessages = uniqueMessages.sort((a, b) => {
+      const dateA = new Date(a.timestamp || 0).getTime();
+      const dateB = new Date(b.timestamp || 0).getTime();
+      return dateA - dateB;
+    });
 
     return sortedMessages;
   }, [initialMessages, realtimeMessages]);
