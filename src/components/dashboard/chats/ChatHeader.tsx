@@ -4,9 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/index";
 import {
   ArrowLeft,
-  Phone,
-  Video,
-  MoreVertical,
   User,
   Clock,
   MessageCircle,
@@ -61,7 +58,6 @@ const isRecentlyActive = (timestamp?: string) => {
 };
 
 export default function ChatHeader({
-  conversationId,
   customerPhone,
   status = "active",
   customerName,

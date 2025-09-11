@@ -30,6 +30,7 @@ export function useSettings() {
   const [saving, setSaving] = useState(false);
 
   // Fetch user settings
+
   const fetchSettings = async () => {
     try {
       setLoading(true);

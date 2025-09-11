@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -16,7 +17,9 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props} className={cn("", className)}>
       <SidebarHeader>
-        <Image src="/logo.png" alt="LeadMate" width={120} height={120} />
+        <Link href="/">
+          <Image src="/logo.png" alt="LeadMate" width={120} height={120} />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
