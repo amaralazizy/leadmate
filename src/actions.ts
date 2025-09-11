@@ -34,6 +34,7 @@ export async function getChats(user_id: string) {
       lastMessage:
         chat.messages?.[chat.messages.length - 1]?.content || "No messages yet",
       time: new Date(chat.updated_at).toLocaleTimeString(),
+      timestamp: chat.updated_at, // Raw timestamp for activity checking
       customer_phone: chat.customer_phone,
       status: chat.status,
     })) || []
@@ -70,6 +71,7 @@ export async function getChatById(id: string) {
 
 export async function getMessagesByConversationId(conversationId: string) {
   const supabase = await createClient();
+
   const { data: messages, error } = await supabase
     .from("messages")
     .select("*")

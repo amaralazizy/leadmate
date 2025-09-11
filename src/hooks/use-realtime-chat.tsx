@@ -13,14 +13,9 @@ interface UseRealtimeChatProps {
 export interface ChatMessage {
   id: string;
   content: string;
-  user: {
-    name: string;
-    id: string;
-  };
-  lead: {
-    id: string;
-  };
-  createdAt: string;
+  sender: "customer" | "bot";
+  timestamp: string;
+  conversation_id: string;
 }
 
 export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
@@ -53,12 +48,9 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
         const formattedMessages: ChatMessage[] = dbMessages.map((msg) => ({
           id: msg.id,
           content: msg.content,
-          user: {
-            name: msg.sender === "customer" ? "Customer" : username,
-            id: msg.sender === "customer" ? "customer" : user.id,
-          },
-          lead: { id: user.id },
-          createdAt: msg.timestamp,
+          sender: msg.sender,
+          timestamp: msg.timestamp,
+          conversation_id: msg.conversation_id,
         }));
         setMessages(formattedMessages);
       }
@@ -83,15 +75,9 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
           const formattedMessage: ChatMessage = {
             id: newMessage.id,
             content: newMessage.content,
-            user: {
-              name: newMessage.sender === "customer" ? "Customer" : username,
-              id:
-                newMessage.sender === "customer"
-                  ? "customer"
-                  : newMessage.user_id || "",
-            },
-            lead: { id: newMessage.user_id || "" },
-            createdAt: newMessage.timestamp,
+            sender: newMessage.sender,
+            timestamp: newMessage.timestamp,
+            conversation_id: newMessage.conversation_id,
           };
 
           setMessages((current) => {
