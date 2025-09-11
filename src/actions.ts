@@ -87,7 +87,7 @@ export async function getMessagesByConversationId(conversationId: string) {
 export async function storeMessage(
   message: string,
   conversationId: string,
-  sender: "customer" | "bot" = "customer"
+  sender: "customer" | "bot" = "bot"
 ) {
   const supabase = await createClient();
   const { data: newMessage, error } = await supabase.from("messages").insert({
@@ -96,7 +96,8 @@ export async function storeMessage(
     sender: sender,
   });
   if (error) {
-    return error;
+    console.error("Database error storing message:", error);
+    throw error;
   }
   return newMessage;
 }

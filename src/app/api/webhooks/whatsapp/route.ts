@@ -4,7 +4,7 @@ import twilio from "twilio";
 import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
 import { extractLead } from "@/lib/services/openai/openai";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 
 const apiKey = process.env.OPENROUTER_API_KEY!;
 
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       Object.fromEntries(request.headers.entries())
     );
 
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const body = await request.text();
     const params = new URLSearchParams(body);
 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       console.error("Business user not found:", userError);
       return NextResponse.json(
-        { error: "Business not found" },
+        { error: "Business not found", details: userError },
         { status: 404 }
       );
     }
