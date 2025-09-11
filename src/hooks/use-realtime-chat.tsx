@@ -44,7 +44,6 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
         .order("timestamp", { ascending: true });
 
       if (dbMessages) {
-        console.log("dbMessages", dbMessages);
         const formattedMessages: ChatMessage[] = dbMessages.map((msg) => ({
           id: msg.id,
           content: msg.content,
@@ -60,45 +59,80 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
   }, [roomName, username, supabase]);
 
   useEffect(() => {
-    const newChannel = supabase
-      .channel(`messages:${roomName}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `conversation_id=eq.${roomName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as any;
-          const formattedMessage: ChatMessage = {
-            id: newMessage.id,
-            content: newMessage.content,
-            sender: newMessage.sender,
-            timestamp: newMessage.timestamp,
-            conversation_id: newMessage.conversation_id,
-          };
+    // Only set up subscription if we have a valid room name
+    if (!roomName) return;
 
-          setMessages((current) => {
-            // Avoid duplicates
-            if (current.find((msg) => msg.id === formattedMessage.id)) {
-              return current;
+    const setupRealtimeSubscription = async () => {
+      // Ensure user is authenticated before setting up subscription
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        setIsConnected(false);
+        return null;
+      }
+
+      const newChannel = supabase
+        .channel(`messages_${roomName}`, {
+          config: {
+            presence: {
+              key: user.id,
+            },
+          },
+        })
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages",
+            filter: `conversation_id=eq.${roomName}`,
+          },
+          (payload) => {
+            const newMessage = payload.new as any;
+
+            // Verify this message belongs to a conversation owned by the current user
+            if (newMessage.conversation_id === roomName) {
+              const formattedMessage: ChatMessage = {
+                id: newMessage.id,
+                content: newMessage.content,
+                sender: newMessage.sender,
+                timestamp: newMessage.timestamp,
+                conversation_id: newMessage.conversation_id,
+              };
+
+              setMessages((current) => {
+                // Avoid duplicates
+                if (current.find((msg) => msg.id === formattedMessage.id)) {
+                  return current;
+                }
+                return [...current, formattedMessage];
+              });
             }
-            return [...current, formattedMessage];
-          });
-        }
-      )
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          setIsConnected(true);
-        }
-      });
+          }
+        )
+        .subscribe(async (status, err) => {
+          if (status === "SUBSCRIBED") {
+            setIsConnected(true);
+          } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+            setIsConnected(false);
+          }
+        });
 
-    setChannel(newChannel);
+      setChannel(newChannel);
+      return newChannel;
+    };
+
+    const channelPromise = setupRealtimeSubscription();
 
     return () => {
-      supabase.removeChannel(newChannel);
+      channelPromise.then((newChannel) => {
+        if (newChannel) {
+          supabase.removeChannel(newChannel);
+        }
+      });
     };
   }, [roomName, username, supabase]);
 
