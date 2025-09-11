@@ -63,7 +63,7 @@ export default async function ChatDetailPage({ params }: Params) {
               Conversation not found
             </h2>
             <p className="text-sm text-foreground/60">
-              This conversation may have been deleted or you don't have access
+              This conversation may have been deleted or you don&apos;t have access
               to it.
             </p>
           </div>

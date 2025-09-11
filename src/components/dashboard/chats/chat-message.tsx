@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils/index";
 import type { ChatMessage } from "@/hooks/use-realtime-chat";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Check, CheckCheck, Clock, User, Bot } from "lucide-react";
+import { User, Bot } from "lucide-react";
 
 interface ChatMessageItemProps {
   message: ChatMessage;

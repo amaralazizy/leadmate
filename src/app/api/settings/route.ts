@@ -49,6 +49,7 @@ export async function PUT(request: NextRequest) {
       .select()
       .single();
 
+
     if (error) {
       console.error("Error updating user settings:", error);
       return NextResponse.json(
