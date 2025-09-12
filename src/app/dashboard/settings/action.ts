@@ -4,20 +4,15 @@ import { TSettingsFormPrevState } from "@/app/dashboard/settings/schema";
 import { SettingsInputSchema } from "@/app/dashboard/settings/schema";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import sharp from "sharp";
 
 export async function updateSettings(
   prevState: TSettingsFormPrevState,
   formData: FormData
 ): Promise<TSettingsFormPrevState> {
   const raw = {
-    business_name: String(formData.get("business_name") || ""),
-    business_type: String(formData.get("business_type") || ""),
     business_logo_url: String(formData.get("business_logo_url") || ""),
-    whatsapp_number: String(formData.get("whatsapp_number") || ""),
-    subscription_status: String(formData.get("subscription_status") || "trial"),
-    usage_count: Number(formData.get("usage_count") || 0),
-    usage_limit: Number(formData.get("usage_limit") || 500),
-    stripe_customer_id: String(formData.get("stripe_customer_id") || ""),
+    username: String(formData.get("username") || ""),
   } satisfies TSettingsInput;
 
   const parsed = SettingsInputSchema.safeParse(raw);
@@ -61,4 +56,81 @@ export async function updateSettings(
   revalidatePath("/dashboard/settings");
 
   return { success: true, inputs: parsed.data };
+}
+
+export async function uploadProfilePic(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { success: false, errors: { supabase: ["Not authenticated"] } };
+  }
+
+  const file = formData.get("file") as File;
+  if (!file) {
+    return { success: false, errors: { file: ["No file provided"] } };
+  }
+
+  // Validate file type
+  if (!file.type.startsWith("image/")) {
+    return {
+      success: false,
+      errors: { file: ["Please upload a valid image file"] },
+    };
+  }
+
+  // Validate original file size (max 50MB before processing)
+  if (file.size > 50 * 1024 * 1024) {
+    return {
+      success: false,
+      errors: { file: ["Original file size must be less than 50MB"] },
+    };
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const webpBuffer = await sharp(buffer)
+    .resize(200, 200, { fit: "cover" })
+    .webp({ quality: 80 })
+    .toBuffer();
+
+  // Validate compressed file size (max 5MB after compression)
+  if (webpBuffer.length > 5 * 1024 * 1024) {
+    return {
+      success: false,
+      errors: { file: ["Compressed file size must be less than 5MB"] },
+    };
+  }
+
+  const fileName = `profile-pics/${user.id}-${Date.now()}.webp`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("leadmate")
+    .upload(fileName, webpBuffer, {
+      contentType: "image/webp",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    console.error("uploadError", uploadError);
+    return { success: false, errors: { storage: [uploadError.message] } };
+  }
+
+  // Get the public URL
+  const { data } = supabase.storage.from("leadmate").getPublicUrl(fileName);
+
+  // Update user's business_logo_url in the database
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ business_logo_url: data.publicUrl })
+    .eq("id", user.id);
+
+  if (updateError) {
+    return { success: false, errors: { database: [updateError.message] } };
+  }
+
+  revalidatePath("/dashboard/settings");
+
+  return { success: true, url: data.publicUrl };
 }

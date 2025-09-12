@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "next/form";
-import { useActionState, useRef } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,8 +20,7 @@ import { TgetSettings } from "@/app/dashboard/settings/schema";
 import TwilioInfo from "@/components/dashboard/settings/TwilioInfo";
 import AccountStatus from "@/components/dashboard/settings/AccountStatus";
 import BusinessInfo from "@/components/dashboard/settings/BusinessInfo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserIcon } from "lucide-react";
+import ProfilePictureUpload from "@/components/dashboard/settings/ProfilePictureUpload";
 
 export default function SettingsForm({
   settingsData,
@@ -30,6 +29,8 @@ export default function SettingsForm({
   settingsData: TgetSettings[];
   error: Error | null;
 }) {
+  const [currentProfilePic, setCurrentProfilePic] = useState<string>("");
+
   const [state, formAction, pending] = useActionState<
     TSettingsFormPrevState,
     FormData
@@ -41,8 +42,6 @@ export default function SettingsForm({
       business_logo_url: "",
     },
   });
-
-  const uploadProfilePicRef = useRef<HTMLInputElement>(null);
 
   //Error handling
   if (error) {
@@ -91,6 +90,10 @@ export default function SettingsForm({
     return result;
   }
 
+  const handleProfilePicUploadSuccess = (url: string) => {
+    setCurrentProfilePic(url);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -120,21 +123,19 @@ export default function SettingsForm({
                   placeholder="Your user name"
                   disabled={pending}
                 />
-                {state?.errors?.business_name && (
+                {state?.errors?.username && (
                   <p className="text-sm text-red-500">
-                    {state.errors.business_name.join(", ")}
+                    {state.errors.username.join(", ")}
                   </p>
                 )}
               </div>
-              <div className="grid w-full max-w-64 items-center gap-1.5">
-                <Label htmlFor="picture">Profile Picture</Label>
-                <Avatar onClick={() => uploadProfilePicRef.current?.click()} className="cursor-pointer">
-                  <AvatarImage src={settings.business_logo_url} />
-                  <AvatarFallback>
-                    <UserIcon className="size-3/4" />
-                  </AvatarFallback>
-                </Avatar>
-                <Input hidden id="picture" type="file" ref={uploadProfilePicRef} />
+              <div className="flex justify-center">
+                <ProfilePictureUpload
+                  currentImageUrl={
+                    currentProfilePic || settings.business_logo_url
+                  }
+                  onUploadSuccess={handleProfilePicUploadSuccess}
+                />
               </div>
             </div>
           </CardContent>
