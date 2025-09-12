@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
+// import { revalidatePath } from "next/cache";
 
 export async function getChats(user_id: string) {
   const supabase = await createClient();
@@ -100,4 +101,172 @@ export async function storeMessage(
     throw error;
   }
   return newMessage;
+}
+
+export async function getActiveChatsCount() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+  // get total number of conversations for the current user
+  const { count, error } = await supabase
+    .from("conversations")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+  console.log(count);
+  if (error) {
+    throw error;
+  }
+  return count;
+}
+
+export async function getNewMessagesCount() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Get message count by joining with conversations
+  const { count, error } = await supabase
+    .from("messages")
+    .select(
+      `
+      id,
+      conversations!inner (
+        user_id
+      )
+    `,
+      { count: "exact", head: true }
+    )
+    .eq("conversations.user_id", user.id)
+    .eq("is_read", false);
+
+  if (error) {
+    throw error;
+  }
+
+  return count;
+}
+
+export async function getLeadsCount() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const { count, error } = await supabase
+    .from("leads")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw error;
+  }
+
+  return count || 0;
+}
+
+export async function getConversionRate() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const [chatsResult, leadsResult] = await Promise.all([
+    supabase
+      .from("conversations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+  ]);
+
+  const chats = chatsResult.count || 0;
+  const leads = leadsResult.count || 0;
+  const rate = chats > 0 ? Math.round((leads / chats) * 100) : 0;
+
+  return `${rate}%`;
+}
+
+export async function getTodayMessagesCount() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const { count, error } = await supabase
+    .from("messages")
+    .select(
+      `
+      id,
+      conversations!inner (
+        user_id
+      )
+    `,
+      { count: "exact", head: true }
+    )
+    .eq("conversations.user_id", user.id)
+    .gte("timestamp", `${today}T00:00:00.000Z`);
+
+  if (error) {
+    throw error;
+  }
+
+  return count || 0;
+}
+
+export async function getAvgMessagesPerChat() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  const [messagesResult, chatsResult] = await Promise.all([
+    supabase
+      .from("messages")
+      .select(
+        `
+        id,
+        conversations!inner (
+          user_id
+        )
+      `,
+        { count: "exact", head: true }
+      )
+      .eq("conversations.user_id", user.id),
+    supabase
+      .from("conversations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+  ]);
+
+  const totalMessages = messagesResult.count || 0;
+  const totalChats = chatsResult.count || 0;
+
+  if (totalChats === 0) return "0";
+
+  const avg = Math.round((totalMessages / totalChats) * 10) / 10; // Round to 1 decimal
+  return avg.toString();
 }
