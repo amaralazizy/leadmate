@@ -21,11 +21,11 @@ export function AppSidebarItems() {
           <SidebarMenuItem
             key={index}
             className={cn({
-              "bg-main text-black border-border border-2":
+              "bg-main text-black":
                 pathname === item.href,
             })}
           >
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="h-full">
               <Link href={item.href}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>

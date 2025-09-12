@@ -16,7 +16,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { toast } from "sonner";
 
 export default function SettingsForm() {
-  const { settings, loading, error, saving, updateSettings } = useSettings();
+  const { settings, error, saving, updateSettings } = useSettings();
   const [formData, setFormData] = useState({
     business_name: "",
     business_type: "",
@@ -61,22 +61,6 @@ export default function SettingsForm() {
       toast.error(result.error || "Failed to update settings");
     }
   };
-
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 bg-main/20 rounded animate-pulse"></div>
-        <div className="space-y-3">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="h-12 bg-main/20 rounded animate-pulse"
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
