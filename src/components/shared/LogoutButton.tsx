@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 export default function LogoutButton() {
   const router = useRouter();
 
-  const handleLogout = () => {
-    router.push("/");
+  const handleLogout = async () => {
     supabase.auth.signOut();
+    router.push("/");
   };
 
   return (

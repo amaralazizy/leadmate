@@ -1,6 +1,15 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
 // import { revalidatePath } from "next/cache";
+import { SettingsSchema, type SettingsInput } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
+
+export type TprevSate<T> = {
+  success: boolean;
+  errors?: Partial<Record<keyof T | "supabase", string[]>>;
+  inputs: T;
+};
+
 
 export async function getChats(user_id: string) {
   const supabase = await createClient();

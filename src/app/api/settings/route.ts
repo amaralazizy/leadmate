@@ -22,7 +22,6 @@ export async function PUT(request: NextRequest) {
       business_name,
       business_type,
       whatsapp_number,
-      business_industry,
       business_logo_url,
     } = body;
 
@@ -41,9 +40,7 @@ export async function PUT(request: NextRequest) {
         business_name,
         business_type,
         whatsapp_number,
-        business_industry,
         business_logo_url,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", user.id)
       .select()
