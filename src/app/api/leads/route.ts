@@ -1,26 +1,35 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils/utils";
 import { NextResponse, NextRequest } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";
-// import { conversationSchema } from "@/lib/schemas/conversation";
 
-// type User = z.infer<typeof userSchema>;
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data: users, error } = await supabase.from("leads").select("*");
+    const supabase = await createClient();
 
-    console.log("Users:", users, "Error:", error);
+    // Get user from session
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (users && users.length === 0) {
-      return NextResponse.json({ error: "No users found" }, { status: 404 });
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
     }
+
+    const { data: leads, error } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) {
       throw error;
     }
 
-    return NextResponse.json({ users });
+    return NextResponse.json({ leads: leads || [] });
   } catch (error) {
     return NextResponse.json(
       { error: getErrorMessage(error) },
@@ -32,6 +41,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const supabase = await createClient();
 
     // Get current user
     const {
