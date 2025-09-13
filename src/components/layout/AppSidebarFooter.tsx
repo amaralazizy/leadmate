@@ -19,6 +19,7 @@ export async function AppSidebarFooter() {
   if (!user) {
     redirect("/login");
   }
+  const { data: userData } = await supabase.from("users").select("username, business_logo_url").eq("id", user.id).single();
 
   return (
     <SidebarFooter>
@@ -27,8 +28,8 @@ export async function AppSidebarFooter() {
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src="https://github.com/shadcn.png?size=40"
-                alt="CN"
+                src={userData?.business_logo_url}
+                alt="user profile picture"
               />
               <AvatarFallback>
                 <UserIcon className="size-3/4" />
@@ -36,7 +37,7 @@ export async function AppSidebarFooter() {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <Suspense fallback={<Skeleton className="h-4 w-16" />}>
-                <span className="truncate font-heading">{user?.email?.split("@")[0]}</span>
+                <span className="truncate font-heading">{userData?.username}</span>
               </Suspense>
               <Suspense fallback={<Skeleton className="h-4 w-16" />}>
                 <span className="truncate text-xs">{user?.email}</span>
