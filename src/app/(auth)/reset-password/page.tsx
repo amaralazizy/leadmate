@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -172,13 +173,13 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
               >
                 {loading ? "Updating..." : "Update Password"}
-              </button>
+              </Button>
             </div>
           </form>
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { generateEmbedding } from "@/lib/openai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,42 +21,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Split content into chunks (simple implementation)
-    const chunks = content
-      .split("\n\n")
-      .filter((chunk) => chunk.trim().length > 0)
-      .map((chunk) => chunk.trim());
-
     // Clear existing knowledge base for this user
     await supabase.from("knowledge_base").delete().eq("user_id", user.id);
 
-    // Process each chunk
-    for (const chunk of chunks) {
-      if (chunk.length < 10) continue; // Skip very short chunks
-
-      try {
-        // Generate embedding
-        const embedding = await generateEmbedding(chunk);
-
-        // Store in database
-        await supabase.from("knowledge_base").insert({
-          user_id: user.id,
-          content: chunk,
-          embedding: embedding,
-          metadata: {
-            length: chunk.length,
-            words: chunk.split(" ").length,
-          },
-        });
-      } catch (error) {
-        console.error("Error processing chunk:", error);
-        // Continue with other chunks even if one fails
-      }
-    }
+    // Store the content as-is in database
+    await supabase.from("knowledge_base").insert({
+      user_id: user.id,
+      content: content,
+      metadata: {
+        length: content.length,
+        words: content.split(" ").length,
+      },
+    });
 
     return NextResponse.json({
       message: "Knowledge base updated successfully",
-      chunks_processed: chunks.length,
     });
   } catch (error) {
     console.error("Knowledge API error:", error);

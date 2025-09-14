@@ -6,9 +6,11 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  // With Fluid compute, don't put this client in a global environment
+  // variable. Always create a new one on each request.
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
@@ -30,73 +32,78 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  // IMPORTANT: If you remove getClaims() and you use server-side rendering
+  // with the Supabase client, your users may be randomly logged out.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims;
 
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-
-  const allowedRoutes = [
-    "/contact",
-    "/about",
-    "/privacy",
-    "/terms",
+  // Define public routes that don't require authentication
+  const publicRoutes = [
+    "/login",
     "/signup",
     "/reset-password",
-    "/login",
-    "/coming-soon",
+    "/whatsapp",
+    "/",
   ];
 
-  if (
-    !allowedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-    && request.nextUrl.pathname !== "/"
-  ) {
+  // Routes that don't require onboarding completion
+  const onboardingExemptRoutes = [
+    ...publicRoutes,
+    "/onboarding", // Allow access to onboarding itself
+    "/auth", // Allow auth routes like verify-email
+  ];
+
+  const isPublicRoute = publicRoutes.some(
+    (route) =>
+      request.nextUrl.pathname === route ||
+      request.nextUrl.pathname.startsWith(route + "/")
+  );
+
+  const isOnboardingExempt = onboardingExemptRoutes.some(
+    (route) =>
+      request.nextUrl.pathname === route ||
+      request.nextUrl.pathname.startsWith(route + "/")
+  );
+
+  // Also allow API routes that should be public (webhooks, external integrations)
+  const isPublicApiRoute =
+    request.nextUrl.pathname.startsWith("/api/waitlist") ||
+    request.nextUrl.pathname.startsWith("/api/whatsapp") ||
+    request.nextUrl.pathname.startsWith("/api/webhooks/whatsapp") ||
+    request.nextUrl.pathname.startsWith("/api/onboarding") ||
+    request.nextUrl.pathname.startsWith("/api/");
+
+  // Redirect to login only if user is not authenticated AND not on a public route
+  if (!user && !isPublicRoute && !isPublicApiRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = "/coming-soon";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // const protectedRoutes = [
-  //   "/dashboard",
-  //   "/settings",
-  //   "/billing",
-  //   "/unauthorized",
-  //   "/auth/verify-email",
-  // ];
+  // Check onboarding status for authenticated users on protected routes
+  if (user && !isOnboardingExempt && !isPublicApiRoute) {
+    try {
+      // Fetch user's onboarding status from the database
+      const { data: userData, error } = await supabase
+        .from("users")
+        .select("onboarding_completed")
+        .eq("id", user.sub)
+        .single();
 
-  // const prohibitedRoutes = ["/dashboard"];
-
-  // if (
-  //   prohibitedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  // ) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/";
-  //   return NextResponse.redirect(url);
-  // }
-
-  // if (
-  //   !user &&
-  //   protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  // ) {
-  //   // no user, potentially respond by redirecting the user to the login page
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/login";
-  //   return NextResponse.redirect(url);
-  // }
-
-  // if (
-  //   user &&
-  //   (request.nextUrl.pathname.startsWith("/login") ||
-  //     request.nextUrl.pathname.startsWith("/signup") ||
-  //     request.nextUrl.pathname.startsWith("/auth"))
-  // ) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/";
-  //   return NextResponse.redirect(url);
-  // }
+      if (!error && userData && !userData.onboarding_completed) {
+        // User hasn't completed onboarding, redirect to onboarding
+        const url = request.nextUrl.clone();
+        url.pathname = "/onboarding";
+        return NextResponse.redirect(url);
+      }
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      // On error, allow the request to continue to avoid breaking the app
+    }
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
