@@ -118,7 +118,12 @@ export async function uploadProfilePic(formData: FormData) {
   }
 
   // Get the public URL
-  const { data } = supabase.storage.from("leadmate").getPublicUrl(fileName);
+  const { data} = supabase.storage.from("leadmate").getPublicUrl(fileName);
+
+  if (!data) {
+      return { success: false, errors: { storage: ["Cannot get public URL"] } };
+    }
+
 
   // Update user's business_logo_url in the database
   const { error: updateError } = await supabase
