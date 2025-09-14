@@ -1,10 +1,23 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
-// import { revalidatePath } from "next/cache";
+import { getErrorMessage } from "./lib/utils";
+import { revalidatePath } from "next/cache";
 export type TprevSate<T> = {
   success: boolean;
   errors?: Partial<Record<keyof T | "supabase", string[]>>;
   inputs: T;
+};
+
+export const handleLogout = async () => {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    revalidatePath("/", "layout");
+    return { message: "User logged out successfully" };
+  } catch (error) {
+    return { message: getErrorMessage(error) };
+  }
 };
 
 export async function getChats(user_id: string) {

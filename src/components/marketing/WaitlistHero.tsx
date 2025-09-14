@@ -30,6 +30,6 @@ export default function WaitlistHero() {
           Learn More
         </button>
       </div> */}
-    </>
+    </div>
   );
 }
