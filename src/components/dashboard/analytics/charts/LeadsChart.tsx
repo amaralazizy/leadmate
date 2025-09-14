@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card } from "@/components/ui/card";
 import {
   ChartContainer,
@@ -25,15 +17,15 @@ interface LeadsChartProps {
 const chartConfig = {
   order: {
     label: "Orders",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
   booking: {
     label: "Bookings",
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-2)",
   },
   inquiry: {
     label: "Inquiries",
-    color: "hsl(var(--chart-3))",
+    color: "var(--chart-3)",
   },
 };
 
@@ -69,6 +61,12 @@ export default function LeadsChart({ data, period }: LeadsChartProps) {
     }
   };
 
+  // Check if data is empty or all values are zero
+  const hasData =
+    data &&
+    data.length > 0 &&
+    data.some((item) => item.order > 0 || item.booking > 0 || item.inquiry > 0);
+
   return (
     <Card className="p-6">
       <div className="mb-4">
@@ -78,36 +76,71 @@ export default function LeadsChart({ data, period }: LeadsChartProps) {
         </p>
       </div>
 
-      <ChartContainer config={chartConfig} className="h-[300px]">
-        <BarChart
-          data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <XAxis
-            dataKey="date"
-            tickFormatter={formatXAxisLabel}
-            fontSize={12}
-          />
-          <YAxis fontSize={12} />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <Legend />
-          <Bar
-            dataKey="order"
-            fill="var(--color-order)"
-            radius={[2, 2, 0, 0]}
-          />
-          <Bar
-            dataKey="booking"
-            fill="var(--color-booking)"
-            radius={[2, 2, 0, 0]}
-          />
-          <Bar
-            dataKey="inquiry"
-            fill="var(--color-inquiry)"
-            radius={[2, 2, 0, 0]}
-          />
-        </BarChart>
-      </ChartContainer>
+      {!hasData ? (
+        <div className="h-[300px] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-4xl mb-4">🎯</div>
+            <h4 className="text-lg font-medium text-muted-foreground mb-2">
+              No Leads Yet
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              {period === "day"
+                ? "No leads generated today"
+                : period === "month"
+                ? "No leads this month"
+                : "No leads this year"}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <ChartContainer config={chartConfig} className="h-[300px]">
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            barCategoryGap={data.length <= 12 ? "20%" : "10%"}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickFormatter={formatXAxisLabel}
+              fontSize={12}
+              tickMargin={10}
+              strokeOpacity={0}
+              type="category"
+            />
+            <YAxis
+              fontSize={12}
+              tickMargin={10}
+              strokeOpacity={0}
+              domain={[0, "dataMax + 1"]}
+              minTickGap={5}
+            />
+            <ChartTooltip
+              content={<ChartTooltipContent />}
+              cursor={{ fill: "none" }}
+            />
+            <Legend />
+            <Bar
+              dataKey="order"
+              fill="var(--color-order)"
+              radius={[2, 2, 0, 0]}
+              minPointSize={2}
+            />
+            <Bar
+              dataKey="booking"
+              fill="var(--color-booking)"
+              radius={[2, 2, 0, 0]}
+              minPointSize={2}
+            />
+            <Bar
+              dataKey="inquiry"
+              fill="var(--color-inquiry)"
+              radius={[2, 2, 0, 0]}
+              minPointSize={2}
+            />
+          </BarChart>
+        </ChartContainer>
+      )}
     </Card>
   );
 }
