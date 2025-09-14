@@ -12,10 +12,8 @@ import { Button } from "@/components/ui/button";
 import logo from "../../public/logo.png";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { handleLogout } from "@/actions";
 import { navLinks } from "@/lib/data/navLinks";
-
-
+import { handleLogout } from "@/actions";
 
 export default function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
