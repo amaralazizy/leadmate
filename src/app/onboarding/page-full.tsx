@@ -21,7 +21,7 @@ import {
   useActivationStatus,
   useUpdateWhatsAppStatus,
 } from "@/hooks/useOnboarding";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function OnboardingPageFull() {
   const [step, setStep] = useState(1);
@@ -108,7 +108,6 @@ export default function OnboardingPageFull() {
         businessName: data.businessName,
         businessType: data.businessType,
         logoUrl: data.logoUrl,
-        userId: user.id,
       });
       setStep(2);
     } catch (error) {

@@ -6,6 +6,8 @@ import {
 } from "@/components/ui/sidebar";
 import AppBreadcrumb from "@/components/layout/AppBreadcrumb";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({
   children,
 }: {

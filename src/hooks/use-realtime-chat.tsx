@@ -91,7 +91,7 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
             filter: `conversation_id=eq.${roomName}`,
           },
           (payload) => {
-            const newMessage = payload.new as any;
+            const newMessage = payload.new as ChatMessage;
 
             // Verify this message belongs to a conversation owned by the current user
             if (newMessage.conversation_id === roomName) {

@@ -149,7 +149,7 @@ export default function ActivationStep({ data }: OnboardingStepProps) {
         <ul className="text-xs text-foreground/70 space-y-2">
           <li>• The activation process is fully automated</li>
           <li>• You can safely close this page and return later</li>
-          <li>• You'll receive an email confirmation when ready</li>
+          <li>• You&apos;ll receive an email confirmation when ready</li>
           <li>
             • Test your bot by sending a WhatsApp message to your new number
           </li>

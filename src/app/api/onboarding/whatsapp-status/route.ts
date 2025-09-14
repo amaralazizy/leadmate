@@ -19,7 +19,11 @@ export async function POST(request: NextRequest) {
     const { status, phoneNumber } = body;
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: {
+      whatsapp_status: string;
+      updated_at: string;
+      whatsapp_number?: string;
+    } = {
       whatsapp_status: status,
       updated_at: new Date().toISOString(),
     };

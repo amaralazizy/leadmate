@@ -3,7 +3,7 @@ import { getErrorMessage } from "@/lib/utils/utils";
 import { NextResponse, NextRequest } from "next/server";
 import { leadSchema } from "@/lib/schemas/lead";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
 

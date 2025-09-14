@@ -6,7 +6,7 @@ import { useChatScroll } from "@/hooks/use-chat-scroll";
 import { type ChatMessage, useRealtimeChat } from "@/hooks/use-realtime-chat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Paperclip, Smile, MoreVertical, Bot } from "lucide-react";
+import { Send, Bot } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type RealtimeChatProps = {

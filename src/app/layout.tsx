@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://leadmate.vercel.app"
+  ),
   title: "LeadMate — Smarter WhatsApp Conversations",
   description:
     "LeadMate helps businesses provide AI-powered responses on WhatsApp, improving customer engagement and support.",
