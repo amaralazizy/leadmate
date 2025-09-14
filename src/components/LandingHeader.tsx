@@ -1,52 +1,13 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter, usePathname } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { getCurrentUser } from "@/lib/auth/server";
 import logo from "../../public/logo.png";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
-import { Button } from "@/components/ui/button";
 import MobileSidebar from "@/components/MobileSidebar";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import ClientLogoutButton from "@/components/shared/ClientLogoutButton";
 
-export default function LandingHeader() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const handleClientLogout = async () => {
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      return { message: "User logged out successfully" };
-    } catch (error) {
-      throw new Error(
-        error instanceof Error ? error.message : "Failed to logout"
-      );
-    }
-  };
-
-  const { mutate: logout } = useMutation({
-    mutationKey: ["logout"],
-    onMutate: () => {
-      toast.loading("Logging out...");
-    },
-    mutationFn: handleClientLogout,
-    onSuccess: () => {
-      toast.dismiss(); // Clear loading toast
-      toast.success("Logged out successfully");
-      if (pathname !== "/") router.push("/");
-      else router.refresh();
-    },
-    onError: (error) => {
-      toast.dismiss(); // Clear loading toast
-      toast.error(error.message || "Failed to logout");
-    },
-  });
+export default async function LandingHeader() {
+  const { user, isAuthenticated } = await getCurrentUser();
 
   return (
     <header className="z-10 bg-background border-b border-gray-800 sticky top-0">
@@ -75,16 +36,12 @@ export default function LandingHeader() {
             >
               Contact
             </Link>
-            {loading ? (
-              <span className="text-foreground">Loading...</span>
-            ) : user ? (
+            {isAuthenticated && user ? (
               <>
                 <span className="text-foreground px-3 py-2 text-sm">
-                  Welcome, {user?.email}
+                  Welcome, {user.email}
                 </span>
-                <Button onClick={() => logout()} size="sm">
-                  Logout
-                </Button>
+                <ClientLogoutButton size="sm">Logout</ClientLogoutButton>
               </>
             ) : (
               <>
