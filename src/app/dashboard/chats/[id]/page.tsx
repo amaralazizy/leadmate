@@ -4,6 +4,7 @@ import ChatHeader from "@/components/dashboard/chats/ChatHeader";
 import { createClient } from "@/lib/supabase/server";
 import { getUserName } from "@/lib/utils/utils";
 import { redirect } from "next/navigation";
+import ChatPageClient from "./ChatPageClient";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -63,8 +64,8 @@ export default async function ChatDetailPage({ params }: Params) {
               Conversation not found
             </h2>
             <p className="text-sm text-foreground/60">
-              This conversation may have been deleted or you don&apos;t have access
-              to it.
+              This conversation may have been deleted or you don&apos;t have
+              access to it.
             </p>
           </div>
         </div>
@@ -73,30 +74,23 @@ export default async function ChatDetailPage({ params }: Params) {
 
     return (
       <div className="h-[calc(100vh-4rem)] flex flex-col p-4">
-        <div className="flex flex-col flex-1 rounded-2xl border overflow-hidden bg-background shadow-lg">
-          <ChatHeader
-            conversationId={id}
-            customerPhone={conversation.customer_phone}
-            status={conversation.status}
-            lastSeen={
-              messages && messages.length > 0
-                ? formatLastSeen(messages[messages.length - 1]?.timestamp)
-                : undefined
-            }
-            lastMessageTimestamp={
-              messages && messages.length > 0
-                ? messages[messages.length - 1]?.timestamp
-                : undefined
-            }
-          />
-          <div className="flex-1 min-h-0">
-            <RealtimeChat
-              roomName={id}
-              username={getUserName(user.email!)}
-              messages={messages || []}
-            />
-          </div>
-        </div>
+        <ChatPageClient
+          conversationId={id}
+          customerPhone={conversation.customer_phone}
+          status={conversation.status}
+          lastSeen={
+            messages && messages.length > 0
+              ? formatLastSeen(messages[messages.length - 1]?.timestamp)
+              : undefined
+          }
+          lastMessageTimestamp={
+            messages && messages.length > 0
+              ? messages[messages.length - 1]?.timestamp
+              : undefined
+          }
+          username={getUserName(user.email!)}
+          initialMessages={messages || []}
+        />
       </div>
     );
   } catch (error) {
