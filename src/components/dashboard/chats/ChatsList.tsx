@@ -23,6 +23,7 @@ type Chat = {
   timestamp: string;
   customer_phone: string;
   status: string;
+  unreadCount: number;
 };
 
 const getStatusColor = (status: string) => {
@@ -183,10 +184,12 @@ export default async function ChatsList() {
                   </p>
                 </div>
 
-                {/* Unread indicator - Only show if recently active */}
+                {/* Unread indicator */}
                 <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                  {isRecentlyActive(chat.timestamp) && (
-                    <div className="w-2 h-2 bg-main rounded-full shadow-sm" />
+                  {chat.unreadCount > 0 && (
+                    <Badge className="bg-main text-main-foreground hover:bg-main/90 text-xs font-semibold min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                      {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
+                    </Badge>
                   )}
                 </div>
               </div>

@@ -49,6 +49,7 @@ export interface Message {
   content: string;
   sender: "customer" | "bot";
   timestamp: string;
+  is_read: boolean;
 }
 
 export interface Lead {
