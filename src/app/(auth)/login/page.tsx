@@ -103,7 +103,7 @@ export default function LoginPage() {
                       Password
                     </Label>
                     <Link
-                      href="/auth/reset-password"
+                      href="/reset-password"
                       className="ml-auto inline-block text-sm underline-offset-4 hover:underline text-main"
                     >
                       Forgot your password?
@@ -136,7 +136,7 @@ export default function LoginPage() {
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link
-              href="/auth/signup"
+              href="/signup"
               className="hover:underline underline-offset-4 text-main"
             >
               Sign up

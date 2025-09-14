@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -64,6 +65,14 @@ export default function SignupPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-background py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <Card className="w-full max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle className="">Create your account</CardTitle>
+              <CardDescription className="">
+                Enter your email below to create your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
           <form className="space-y-6" onSubmit={handleSignup}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
@@ -135,8 +144,10 @@ export default function SignupPage() {
               >
                 {loading ? "Creating account..." : "Create account"}
               </Button>
-            </div>
-          </form>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
 
           <div className="mt-6">
             <div className="text-center">
