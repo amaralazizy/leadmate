@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { OnboardingStepProps } from "./types";
+import { AvailableNumber, OnboardingStepProps } from "./types";
 import { COUNTRIES } from "./constants";
 import { useSearchNumbers } from "@/hooks/useOnboarding";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,9 @@ export default function PhoneNumberStep({
   data,
   setData,
 }: OnboardingStepProps) {
-  const [availableNumbers, setAvailableNumbers] = useState<any[]>([]);
+  const [availableNumbers, setAvailableNumbers] = useState<AvailableNumber[]>(
+    []
+  );
   const searchNumbersMutation = useSearchNumbers();
 
   const handleSearchNumbers = async () => {
@@ -133,8 +135,8 @@ export default function PhoneNumberStep({
           <div className="text-center py-8 bg-secondary-background rounded-base border-2 border-border">
             <Phone className="h-12 w-12 text-foreground/40 mx-auto mb-3" />
             <p className="text-sm text-foreground/70">
-              Click "Search Available Numbers" to find WhatsApp numbers in your
-              selected country
+              Click &quot;Search Available Numbers&quot; to find WhatsApp
+              numbers in your selected country
             </p>
           </div>
         )}

@@ -266,7 +266,12 @@ export async function updateLeadWithExtractedInfo(
     }
 
     // Prepare update data
-    const updateData: any = {};
+    const updateData: {
+      customer_name?: string;
+      type?: string;
+      details?: string;
+      status?: string;
+    } = {};
 
     if (userInfo.name && userInfo.name !== "Unknown") {
       updateData.customer_name = userInfo.name;

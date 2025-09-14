@@ -1,11 +1,4 @@
-import {
-  Check,
-  MessageSquare,
-  BarChart3,
-  Settings,
-  ArrowRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Check, MessageSquare, BarChart3, Settings } from "lucide-react";
 
 export default function CompletionStep() {
   return (

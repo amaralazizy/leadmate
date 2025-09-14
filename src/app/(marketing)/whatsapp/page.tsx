@@ -14,7 +14,7 @@ import {
 export default function Home() {
   const [to, setTo] = useState("");
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   async function sendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -49,7 +49,7 @@ export default function Home() {
               New Message
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Enter the recipient's number and your message below
+              Enter the recipient&apos;s number and your message below
             </CardDescription>
           </CardHeader>
 

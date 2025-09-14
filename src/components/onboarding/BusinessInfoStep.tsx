@@ -2,7 +2,7 @@ import { OnboardingStepProps } from "./types";
 import { INDUSTRIES } from "./constants";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Image, Briefcase } from "lucide-react";
+import { Building2, Briefcase, Image } from "lucide-react";
 
 export default function BusinessInfoStep({
   data,
@@ -102,7 +102,7 @@ export default function BusinessInfoStep({
             <div className="mt-3 p-3 bg-secondary-background rounded-base border-2 border-border">
               <p className="text-xs text-foreground/70 mb-2">Preview:</p>
               <img
-                src={data.logoUrl}
+                src={data.logoUrl || ""}
                 alt="Logo preview"
                 className="h-12 w-auto rounded border"
                 onError={(e) => {

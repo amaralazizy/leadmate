@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { Bot, Sparkles } from "lucide-react";
 import {
   BusinessInfoStep,
@@ -14,7 +13,6 @@ import {
 import { useOnboardingMutations } from "@/hooks/useOnboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 
 // Simplified onboarding progress component
 function SimplifiedOnboardingProgress({
