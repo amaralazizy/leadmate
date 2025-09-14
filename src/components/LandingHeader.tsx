@@ -14,16 +14,17 @@ export default async function LandingHeader() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">
+          {/* make the logo responsive */}
             <Image
               src={logo}
               alt="LeadMate"
-              height={150}
               width={150}
-              className="w-full"
+              height={150}
+              className="w-[calc(5rem+8vw)] h-full object-contain"
             />
           </Link>
 
-          <div className="hidden md:flex space-x-6 items-center">
+          <div className="hidden lg:flex space-x-6 items-center">
             <Link
               href="/about"
               className="text-foreground hover:text-white transition-colors"

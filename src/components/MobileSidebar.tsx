@@ -37,7 +37,7 @@ export default function MobileSidebar() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden p-2 rounded-md text-foreground hover:text-white hover:bg-dark-card transition-colors"
+        className="lg:hidden p-2 rounded-md text-foreground hover:text-white hover:bg-dark-card transition-colors"
         aria-label="Open menu"
       >
         <Menu className="h-6 w-6" />
@@ -45,14 +45,14 @@ export default function MobileSidebar() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
