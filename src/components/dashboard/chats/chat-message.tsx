@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils/index";
 import type { ChatMessage } from "@/hooks/use-realtime-chat";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, Bot } from "lucide-react";
+import { User, Bot, Check, CheckCheck } from "lucide-react";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -130,7 +130,23 @@ export const ChatMessageItem = ({
               "flex items-center justify-end gap-1 mt-2",
               isOwnMessage ? "text-main-foreground/60" : "text-foreground/50"
             )}
-          ></div>
+          >
+            {/* Only show time for non-header messages */}
+            {!showHeader && (
+              <span className="text-xs">{formatTime(message.timestamp)}</span>
+            )}
+
+            {/* Read status indicators for customer messages */}
+            {message.sender === "customer" && (
+              <div className="flex items-center">
+                {message.is_read ? (
+                  <CheckCheck className="w-3 h-3 text-green-500" />
+                ) : (
+                  <Check className="w-3 h-3 text-foreground/40" />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

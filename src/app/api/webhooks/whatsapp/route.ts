@@ -193,6 +193,7 @@ export async function POST(request: NextRequest) {
         conversation_id: conversation?.id,
         content: messageBody,
         sender: "customer",
+        is_read: false, // Customer messages start as unread
       });
 
     const { error: messageError } = await supabase
