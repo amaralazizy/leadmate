@@ -118,7 +118,7 @@ export async function uploadProfilePic(formData: FormData) {
   }
 
   // Get the public URL
-  const { data} = supabase.storage.from("leadmate").getPublicUrl(fileName);
+  const { data } = supabase.storage.from("leadmate").getPublicUrl(fileName);
 
   if (!data) {
       return { success: false, errors: { storage: ["Cannot get public URL"] } };
