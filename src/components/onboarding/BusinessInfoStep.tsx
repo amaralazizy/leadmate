@@ -53,6 +53,7 @@ export default function BusinessInfoStep({
           >
             <Briefcase className="h-4 w-4" />
             Industry
+            <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
             <select
@@ -61,7 +62,7 @@ export default function BusinessInfoStep({
               onChange={(e) =>
                 setData({ ...data, businessType: e.target.value })
               }
-              className="w-full h-9 px-3 py-1 text-base bg-transparent border border-input rounded-md shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              className="w-full h-9 px-3 py-1 text-white bg-black border border-input rounded-md shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             >
               {INDUSTRIES.map((industry) => (
                 <option key={industry.value} value={industry.value}>

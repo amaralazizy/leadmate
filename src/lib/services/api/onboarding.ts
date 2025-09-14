@@ -24,9 +24,7 @@ export const onboardingApi = {
     businessName: string;
     businessType: string;
     logoUrl: string;
-    userId: string;
   }) => {
-
     // This would typically be handled by a dedicated API endpoint
     // For now, we'll use Supabase directly but wrapped in an API call
     const response = await fetch("/api/onboarding/business", {
