@@ -2,7 +2,6 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { FaGoogle } from "react-icons/fa";
 import Form from "next/form";
 import { toast } from "sonner";
 
@@ -131,10 +130,6 @@ export default function LoginPage() {
               )}
               <Button type="submit" disabled={pending} className="w-full">
                 {pending ? "Logging in..." : "Login"}
-              </Button>
-              <Button variant="neutral" className="w-full" disabled={pending}>
-                <FaGoogle className="w-4 h-4" />
-                {pending ? "Logging in..." : "Login with Google"}
               </Button>
             </CardFooter>
           </Form>
