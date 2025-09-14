@@ -91,14 +91,6 @@ ${knowledgeBase}
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("🔥 Webhook POST request received");
-    console.log("🔗 Request URL:", request.url);
-    console.log("🎯 Request method:", request.method);
-    console.log(
-      "📋 Request headers:",
-      Object.fromEntries(request.headers.entries())
-    );
-
     const supabase = createServiceClient();
     const body = await request.text();
     const params = new URLSearchParams(body);
@@ -111,9 +103,19 @@ export async function POST(request: NextRequest) {
     const customerPhone = from?.replace("whatsapp:", "");
     const businessPhone = to?.replace("whatsapp:", "");
 
-    console.log("customerPhone", customerPhone);
-    console.log("businessPhone", businessPhone);
-    console.log("messageBody", messageBody);
+    // Validate required fields
+    if (!customerPhone || !businessPhone) {
+      console.error("Missing phone numbers:", {
+        from,
+        to,
+        customerPhone,
+        businessPhone,
+      });
+      return NextResponse.json(
+        { error: "Missing required phone numbers" },
+        { status: 400 }
+      );
+    }
 
     // Find the business user by WhatsApp number
     const { data: user, error: userError } = await supabase
@@ -143,13 +145,18 @@ export async function POST(request: NextRequest) {
 
     // Find or create conversation and lead atomically for new customers
     let conversation: Conversation | null = null;
-    const { data: existingConversation } = await supabase
+
+    // Look for existing conversation (active or completed, but not archived)
+    const { data: existingConversations } = await supabase
       .from("conversations")
       .select("*")
       .eq("user_id", user.id)
       .eq("customer_phone", customerPhone)
-      .eq("status", "active")
-      .single();
+      .in("status", ["active", "completed"])
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    const existingConversation = existingConversations?.[0] || null;
 
     if (existingConversation) {
       conversation = existingConversation;
@@ -172,6 +179,13 @@ export async function POST(request: NextRequest) {
         throw rpcError;
       }
 
+      // Validate RPC result
+      if (!result?.success || !result?.conversation_id) {
+        throw new Error(
+          result?.error || "RPC function failed to create conversation and lead"
+        );
+      }
+
       // Get the created conversation
       const { data: newConversation, error: conversationError } = await supabase
         .from("conversations")
@@ -186,11 +200,16 @@ export async function POST(request: NextRequest) {
       conversation = newConversation;
     }
 
+    // Ensure conversation exists before proceeding
+    if (!conversation?.id) {
+      throw new Error("Conversation not found or created properly");
+    }
+
     // Save customer message with schema validation
     const parsedMessage = messageSchema
       .omit({ id: true, timestamp: true })
       .parse({
-        conversation_id: conversation?.id,
+        conversation_id: conversation.id,
         content: messageBody,
         sender: "customer",
         is_read: false, // Customer messages start as unread
@@ -225,7 +244,7 @@ export async function POST(request: NextRequest) {
     const { data: previousMessages } = await supabase
       .from("messages")
       .select("content, sender")
-      .eq("conversation_id", conversation?.id)
+      .eq("conversation_id", conversation.id)
       .order("timestamp", { ascending: true })
       .limit(10);
 
@@ -266,36 +285,14 @@ export async function POST(request: NextRequest) {
         completion.choices[0]?.message?.content ||
         "I apologize, but I'm having trouble processing your message right now. Please try again in a moment.";
 
-      console.log("🤖 AI Response:", aiResponse);
-
       // Smart lead extraction - only extracts when needed
       const extractionResult = await processLeadExtraction(
-        conversation!.id,
+        conversation.id,
         user.id
       );
 
-      if (extractionResult.success) {
-        if (extractionResult.skipped) {
-          console.log(
-            `⏭️ Lead extraction skipped: ${extractionResult.skipReason}`
-          );
-        } else if (extractionResult.extractionResult) {
-          console.log("✅ Lead extraction completed:", {
-            userInfo: extractionResult.extractionResult.userInfo,
-            leadScore: extractionResult.extractionResult.leadScore,
-            shouldUpdate: extractionResult.extractionResult.shouldUpdateLead,
-          });
-
-          // Log suggested questions for future improvements
-          if (extractionResult.suggestedQuestions?.length) {
-            console.log(
-              "💡 AI suggested follow-up questions:",
-              extractionResult.suggestedQuestions
-            );
-          }
-        }
-      } else {
-        console.log("⚠️ Lead extraction failed");
+      if (!extractionResult.success) {
+        console.error("⚠️ Lead extraction failed");
       }
     } catch (aiError) {
       console.error("AI response failed:", aiError);
@@ -320,7 +317,7 @@ export async function POST(request: NextRequest) {
     const botMessageParsed = messageSchema
       .omit({ id: true, timestamp: true })
       .parse({
-        conversation_id: conversation!.id,
+        conversation_id: conversation.id,
         content: aiResponse,
         sender: "bot",
       });
@@ -354,7 +351,6 @@ export async function POST(request: NextRequest) {
 
 // Add a GET method for testing webhook endpoint accessibility
 export async function GET() {
-  console.log("🔥 Webhook GET request received - endpoint is accessible");
   return NextResponse.json({
     message: "WhatsApp webhook endpoint is working",
     timestamp: new Date().toISOString(),
