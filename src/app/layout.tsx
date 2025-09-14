@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { Toaster } from "@/components/ui/sonner";
-import ScrollToTop from "./components/ScrollToTop";
-import TanstackProvider from "@/components/tanstack/TanstackProvider";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
+import { Toaster } from "sonner";
+import ScrollToTop from "@/components/shared/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,28 +56,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-bg min-h-screen relative`}
       >
-        {/* Global Background Pattern */}
-        <TanstackProvider>
+        <QueryProvider>
           <AuthProvider>
-            <ScrollToTop />
+            {children}
             <Toaster
               position="bottom-right"
-              richColors
-              closeButton
               theme="dark"
+              duration={4000}
+              expand={true}
+              richColors={false}
             />
-            {children}
+            <ScrollToTop />
           </AuthProvider>
-        </TanstackProvider>
-        <div className="fixed inset-0 opacity-10 pointer-events-none">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-main) 1px, transparent 0)`,
-              backgroundSize: "40px 40px",
-            }}
-          />
-        </div>
+        </QueryProvider>
       </body>
     </html>
   );
