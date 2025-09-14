@@ -79,7 +79,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Information */}
           <div className="space-y-8">
-            <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+            <div className="bg-dark-card rounded-2xl p-8 border border-border">
               <div className="flex items-center mb-6">
                 <Mail className="h-8 w-8 text-main mr-3" />
                 <h2 className="text-2xl font-bold text-white">Get Support</h2>
@@ -141,7 +141,7 @@ export default function ContactPage() {
             </div>
 
             {/* Quick Links */}
-            {/* <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+            {/* <div className="bg-dark-card rounded-2xl p-8 border border-border">
               <div className="flex items-center mb-6">
                 <MessageSquare className="h-8 w-8 text-main mr-3" />
                 <h2 className="text-2xl font-bold text-white">Quick Links</h2>
@@ -187,7 +187,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <div className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Send className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -284,7 +284,7 @@ export default function ContactPage() {
         </div>
 
         {/* Additional Information */}
-        <div className="mt-16 bg-dark-card rounded-2xl p-8 border border-gray-800">
+        <div className="mt-16 bg-dark-card rounded-2xl p-8 border border-border">
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
             Frequently Asked Questions
           </h2>

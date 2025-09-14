@@ -12,7 +12,7 @@ export default function FeatureCard({
   description,
 }: FeatureCardProps) {
   return (
-    <div className="text-center p-6 rounded-2xl bg-dark-card border border-gray-800">
+    <div className="text-center p-6 rounded-2xl bg-dark-card border border-border">
       <div className="flex items-center justify-center h-12 w-12 rounded-full bg-main text-main-foreground mx-auto">
         <Icon className="h-6 w-6" />
       </div>

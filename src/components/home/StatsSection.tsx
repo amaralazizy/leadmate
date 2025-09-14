@@ -4,7 +4,7 @@ import { StatItem } from "@/components/home/StatItem";
 export default function StatsSection() {
   return (
     <section className="py-16 md:py-24">
-      <div className="bg-dark-card rounded-3xl p-8 md:p-12 border border-gray-800">
+      <div className="bg-dark-card rounded-3xl p-8 md:p-12 border-2 border-border">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Trusted by Growing Businesses

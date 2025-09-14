@@ -42,7 +42,7 @@ export default function AboutPage() {
 
         {/* Story Section */}
         <section className="mb-16">
-          <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <div className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <MessageSquare className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Our Story</h2>
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
         {/* Mission Section */}
         <section className="mb-16">
-          <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <div className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Target className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Our Mission</h2>
@@ -104,7 +104,7 @@ export default function AboutPage() {
             What We Stand For
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-dark-card rounded-2xl p-6 border border-gray-800">
+            <div className="bg-dark-card rounded-2xl p-6 border border-border">
               <div className="flex items-center mb-4">
                 <Shield className="h-6 w-6 text-main mr-3" />
                 <h3 className="text-xl font-semibold text-white">
@@ -118,7 +118,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="bg-dark-card rounded-2xl p-6 border border-gray-800">
+            <div className="bg-dark-card rounded-2xl p-6 border border-border">
               <div className="flex items-center mb-4">
                 <Users className="h-6 w-6 text-main mr-3" />
                 <h3 className="text-xl font-semibold text-white">
@@ -132,7 +132,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="bg-dark-card rounded-2xl p-6 border border-gray-800">
+            <div className="bg-dark-card rounded-2xl p-6 border border-border">
               <div className="flex items-center mb-4">
                 <Target className="h-6 w-6 text-main mr-3" />
                 <h3 className="text-xl font-semibold text-white">
@@ -146,7 +146,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="bg-dark-card rounded-2xl p-6 border border-gray-800">
+            <div className="bg-dark-card rounded-2xl p-6 border border-border">
               <div className="flex items-center mb-4">
                 <Shield className="h-6 w-6 text-main mr-3" />
                 <h3 className="text-xl font-semibold text-white">
@@ -164,7 +164,7 @@ export default function AboutPage() {
 
         {/* Contact Section */}
         <section className="text-center">
-          <div className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <div className="bg-dark-card rounded-2xl p-8 border border-border">
             <h2 className="text-2xl font-bold text-white mb-4">
               Ready to Transform Your Customer Support?
             </h2>

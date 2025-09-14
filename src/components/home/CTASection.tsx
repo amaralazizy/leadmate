@@ -3,7 +3,7 @@ import { Sparkles, CircleCheckBig } from "lucide-react";
 export default function CTASection() {
   return (
     <section className="py-16 md:py-24">
-      <div className="bg-gradient-to-br from-dark-card to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-800 text-center relative overflow-hidden h-full">
+      <div className="bg-gradient-to-br from-dark-card to-gray-900 rounded-3xl p-8 md:p-12 border border-border text-center relative overflow-hidden h-full">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-main opacity-5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-main opacity-5 rounded-full blur-3xl"></div>

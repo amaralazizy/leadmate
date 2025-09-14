@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import logo from "../../public/logo.png";
+import logo from "../../../public/logo.png";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
 import { Button } from "@/components/ui/button";
 import MobileSidebar from "@/components/MobileSidebar";
@@ -19,7 +19,7 @@ export default function LandingHeader() {
 
   const handleClientLogout = async () => {
     try {
-      const supabase = await createClient();
+      const supabase = createClient();
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       return { message: "User logged out successfully" };
@@ -49,7 +49,7 @@ export default function LandingHeader() {
   });
 
   return (
-    <header className="z-10 bg-background border-b border-gray-800 sticky top-0">
+    <header className="z-10 bg-background border-b border-border sticky top-0">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">

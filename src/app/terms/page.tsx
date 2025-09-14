@@ -39,7 +39,7 @@ export default function TermsPage() {
         {/* Content */}
         <div className="space-y-8">
           {/* Agreement */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Scale className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -63,7 +63,7 @@ export default function TermsPage() {
           </section>
 
           {/* Service Description */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -88,7 +88,7 @@ export default function TermsPage() {
           </section>
 
           {/* Acceptable Use */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <CheckCircle className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -150,7 +150,7 @@ export default function TermsPage() {
           </section>
 
           {/* Account Responsibilities */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -181,7 +181,7 @@ export default function TermsPage() {
           </section>
 
           {/* Service Availability */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <AlertTriangle className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -209,7 +209,7 @@ export default function TermsPage() {
           </section>
 
           {/* Limitation of Liability */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Scale className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -243,7 +243,7 @@ export default function TermsPage() {
           </section>
 
           {/* Termination */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <AlertTriangle className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Termination</h2>
@@ -279,7 +279,7 @@ export default function TermsPage() {
           </section>
 
           {/* Governing Law */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Scale className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Governing Law</h2>
@@ -299,7 +299,7 @@ export default function TermsPage() {
           </section>
 
           {/* Contact Information */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Contact Us</h2>
@@ -323,7 +323,7 @@ export default function TermsPage() {
           </section>
 
           {/* Updates */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <AlertTriangle className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">

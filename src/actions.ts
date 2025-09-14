@@ -1,6 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
-import { getErrorMessage } from "./lib/utils";
+import { getErrorMessage } from "@/lib/utils/utils";
 import { revalidatePath } from "next/cache";
 // import { revalidatePath } from "next/cache";
 import { updateMessageReadSchema } from "@/lib/schemas";

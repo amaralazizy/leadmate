@@ -15,14 +15,25 @@ export default function AppSidebarLogo() {
           isCollapsed ? "w-8 h-8" : "w-[120px] h-[40px]"
         )}
       >
+        {isCollapsed ? (
         <Image
-          src="/logo.png"
+          src="/og-image.png"
           alt="LeadMate"
           fill
           className="object-contain transition-all duration-200 ease-in-out"
           priority
-          sizes={isCollapsed ? "32px" : "120px"}
+          sizes="32px"
         />
+        ) : (
+          <Image
+            src="/logo.png"
+            alt="LeadMate"
+            fill
+            className="object-contain transition-all duration-200 ease-in-out"
+            priority
+            sizes="120px"
+          />
+        )}
       </div>
     </Link>
   );

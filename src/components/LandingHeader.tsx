@@ -10,7 +10,7 @@ export default async function LandingHeader() {
   const { user, isAuthenticated } = await getCurrentUser();
 
   return (
-    <header className="z-10 bg-background border-b border-gray-800 sticky top-0">
+    <header className="z-10 bg-background border-b border-border sticky top-0">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">
@@ -39,8 +39,9 @@ export default async function LandingHeader() {
             {isAuthenticated && user ? (
               <>
                 <span className="text-foreground px-3 py-2 text-sm">
-                  Welcome, {user.email}
+                  Welcome, {user.username}
                 </span>
+                <NavigationButton href="/dashboard">Dashboard</NavigationButton>
                 <ClientLogoutButton size="sm">Logout</ClientLogoutButton>
               </>
             ) : (

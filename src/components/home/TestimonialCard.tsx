@@ -17,7 +17,7 @@ export default function TestimonialCard({
   rating,
 }: TestimonialCardProps) {
   return (
-    <div className="bg-dark-card rounded-2xl p-6 border border-gray-800 h-full">
+    <div className="bg-dark-card rounded-2xl p-6 border border-border h-full">
       {/* Rating */}
       <div className="flex items-center mb-4">
         {Array.from({ length: 5 }).map((_, index) => (

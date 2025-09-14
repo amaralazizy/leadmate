@@ -14,14 +14,14 @@ export default function HowItWorksStep({
   icon: Icon,
 }: HowItWorksStepProps) {
   return (
-    <div className="text-center relative border-2 border-gray-800 rounded-2xl p-4">
+    <div className="text-center relative border-2 border-border rounded-2xl p-4">
       {/* Step Number */}
       <div className="inline-flex items-center justify-center w-12 h-12 bg-main text-main-foreground font-bold text-lg rounded-full mb-4">
         {step}
       </div>
 
       {/* Icon */}
-      <div className="flex items-center justify-center w-16 h-16 bg-dark-card border border-gray-800 rounded-2xl mx-auto mb-6">
+      <div className="flex items-center justify-center w-16 h-16 bg-dark-card border border-border rounded-2xl mx-auto mb-6">
         <Icon className="h-8 w-8 text-main" />
       </div>
 

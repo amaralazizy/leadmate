@@ -1,6 +1,8 @@
 export interface User {
   id: string;
   email: string;
+  username: string;
+  business_logo_url: string;
   business_name: string;
   business_type: string;
   whatsapp_number: string;

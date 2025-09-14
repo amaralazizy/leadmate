@@ -39,7 +39,7 @@ export default function PrivacyPage() {
         {/* Content */}
         <div className="space-y-8">
           {/* Introduction */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Shield className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Introduction</h2>
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Information We Collect */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Eye className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -109,7 +109,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* How We Use Your Information */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Data Protection */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Lock className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">
@@ -179,7 +179,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Data Sharing */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Shield className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Data Sharing</h2>
@@ -217,7 +217,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Your Rights */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Your Rights</h2>
@@ -252,7 +252,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Contact Information */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <Shield className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Contact Us</h2>
@@ -279,7 +279,7 @@ export default function PrivacyPage() {
           </section>
 
           {/* Updates */}
-          <section className="bg-dark-card rounded-2xl p-8 border border-gray-800">
+          <section className="bg-dark-card rounded-2xl p-8 border border-border">
             <div className="flex items-center mb-6">
               <FileText className="h-8 w-8 text-main mr-3" />
               <h2 className="text-2xl font-bold text-white">Policy Updates</h2>

@@ -52,13 +52,13 @@ export default function MobileSidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-dark-bg border-l border-gray-800 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-800">
+          <div className="flex items-center justify-between p-6 border-b border-border">
             <Link href="/" onClick={closeSidebar}>
               <Image src={logo} alt="LeadMate" height={150} width={150} />
             </Link>
@@ -91,7 +91,7 @@ export default function MobileSidebar() {
           </nav>
 
           {/* Auth Section */}
-          <div className="p-6 border-t border-gray-800">
+          <div className="p-6 border-t border-border">
             {loading ? (
               <div className="text-center text-foreground">Loading...</div>
             ) : user ? (
