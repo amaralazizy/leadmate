@@ -1,10 +1,11 @@
 import { stats } from "@/lib/data/stats";
 import { StatItem } from "@/components/home/StatItem";
+import { Card } from "@/components/ui/card";
 
 export default function StatsSection() {
   return (
     <section className="py-16 md:py-24">
-      <div className="bg-dark-card rounded-3xl p-8 md:p-12 border-2 border-border">
+      <Card className="p-6 flex flex-col items-center hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Trusted by Growing Businesses
@@ -24,7 +25,7 @@ export default function StatsSection() {
             />
           ))}
         </div>
-      </div>
+      </Card>
     </section>
   );
 }

@@ -1,9 +1,10 @@
 import { Sparkles, CircleCheckBig } from "lucide-react";
+import { Card } from "../ui/card";
 
 export default function CTASection() {
   return (
     <section className="py-16 md:py-24">
-      <div className="bg-gradient-to-br from-dark-card to-gray-900 rounded-3xl p-8 md:p-12 border border-border text-center relative overflow-hidden h-full">
+      <Card className="relative p-6 flex flex-col items-center hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-main opacity-5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-main opacity-5 rounded-full blur-3xl"></div>
@@ -36,7 +37,7 @@ export default function CTASection() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </section>
   );
 }

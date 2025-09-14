@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -71,10 +74,10 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-            <div className="text-green-600 mb-4">
+          <div className=" py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
+            <div className="mb-4">
               <svg
                 className="mx-auto h-12 w-12"
                 fill="none"
@@ -109,18 +112,22 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen  flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold">
           Reset your password
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm">
           Enter your new password below
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <Card className="mt-8 sm:mx-auto sm:w-full sm:max-w-md ">
+        <CardHeader>
+          <CardTitle>Reset your password</CardTitle>
+          <CardDescription>Enter your new password below</CardDescription>
+        </CardHeader>
+        <CardContent>
           <form className="space-y-6" onSubmit={handleResetPassword}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
@@ -129,14 +136,14 @@ export default function ResetPasswordPage() {
             )}
 
             <div>
-              <label
+              <Label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
               >
                 New Password
-              </label>
+              </Label>
               <div className="mt-1">
-                <input
+                <Input
                   id="password"
                   name="password"
                   type="password"
@@ -144,21 +151,21 @@ export default function ResetPasswordPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="text-main disabled:cursor-not-allowed"
                   placeholder="Enter your new password"
                 />
               </div>
             </div>
 
             <div>
-              <label
+              <Label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
               >
                 Confirm New Password
-              </label>
+              </Label>
               <div className="mt-1">
-                <input
+                <Input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
@@ -166,18 +173,14 @@ export default function ResetPasswordPage() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="text-main disabled:cursor-not-allowed"
                   placeholder="Confirm your new password"
                 />
               </div>
             </div>
 
             <div>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
-              >
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? "Updating..." : "Update Password"}
               </Button>
             </div>
@@ -185,19 +188,16 @@ export default function ResetPasswordPage() {
 
           <div className="mt-6">
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm">
                 Remember your password?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-green-600 hover:text-green-500"
-                >
+                <Link href="/login" className="font-medium text-main">
                   Sign in
                 </Link>
               </span>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

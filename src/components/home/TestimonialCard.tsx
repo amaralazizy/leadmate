@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface TestimonialCardProps {
   name: string;
@@ -17,7 +18,7 @@ export default function TestimonialCard({
   rating,
 }: TestimonialCardProps) {
   return (
-    <div className="bg-dark-card rounded-2xl p-6 border border-border h-full">
+    <Card className="p-6 flex flex-col items-center hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300">
       {/* Rating */}
       <div className="flex items-center mb-4">
         {Array.from({ length: 5 }).map((_, index) => (
@@ -42,6 +43,6 @@ export default function TestimonialCard({
           {role} at {company}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
