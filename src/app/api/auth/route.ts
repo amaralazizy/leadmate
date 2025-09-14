@@ -89,7 +89,6 @@ export async function GET() {
       .from("users")
       .select("*")
       .eq("id", user.id);
-    console.log("user", user.id);
 
     if (error) {
       console.error("Error fetching user settings:", error);

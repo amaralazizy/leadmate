@@ -49,7 +49,21 @@ export async function updateSession(request: NextRequest) {
     "/whatsapp",
     "/",
   ];
+
+  // Routes that don't require onboarding completion
+  const onboardingExemptRoutes = [
+    ...publicRoutes,
+    "/onboarding", // Allow access to onboarding itself
+    "/auth", // Allow auth routes like verify-email
+  ];
+
   const isPublicRoute = publicRoutes.some(
+    (route) =>
+      request.nextUrl.pathname === route ||
+      request.nextUrl.pathname.startsWith(route + "/")
+  );
+
+  const isOnboardingExempt = onboardingExemptRoutes.some(
     (route) =>
       request.nextUrl.pathname === route ||
       request.nextUrl.pathname.startsWith(route + "/")
@@ -59,13 +73,37 @@ export async function updateSession(request: NextRequest) {
   const isPublicApiRoute =
     request.nextUrl.pathname.startsWith("/api/waitlist") ||
     request.nextUrl.pathname.startsWith("/api/whatsapp") ||
-    request.nextUrl.pathname.startsWith("/api/webhooks/whatsapp");
+    request.nextUrl.pathname.startsWith("/api/webhooks/whatsapp") ||
+    request.nextUrl.pathname.startsWith("/api/onboarding") ||
+    request.nextUrl.pathname.startsWith("/api/");
 
   // Redirect to login only if user is not authenticated AND not on a public route
   if (!user && !isPublicRoute && !isPublicApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // Check onboarding status for authenticated users on protected routes
+  if (user && !isOnboardingExempt && !isPublicApiRoute) {
+    try {
+      // Fetch user's onboarding status from the database
+      const { data: userData, error } = await supabase
+        .from("users")
+        .select("onboarding_completed")
+        .eq("id", user.sub)
+        .single();
+
+      if (!error && userData && !userData.onboarding_completed) {
+        // User hasn't completed onboarding, redirect to onboarding
+        const url = request.nextUrl.clone();
+        url.pathname = "/onboarding";
+        return NextResponse.redirect(url);
+      }
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      // On error, allow the request to continue to avoid breaking the app
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

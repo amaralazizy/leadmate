@@ -11,10 +11,11 @@ export interface UserProfile {
   twilio_sender_sid?: string;
   twilio_waba_id?: string;
   whatsapp_status?: string;
-  subscription_status: 'trial' | 'active' | 'cancelled';
+  subscription_status: "trial" | "active" | "cancelled";
   usage_count: number;
   usage_limit: number;
   stripe_customer_id?: string;
+  onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
 }

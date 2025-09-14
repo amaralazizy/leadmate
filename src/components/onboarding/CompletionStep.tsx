@@ -100,22 +100,6 @@ export default function CompletionStep() {
           <li>3. Watch your AI assistant respond instantly!</li>
         </ol>
       </div>
-
-      {/* CTA */}
-      <div className="text-center pt-4">
-        <Button
-          variant="default"
-          size="lg"
-          className="flex items-center gap-2 mx-auto"
-          onClick={() => (window.location.href = "/dashboard")}
-        >
-          Go to Dashboard
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-        <p className="text-xs text-foreground/60 mt-3">
-          Start managing your AI assistant and customer conversations
-        </p>
-      </div>
     </div>
   );
 }
