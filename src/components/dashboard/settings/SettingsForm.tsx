@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "next/form";
-import { useActionState, useState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,7 +34,7 @@ export default function SettingsForm({
   const [state, formAction, pending] = useActionState<
     TSettingsFormPrevState,
     FormData
-  >(settingsAction, {
+  >(settingsClientAction, {
     success: false,
     errors: undefined,
     inputs: {
@@ -42,6 +42,10 @@ export default function SettingsForm({
       business_logo_url: "",
     },
   });
+
+  const handleProfilePicUploadSuccess = useCallback((url: string) => {
+    setCurrentProfilePic(url);
+  }, []);
 
   //Error handling
   if (error) {
@@ -67,7 +71,7 @@ export default function SettingsForm({
   const settings = settingsData[0] as TgetSettings;
 
   //Update settings
-  async function settingsAction(
+  async function settingsClientAction(
     prevState: TSettingsFormPrevState,
     fd: FormData
   ): Promise<TSettingsFormPrevState> {
@@ -90,9 +94,7 @@ export default function SettingsForm({
     return result;
   }
 
-  const handleProfilePicUploadSuccess = (url: string) => {
-    setCurrentProfilePic(url);
-  };
+  
 
   return (
     <div className="space-y-6">

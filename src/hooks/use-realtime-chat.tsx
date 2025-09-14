@@ -16,6 +16,7 @@ export interface ChatMessage {
   sender: "customer" | "bot";
   timestamp: string;
   conversation_id: string;
+  is_read?: boolean;
 }
 
 export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
@@ -50,6 +51,7 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
           sender: msg.sender,
           timestamp: msg.timestamp,
           conversation_id: msg.conversation_id,
+          is_read: msg.is_read,
         }));
         setMessages(formattedMessages);
       }
