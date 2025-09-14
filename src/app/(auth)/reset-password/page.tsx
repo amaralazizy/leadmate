@@ -191,7 +191,7 @@ export default function ResetPasswordPage() {
               <span className="text-sm">
                 Remember your password?{" "}
                 <Link href="/login" className="font-medium text-main">
-                  Sign in
+                  Login
                 </Link>
               </span>
             </div>

@@ -29,7 +29,7 @@ export default function ProtectedRoute({
   useEffect(() => {
     if (loading) return;
 
-    // No user = redirect to signin
+    // No user = redirect to login
     if (!user) {
       router.push(redirectTo);
       return;
@@ -102,7 +102,7 @@ export default function ProtectedRoute({
             onClick={() => router.push("/auth/login")}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
           >
-            Sign In
+            Login
           </Button>
         </div>
       </div>
