@@ -47,6 +47,8 @@ export async function updateSession(request: NextRequest) {
     "/reset-password",
     "/whatsapp",
     "/",
+    "/about",
+    "/contact",
   ];
 
   // Routes that don't require onboarding completion
