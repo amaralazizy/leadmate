@@ -6,11 +6,9 @@ import { Conversation } from "@/lib/types/chat";
 import { processLeadExtraction } from "@/lib/services/leads/extraction";
 import { createServiceClient } from "@/lib/supabase/service";
 
-const apiKey = process.env.OPENROUTER_API_KEY!;
-
+// Use OpenAI directly for GPT-4o mini
 const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: apiKey,
+  apiKey: process.env.OPENAI_API_KEY!,
 });
 
 // Create dynamic system prompt based on business knowledge with enhanced information gathering
@@ -158,6 +156,15 @@ export async function POST(request: NextRequest) {
 
     const existingConversation = existingConversations?.[0] || null;
 
+    if (existingConversation.status === "completed") {
+      await supabase
+        .from("conversations")
+        .update({
+          status: "active",
+        })
+        .eq("id", existingConversation.id);
+    }
+
     if (existingConversation) {
       conversation = existingConversation;
     } else {
@@ -267,9 +274,9 @@ export async function POST(request: NextRequest) {
     let aiResponse = "";
 
     try {
-      // Generate AI response using the LLM with dynamic context
+      // Generate AI response using GPT-4o mini with dynamic context
       const completion = await openai.chat.completions.create({
-        model: "meta-llama/llama-4-scout:free",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",

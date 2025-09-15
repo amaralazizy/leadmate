@@ -33,10 +33,11 @@ export async function processTimeBasedExtractions(
     // Find active conversations that haven't been extracted yet (limited batch)
     const { data: activeConversations } = await supabase
       .from("conversations")
-      .select("id, user_id, created_at, updated_at, metadata")
+      .select("id, user_id, created_at, updated_at")
       .eq("status", "active")
-      .is("metadata->extractionCompleted", null)
       .limit(batchSize);
+
+    console.log("activeConversations", activeConversations);
 
     if (!activeConversations || activeConversations.length === 0) {
       return { processed: 0, errors: 0, hasMore: false, results: [] };
@@ -71,6 +72,15 @@ export async function processTimeBasedExtractions(
             conversation.user_id,
             false // Use time-based logic, not force
           );
+
+          if (extractionResult.error) {
+            errors++;
+            results.push({
+              conversationId: conversation.id,
+              success: false,
+              error: extractionResult.error,
+            });
+          }
 
           if (extractionResult.success && !extractionResult.skipped) {
             processed++;
@@ -115,8 +125,7 @@ export async function processTimeBasedExtractions(
     const { count } = await supabase
       .from("conversations")
       .select("id", { count: "exact" })
-      .eq("status", "active")
-      .is("metadata->extractionCompleted", null);
+      .eq("status", "active");
 
     const hasMore = (count || 0) > batchSize;
 
@@ -148,7 +157,6 @@ export async function scheduledLeadProcessing(): Promise<{
   console.log("🔄 Starting Vercel-friendly lead processing");
 
   const startTime = Date.now();
-  const TIMEOUT_THRESHOLD = 8000; // 8 seconds to be safe
 
   try {
     // Process small batch (3-5 conversations max for Vercel)

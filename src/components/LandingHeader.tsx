@@ -14,7 +14,7 @@ export default async function LandingHeader() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">
-          {/* make the logo responsive */}
+            {/* make the logo responsive */}
             <Image
               src={logo}
               alt="LeadMate"

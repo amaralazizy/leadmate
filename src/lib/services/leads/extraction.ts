@@ -1,16 +1,10 @@
 import OpenAI from "openai";
 import { createServiceClient } from "@/lib/supabase/service";
-import {
-  shouldExtractByTime,
-  getConversationTimestamps,
-  type TimeBasedTrigger,
-} from "./triggers";
+import { shouldExtractByTime, getConversationTimestamps } from "./triggers";
 
-const apiKey = process.env.OPENROUTER_API_KEY!;
-
+// Use OpenAI directly for GPT-4o mini with function calling
 const extractionClient = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: apiKey,
+  apiKey: process.env.OPENAI_API_KEY!,
 });
 
 export interface ExtractedUserInfo {
@@ -32,25 +26,130 @@ export interface LeadExtractionResult {
   shouldUpdateLead: boolean;
   suggestedQuestions: string[];
   leadScore: number;
+  error?: any;
 }
 
 /**
- * Enhanced system prompt for information extraction
+ * Function calling schema for GPT-4o mini lead extraction with strict mode
+ */
+const leadExtractionTool = {
+  type: "function" as const,
+  function: {
+    name: "extract_lead_information",
+    description:
+      "Extract customer information and lead data from WhatsApp conversation",
+    strict: true,
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        userInfo: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            name: {
+              type: "string",
+              description: "Customer's full name, first name, or business name",
+            },
+            phone: {
+              type: "string",
+              description: "Phone number in any format",
+            },
+            email: {
+              type: "string",
+              description: "Email address",
+            },
+            location: {
+              type: "string",
+              description: "Location, city, area, or address",
+            },
+            company: {
+              type: "string",
+              description: "Company or business name",
+            },
+            intent: {
+              type: "string",
+              enum: ["inquiry", "booking", "order", "support"],
+              description: "Customer intent type",
+            },
+            urgency: {
+              type: "string",
+              enum: ["low", "medium", "high"],
+              description: "Urgency level based on customer language",
+            },
+            budget: {
+              type: "string",
+              description: "Budget information or price discussions",
+            },
+            preferences: {
+              type: "array",
+              items: { type: "string" },
+              description: "Customer preferences or specific requirements",
+            },
+            followUpNeeded: {
+              type: "boolean",
+              description:
+                "Whether follow-up is needed for missing information",
+            },
+            confidence: {
+              type: "number",
+              minimum: 0,
+              maximum: 100,
+              description: "Confidence score for extracted information quality",
+            },
+          },
+          required: [
+            "name",
+            "phone",
+            "email",
+            "location",
+            "company",
+            "intent",
+            "urgency",
+            "budget",
+            "preferences",
+            "followUpNeeded",
+            "confidence",
+          ],
+        },
+        shouldUpdateLead: {
+          type: "boolean",
+          description: "Whether this lead should be updated in the database",
+        },
+        leadScore: {
+          type: "number",
+          minimum: 0,
+          maximum: 100,
+          description:
+            "Lead quality score (0-100) based on available information",
+        },
+      },
+      required: ["userInfo", "shouldUpdateLead", "leadScore"],
+    },
+  },
+};
+
+/**
+ * Enhanced system prompt for GPT-4o mini function calling
  */
 function createExtractionPrompt(): string {
-  return `You are an expert information extraction AI. Your task is to analyze WhatsApp conversations and extract customer information.
+  return `You are an expert information extraction AI. Your task is to analyze WhatsApp conversations between a CUSTOMER and our BUSINESS AI CHATBOT, then extract customer information using the extract_lead_information function.
+
+CONVERSATION CONTEXT:
+- "customer": Messages from the potential lead/client
+- "bot": Messages from our business AI assistant responding to customer inquiries
+- Focus on extracting information about the CUSTOMER only (not the bot responses)
 
 EXTRACTION RULES:
 1. Analyze the ENTIRE conversation history, not just the latest message
-2. Extract ALL available information about the customer
-3. Identify customer intent and urgency level
-4. Suggest follow-up questions for missing critical information
-5. Score the lead quality (0-100)
+2. Extract ALL available information about the CUSTOMER from their messages
+3. Identify customer intent and urgency level based on their inquiries
+5. Score the lead quality (0-100) based on customer engagement and information provided
 
 INFORMATION TO EXTRACT:
 - Name (first name, last name, or business name)
 - Phone numbers (any format)
-- Email addresses
+- Email addresses  
 - Location (city, area, address)
 - Company/business name
 - Intent type (inquiry/booking/order/support)
@@ -66,29 +165,9 @@ INTENT DETECTION:
 - "support": Problems, complaints, technical help
 
 URGENCY INDICATORS:
-- High: "urgent", "ASAP", "today", "emergency", "immediately"
+- High: "urgent", "ASAP", "today", "emergency", "immediately" 
 - Medium: "soon", "this week", "by Friday", timeline mentioned
 - Low: "eventually", "when possible", no timeline
-
-RESPONSE FORMAT - Return a JSON object with this exact structure:
-{
-  "userInfo": {
-    "name": "extracted name or null",
-    "phone": "extracted phone or null", 
-    "email": "extracted email or null",
-    "location": "extracted location or null",
-    "company": "extracted company or null",
-    "intent": "inquiry|booking|order|support or null",
-    "urgency": "low|medium|high or null",
-    "budget": "budget info or null",
-    "preferences": ["array", "of", "preferences"] or [],
-    "followUpNeeded": true/false,
-    "confidence": 0-100
-  },
-  "shouldUpdateLead": true/false,
-  "suggestedQuestions": ["array of questions to ask for missing info"],
-  "leadScore": 0-100
-}
 
 LEAD SCORING (0-100):
 - +20 for having name
@@ -99,7 +178,12 @@ LEAD SCORING (0-100):
 - +10 for budget mentions
 - +10 for specific requirements
 
-CRITICAL: Only return the JSON object, no other text.`;
+CONFIDENCE SCORING:
+- Set confidence based on quality and completeness of extracted data
+- Higher confidence for verified contact information
+- Lower confidence for uncertain or incomplete data
+
+Use the extract_lead_information function to provide structured results.`;
 }
 
 /**
@@ -133,8 +217,7 @@ function validateEmail(email: string): boolean {
  * Enhanced lead extraction using conversation analysis
  */
 export async function extractLeadInformation(
-  conversationId: string,
-  userId: string
+  conversationId: string
 ): Promise<LeadExtractionResult> {
   try {
     const supabase = createServiceClient();
@@ -152,6 +235,7 @@ export async function extractLeadInformation(
         shouldUpdateLead: false,
         suggestedQuestions: [],
         leadScore: 0,
+        error: "No messages found",
       };
     }
 
@@ -162,9 +246,9 @@ export async function extractLeadInformation(
 
     const extractionPrompt = createExtractionPrompt();
 
-    // Call AI for information extraction
+    // Call GPT-4o mini with function calling for information extraction
     const completion = await extractionClient.chat.completions.create({
-      model: "meta-llama/llama-4-scout:free",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -175,35 +259,45 @@ export async function extractLeadInformation(
           content: `Analyze this WhatsApp conversation and extract customer information:\n\n${conversationText}`,
         },
       ],
-      max_tokens: 800,
+      tools: [leadExtractionTool],
+      tool_choice: {
+        type: "function",
+        function: { name: "extract_lead_information" },
+      },
+      max_tokens: 1000,
       temperature: 0.1, // Low temperature for consistent extraction
     });
 
-    const aiResponse = completion.choices[0]?.message?.content;
+    // Extract the function call result
+    const toolCall = completion.choices[0]?.message?.tool_calls?.[0];
 
-    if (!aiResponse) {
-      throw new Error("No response from extraction AI");
+    if (!toolCall || toolCall.function.name !== "extract_lead_information") {
+      throw new Error("No valid function call response from extraction AI");
     }
 
-    // Parse the JSON response
+    // Parse the structured function call arguments
     let extractionResult: LeadExtractionResult;
     try {
-      extractionResult = JSON.parse(aiResponse);
+      extractionResult = JSON.parse(toolCall.function.arguments);
     } catch (parseError) {
-      console.error("Failed to parse extraction result:", parseError);
+      console.error("Failed to parse function call arguments:", parseError);
       return {
         userInfo: { confidence: 0 },
         shouldUpdateLead: false,
         suggestedQuestions: [],
         leadScore: 0,
+        error: parseError,
       };
     }
 
-    // Validate extracted data
+    // Validate and clean extracted data
     if (
       extractionResult.userInfo.phone &&
       !validatePhone(extractionResult.userInfo.phone)
     ) {
+      console.log(
+        `Invalid phone number detected: ${extractionResult.userInfo.phone}`
+      );
       extractionResult.userInfo.phone = undefined;
       extractionResult.leadScore = Math.max(0, extractionResult.leadScore - 20);
     }
@@ -212,8 +306,22 @@ export async function extractLeadInformation(
       extractionResult.userInfo.email &&
       !validateEmail(extractionResult.userInfo.email)
     ) {
+      console.log(`Invalid email detected: ${extractionResult.userInfo.email}`);
       extractionResult.userInfo.email = undefined;
       extractionResult.leadScore = Math.max(0, extractionResult.leadScore - 20);
+    }
+
+    // Ensure required fields have valid values
+    if (!extractionResult.userInfo.confidence) {
+      extractionResult.userInfo.confidence = 0;
+    }
+
+    if (!extractionResult.leadScore) {
+      extractionResult.leadScore = 0;
+    }
+
+    if (!extractionResult.suggestedQuestions) {
+      extractionResult.suggestedQuestions = [];
     }
 
     // Set confidence based on extracted data quality
@@ -239,6 +347,7 @@ export async function extractLeadInformation(
       shouldUpdateLead: false,
       suggestedQuestions: [],
       leadScore: 0,
+      error: error,
     };
   }
 }
@@ -342,14 +451,15 @@ export async function processLeadExtraction(
   suggestedQuestions?: string[];
   skipped?: boolean;
   skipReason?: string;
+  error?: any;
 }> {
   try {
     const supabase = createServiceClient();
 
-    // Get conversation and its metadata
+    // Get conversation and its status
     const { data: conversation } = await supabase
       .from("conversations")
-      .select("metadata, updated_at, created_at")
+      .select("status, updated_at, created_at")
       .eq("id", conversationId)
       .single();
 
@@ -361,9 +471,8 @@ export async function processLeadExtraction(
       };
     }
 
-    // Check if extraction already completed
-    const extractionCompleted =
-      conversation.metadata?.extractionCompleted || false;
+    // Check if extraction already completed (status is "completed")
+    const extractionCompleted = conversation.status === "completed";
 
     if (!forceExtraction && extractionCompleted) {
       return {
@@ -409,21 +518,20 @@ export async function processLeadExtraction(
     }
 
     // Extract information from conversation
-    const extractionResult = await extractLeadInformation(
-      conversationId,
-      userId
-    );
+    const extractionResult = await extractLeadInformation(conversationId);
+
+    if (extractionResult.error) {
+      return {
+        success: false,
+        error: extractionResult.error,
+      };
+    }
 
     // Mark extraction as completed
     await supabase
       .from("conversations")
       .update({
         status: "completed",
-        metadata: {
-          ...conversation.metadata,
-          extractionCompleted: true,
-          extractionAt: new Date().toISOString(),
-        },
       })
       .eq("id", conversationId);
 
@@ -448,6 +556,7 @@ export async function processLeadExtraction(
     console.error("Error in processLeadExtraction:", error);
     return {
       success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
