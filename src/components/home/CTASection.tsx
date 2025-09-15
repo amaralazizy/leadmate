@@ -9,7 +9,7 @@ export default function CTASection() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-main opacity-5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-main opacity-5 rounded-full blur-3xl"></div>
 
-        <div className="relative z-10 flex flex-col items-center justify-between h-full">
+        <div className="flex flex-col items-center justify-between h-full">
           {/* Badge */}
           <div className="inline-flex items-center px-4 py-2 bg-main/10 border border-main/20 rounded-full text-main font-medium mb-6">
             <Sparkles className="h-4 w-4 mr-2" />

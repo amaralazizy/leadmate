@@ -52,7 +52,7 @@ export default function MobileSidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-screen w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -122,6 +122,7 @@ export default function MobileSidebar() {
           </div>
         </div>
       </div>
+      {/* <div className={cn("z-50 inset-0 bg-black", !isOpen && "hidden")}></div> */}
     </>
   );
 }

@@ -6,6 +6,7 @@ import {
   getTodayMessagesCount,
   getAvgMessagesPerChat,
 } from "@/actions";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function OverviewCards() {
   try {
@@ -38,16 +39,16 @@ export default async function OverviewCards() {
       <section>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {stats.map((s) => (
-            <div
+            <Card
               key={s.label}
               className="rounded-base border p-4 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted-foreground">{s.label}</p>
-                <span className="text-lg">{s.icon}</span>
-              </div>
+              <CardHeader className="flex items-center justify-between px-0">
+                <CardTitle className="text-sm text-muted-foreground">{s.label}</CardTitle>
+                <span className="text-2xl">{s.icon}</span>
+              </CardHeader>
               <p className="text-2xl font-heading">{s.value}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>

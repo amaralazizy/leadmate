@@ -7,7 +7,7 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="relative z-10 min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <LandingHeader />
       <main className="flex-1">{children}</main>
       <GlobalFooter />

@@ -66,7 +66,7 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="">Login to your account</CardTitle>
             <CardDescription className="">
