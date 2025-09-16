@@ -55,7 +55,7 @@ export default function AnimatedSection({
         delay,
         ease: "easeOut",
       }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-30px" }}
       className={className}
     >
       {children}
