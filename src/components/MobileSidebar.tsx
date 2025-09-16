@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -73,6 +73,23 @@ export default function MobileSidebar() {
 
           {/* Navigation Links */}
           <nav className="flex-1 px-6 py-6 space-y-2">
+            {/* Dashboard Link - Only show when authenticated */}
+            {user && (
+              <Link
+                href="/dashboard"
+                onClick={closeSidebar}
+                className={cn(
+                  "flex items-center px-4 py-3 text-foreground hover:text-main hover:bg-dark-card rounded-lg transition-colors duration-300",
+                  pathname.startsWith("/dashboard") &&
+                    "text-main-foreground bg-main hover:text-main-foreground hover:bg-main"
+                )}
+              >
+                <LayoutDashboard className="h-5 w-5 mr-3" />
+                Dashboard
+              </Link>
+            )}
+
+            {/* Regular Navigation Links */}
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -96,10 +113,26 @@ export default function MobileSidebar() {
               <div className="text-center text-foreground">Loading...</div>
             ) : user ? (
               <div className="space-y-4">
-                <div className="text-sm text-foreground">
-                  Welcome, {user.email}
+                <div className="flex items-center gap-3 p-3 bg-secondary-background/30 rounded-lg border border-border/50">
+                  <div className="w-8 h-8 bg-main/10 rounded-full flex items-center justify-center">
+                    <span className="text-main font-semibold text-sm">
+                      {user.email?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {user.email?.split("@")[0] || "User"}
+                    </p>
+                    <p className="text-xs text-foreground/60 truncate">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
-                <Button onClick={() => logout()} className="w-full">
+                <Button
+                  onClick={() => logout()}
+                  variant="neutral"
+                  className="w-full"
+                >
                   Logout
                 </Button>
               </div>
@@ -115,7 +148,7 @@ export default function MobileSidebar() {
                   href="/signup"
                   className="w-full justify-center"
                 >
-                  Signup
+                  Get Started
                 </NavigationButton>
               </div>
             )}

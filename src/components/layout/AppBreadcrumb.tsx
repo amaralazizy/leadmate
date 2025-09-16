@@ -17,14 +17,12 @@ export default function AppBreadcrumb() {
     <BreadcrumbList>
       {parts.map((part, index) => (
         <Fragment key={part}>
-          <BreadcrumbItem >
-            <BreadcrumbLink href={"/"+parts.slice(0, index + 1).join("/")}>
+          <BreadcrumbItem>
+            <BreadcrumbLink href={"/" + parts.slice(0, index + 1).join("/")}>
               <BreadcrumbPage>{capitalize(part)}</BreadcrumbPage>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          {index !== parts.length - 1 && (
-            <BreadcrumbSeparator className="hidden md:block" />
-          )}
+          {index !== parts.length - 1 && <BreadcrumbSeparator />}
         </Fragment>
       ))}
       {/* <BreadcrumbItem className="hidden md:block">
