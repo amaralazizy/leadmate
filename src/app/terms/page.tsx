@@ -312,7 +312,7 @@ export default function TermsPage() {
               <div className="bg-dark-bg p-4 rounded-lg border border-gray-700">
                 <p>
                   <strong className="text-white">Email:</strong>{" "}
-                  support@leadmate.ai
+                  sherifelamir2003@gmail.com
                 </p>
                 <p>
                   <strong className="text-white">Subject:</strong> Terms of

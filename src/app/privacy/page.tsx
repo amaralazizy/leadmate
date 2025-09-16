@@ -55,7 +55,11 @@ export default function PrivacyPage() {
                 By using LeadMate, you agree to the collection and use of
                 information in accordance with this policy. If you have any
                 questions about this Privacy Policy, please contact us at
-                <strong className="text-white"> support@leadmate.ai</strong>.
+                <strong className="text-white">
+                  {" "}
+                  sherifelamir2003@gmail.com
+                </strong>
+                .
               </p>
             </div>
           </section>
@@ -265,7 +269,7 @@ export default function PrivacyPage() {
               <div className="bg-dark-bg p-4 rounded-lg border border-gray-700">
                 <p>
                   <strong className="text-white">Email:</strong>{" "}
-                  support@leadmate.ai
+                  sherifelamir2003@gmail.com
                 </p>
                 <p>
                   <strong className="text-white">Subject:</strong> Privacy

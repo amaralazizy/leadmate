@@ -19,7 +19,7 @@ Add these to your `.env.local` file:
 
 ```bash
 # Contact form email addresses
-CONTACT_EMAIL_1=amarelazizy@gmail.com
+CONTACT_EMAIL_1=sherifelamir2003@gmail.com
 CONTACT_EMAIL_2=sherifelamir2003@gmail.com
 
 # Resend API key (for sending emails)
@@ -30,7 +30,6 @@ RESEND_API_KEY=your_resend_api_key_here
 
 If environment variables are not set, the form will use these default addresses:
 
-- `amarelazizy@gmail.com`
 - `sherifelamir2003@gmail.com`
 
 ## 🔧 **How It Works**

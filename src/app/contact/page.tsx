@@ -60,7 +60,7 @@ export default function ContactPage() {
   };
 
   return (
-    <PageLayout>
+    <>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 md:mb-16">
@@ -97,14 +97,16 @@ export default function ContactPage() {
                     <p className="text-main font-mono whitespace-nowrap overflow-hidden text-ellipsis">
                       {isCopied
                         ? "Email copied to clipboard"
-                        : "support@leadmate.ai"}
+                        : "sherifelamir2003@gmail.com"}
                     </p>
                     <Button
                       variant="default"
                       size="icon"
                       onClick={() => {
                         setIsCopied(true);
-                        navigator.clipboard.writeText("support@leadmate.ai");
+                        navigator.clipboard.writeText(
+                          "sherifelamir2003@gmail.com"
+                        );
                         toast.success("Email copied to clipboard");
                         setTimeout(() => {
                           setIsCopied(false);
@@ -333,6 +335,6 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-    </PageLayout>
+    </>
   );
 }

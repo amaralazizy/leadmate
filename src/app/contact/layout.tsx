@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import PageLayout from "@/components/PageLayout";
 
 export const metadata: Metadata = {
   title: "Contact Us — LeadMate",
@@ -17,5 +18,5 @@ export default function ContactLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <PageLayout>{children}</PageLayout>;
 }

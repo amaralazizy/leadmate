@@ -167,13 +167,6 @@ export default function ContactForm() {
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
             <a
-              href="mailto:amarelazizy@gmail.com"
-              className="text-main hover:text-green-400 transition-colors duration-300 font-semibold"
-            >
-              amarelazizy@gmail.com
-            </a>
-            <span className="text-foreground hidden md:inline">•</span>
-            <a
               href="mailto:sherifelamir2003@gmail.com"
               className="text-main hover:text-green-400 transition-colors duration-300 font-semibold"
             >

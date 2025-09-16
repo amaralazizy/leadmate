@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
 
     // Send email to the business
     const { error: emailError } = await resend.emails.send({
-      from: "LeadMate Contact <contact@leadmate.com>",
-      to: "support@leadmate.com", // Replace with your actual support email
+      from: "LeadMate Contact <sherifelamir2003@gmail.com>",
+      to: "sherifelamir2003@gmail.com", // Replace with your actual support email
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Send confirmation email to the user
     const { error: confirmationError } = await resend.emails.send({
-      from: "LeadMate <no-reply@leadmate.com>",
+      from: "LeadMate <sherifelamir2003@gmail.com>",
       to: email,
       subject: "Thank you for contacting LeadMate",
       html: `

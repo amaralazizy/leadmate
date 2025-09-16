@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notification
     const { error: emailError } = await resend.emails.send({
-      from: "Sherif Elamir<info@soar-ny.com>",
+      from: "Sherif Elamir<sherifelamir2003@gmail.com>",
       to: email,
       subject: "Welcome to the waitlist",
       html: await readFile(

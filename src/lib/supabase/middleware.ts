@@ -49,6 +49,8 @@ export async function updateSession(request: NextRequest) {
     "/",
     "/about",
     "/contact",
+    "/privacy",
+    "/terms",
   ];
 
   // Routes that don't require onboarding completion
