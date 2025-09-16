@@ -49,7 +49,11 @@ export default function ProfilePictureUpload({
       }
     } catch (error) {
       toast.dismiss();
-      toast.error(error instanceof Error ? error.message : "Failed to upload profile picture");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload profile picture"
+      );
     } finally {
       setIsUploading(false);
       // Reset the input value so the same file can be selected again
@@ -68,14 +72,13 @@ export default function ProfilePictureUpload({
   return (
     <div className="flex flex-col items-center space-y-2">
       <Label htmlFor="profile-picture">Profile Picture</Label>
-      <div className="relative">
+      <div className="relative" onClick={handleClick}>
         <Avatar
           className={`h-24 w-24 cursor-pointer transition-all duration-200 ${
             isUploading ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
           }`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          onClick={handleClick}
         >
           <AvatarImage src={currentImageUrl} alt="Profile picture" />
           <AvatarFallback>
@@ -112,6 +115,7 @@ export default function ProfilePictureUpload({
       />
 
       <Button
+        type="button"
         variant="reverse"
         size="sm"
         onClick={handleClick}
