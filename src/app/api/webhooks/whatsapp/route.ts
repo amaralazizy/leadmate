@@ -8,7 +8,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 
 // Use OpenAI directly for GPT-4o mini
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey: process.env.OPENAI_KEY as string,
 });
 
 // Create dynamic system prompt based on business knowledge with enhanced information gathering

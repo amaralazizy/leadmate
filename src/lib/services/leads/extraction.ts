@@ -1,10 +1,13 @@
 import OpenAI from "openai";
 import { createServiceClient } from "@/lib/supabase/service";
 import { shouldExtractByTime, getConversationTimestamps } from "./triggers";
+import "dotenv/config";
 
 // Use OpenAI directly for GPT-4o mini with function calling
+
+console.log("OPENAI_API_KEY", process.env.OPENAI_KEY);
 const extractionClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey: process.env.OPENAI_KEY as string,
 });
 
 export interface ExtractedUserInfo {

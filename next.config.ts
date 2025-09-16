@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import "dotenv/config";
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -6,6 +7,9 @@ const nextConfig: NextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  env: {
+    OPENAI_API_KEY: process.env.OPENAI_KEY as string,
   },
 };
 
