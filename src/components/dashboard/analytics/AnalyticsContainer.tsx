@@ -67,7 +67,7 @@ export default function AnalyticsContainer({
   return (
     <section className="space-y-6">
       {/* Header with Time Period Selector */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-10">
         <div>
           <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
           <p className="text-muted-foreground">
@@ -77,6 +77,7 @@ export default function AnalyticsContainer({
         <TimePeriodSelector
           selectedPeriod={selectedPeriod}
           onPeriodChange={handlePeriodChange}
+          className="lg:w-auto"
         />
       </div>
 
