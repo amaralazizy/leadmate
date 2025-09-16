@@ -37,17 +37,23 @@ export default async function OverviewCards() {
 
     return (
       <section>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
           {stats.map((s) => (
             <Card
               key={s.label}
-              className="rounded-base border p-4 hover:shadow-md transition-shadow"
+              className="rounded-base border p-3 sm:p-4 lg:p-5 hover:shadow-lg hover:scale-105 transition-all duration-200 bg-gradient-to-br from-background to-secondary-background/30"
             >
-              <CardHeader className="flex items-center justify-between px-0">
-                <CardTitle className="text-sm text-muted-foreground">{s.label}</CardTitle>
-                <span className="text-2xl">{s.icon}</span>
+              <CardHeader className="flex items-center justify-between px-0 pb-2 sm:pb-3">
+                <CardTitle className="text-xs sm:text-sm text-muted-foreground font-medium leading-tight">
+                  {s.label}
+                </CardTitle>
+                <span className="text-xl sm:text-2xl flex-shrink-0">
+                  {s.icon}
+                </span>
               </CardHeader>
-              <p className="text-2xl font-heading">{s.value}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-heading text-foreground">
+                {s.value}
+              </p>
             </Card>
           ))}
         </div>
@@ -68,14 +74,21 @@ export default async function OverviewCards() {
 
     return (
       <section>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
           {fallbackStats.map((s) => (
-            <div key={s.label} className="rounded-base border p-4 opacity-75">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted-foreground">{s.label}</p>
-                <span className="text-lg opacity-50">{s.icon}</span>
+            <div
+              key={s.label}
+              className="rounded-base border p-3 sm:p-4 lg:p-5 opacity-75 bg-gradient-to-br from-background to-secondary-background/20"
+            >
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-tight">
+                  {s.label}
+                </p>
+                <span className="text-xl sm:text-2xl opacity-50 flex-shrink-0">
+                  {s.icon}
+                </span>
               </div>
-              <p className="text-2xl font-heading text-muted-foreground">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-heading text-muted-foreground">
                 {s.value}
               </p>
             </div>

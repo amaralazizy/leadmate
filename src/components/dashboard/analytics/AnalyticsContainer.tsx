@@ -65,29 +65,37 @@ export default function AnalyticsContainer({
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4 sm:space-y-6">
       {/* Header with Time Period Selector */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
-          <p className="text-muted-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+            Analytics Dashboard
+          </h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Track your WhatsApp bot performance and customer engagement
           </p>
         </div>
-        <TimePeriodSelector
-          selectedPeriod={selectedPeriod}
-          onPeriodChange={handlePeriodChange}
-        />
+        <div className="flex-shrink-0">
+          <TimePeriodSelector
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={handlePeriodChange}
+          />
+        </div>
       </div>
 
       {/* Charts Grid */}
       {loading ? (
         <AnalyticsSkeleton />
       ) : data ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <MessagesChart data={data.messages} period={selectedPeriod} />
-          <LeadsChart data={data.leads} period={selectedPeriod} />
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="w-full">
+            <MessagesChart data={data.messages} period={selectedPeriod} />
+          </div>
+          <div className="w-full">
+            <LeadsChart data={data.leads} period={selectedPeriod} />
+          </div>
+          <div className="lg:col-span-2 w-full">
             <ConversationsChart
               data={data.conversations}
               period={selectedPeriod}
@@ -95,7 +103,7 @@ export default function AnalyticsContainer({
           </div>
         </div>
       ) : (
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <p className="text-center text-muted-foreground">
             No analytics data available
           </p>
@@ -107,22 +115,22 @@ export default function AnalyticsContainer({
 
 function AnalyticsSkeleton() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="p-6">
-        <Skeleton className="h-6 w-48 mb-2" />
-        <Skeleton className="h-4 w-64 mb-4" />
-        <Skeleton className="h-[300px] w-full" />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <Card className="p-4 sm:p-6">
+        <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 mb-2" />
+        <Skeleton className="h-3 sm:h-4 w-48 sm:w-64 mb-4" />
+        <Skeleton className="h-[200px] sm:h-[250px] lg:h-[300px] w-full" />
       </Card>
-      <Card className="p-6">
-        <Skeleton className="h-6 w-48 mb-2" />
-        <Skeleton className="h-4 w-64 mb-4" />
-        <Skeleton className="h-[300px] w-full" />
+      <Card className="p-4 sm:p-6">
+        <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 mb-2" />
+        <Skeleton className="h-3 sm:h-4 w-48 sm:w-64 mb-4" />
+        <Skeleton className="h-[200px] sm:h-[250px] lg:h-[300px] w-full" />
       </Card>
       <div className="lg:col-span-2">
-        <Card className="p-6">
-          <Skeleton className="h-6 w-48 mb-2" />
-          <Skeleton className="h-4 w-64 mb-4" />
-          <Skeleton className="h-[300px] w-full" />
+        <Card className="p-4 sm:p-6">
+          <Skeleton className="h-5 sm:h-6 w-32 sm:w-48 mb-2" />
+          <Skeleton className="h-3 sm:h-4 w-48 sm:w-64 mb-4" />
+          <Skeleton className="h-[200px] sm:h-[250px] lg:h-[300px] w-full" />
         </Card>
       </div>
     </div>

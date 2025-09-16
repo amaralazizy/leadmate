@@ -68,22 +68,22 @@ export default function LeadsChart({ data, period }: LeadsChartProps) {
     data.some((item) => item.order > 0 || item.booking > 0 || item.inquiry > 0);
 
   return (
-    <Card className="p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">{getTitle()}</h3>
-        <p className="text-sm text-muted-foreground">
+    <Card className="p-3 sm:p-4 lg:p-6">
+      <div className="mb-3 sm:mb-4">
+        <h3 className="text-base sm:text-lg font-semibold">{getTitle()}</h3>
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Leads captured by type over time
         </p>
       </div>
 
       {!hasData ? (
-        <div className="h-[300px] flex items-center justify-center">
+        <div className="h-[200px] sm:h-[250px] lg:h-[300px] flex items-center justify-center">
           <div className="text-center">
-            <div className="text-4xl mb-4">🎯</div>
-            <h4 className="text-lg font-medium text-muted-foreground mb-2">
+            <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">🎯</div>
+            <h4 className="text-base sm:text-lg font-medium text-muted-foreground mb-1 sm:mb-2">
               No Leads Yet
             </h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {period === "day"
                 ? "No leads generated today"
                 : period === "month"
@@ -93,7 +93,10 @@ export default function LeadsChart({ data, period }: LeadsChartProps) {
           </div>
         </div>
       ) : (
-        <ChartContainer config={chartConfig} className="h-[300px]">
+        <ChartContainer
+          config={chartConfig}
+          className="h-[200px] sm:h-[250px] lg:h-[300px]"
+        >
           <BarChart
             data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
