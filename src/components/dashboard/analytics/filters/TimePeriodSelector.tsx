@@ -2,16 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import type { TimePeriod } from "@/lib/schemas";
+import { cn } from "@/lib/utils";
 
 interface TimePeriodSelectorProps {
   selectedPeriod: TimePeriod;
   onPeriodChange: (period: TimePeriod) => void;
+  className?: string;
 }
 
 const PERIOD_OPTIONS: {
   value: TimePeriod;
   label: string;
   description: string;
+  
 }[] = [
   { value: "day", label: "Today", description: "Hourly breakdown" },
   { value: "month", label: "This Month", description: "Daily breakdown" },
@@ -21,9 +24,10 @@ const PERIOD_OPTIONS: {
 export default function TimePeriodSelector({
   selectedPeriod,
   onPeriodChange,
+  className,
 }: TimePeriodSelectorProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <span className="text-sm font-medium text-muted-foreground">Period:</span>
       <div className="flex rounded-lg border bg-background p-1">
         {PERIOD_OPTIONS.map((option) => (
