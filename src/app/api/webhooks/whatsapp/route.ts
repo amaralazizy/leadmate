@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
 import { processLeadExtraction } from "@/lib/services/leads/extraction";
 import { createServiceClient } from "@/lib/supabase/service";
+import { checkWhatsAppRateLimit } from "@/lib/services/rateLimiting";
 
 // Use OpenAI directly for GPT-4o mini
 const openai = new OpenAI({
@@ -112,6 +113,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Missing required phone numbers" },
         { status: 400 }
+      );
+    }
+
+    // Apply rate limiting specifically for the target number "+12182503154"
+    if (businessPhone === "+12182503154") {
+      const rateLimitResult = await checkWhatsAppRateLimit(
+        businessPhone,
+        customerPhone
+      );
+
+      if (!rateLimitResult.allowed) {
+        console.log(
+          `Rate limit exceeded for ${customerPhone} -> ${businessPhone}:`,
+          rateLimitResult.reason
+        );
+
+        // Send rate limit message back to customer
+        const twiml = new twilio.twiml.MessagingResponse();
+        const resetTimeFormatted = new Date(
+          rateLimitResult.resetTime
+        ).toLocaleTimeString();
+
+        twiml.message(
+          `⏰ You've reached the message limit for this hour. Please try again after ${resetTimeFormatted}. Thank you for your patience!`
+        );
+
+        return new Response(twiml.toString(), {
+          headers: { "Content-Type": "text/xml" },
+        });
+      }
+
+      // Log successful rate limit check
+      console.log(
+        `Rate limit check passed for ${customerPhone} -> ${businessPhone}. Remaining: ${rateLimitResult.remainingRequests}`
       );
     }
 

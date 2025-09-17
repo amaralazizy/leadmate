@@ -6,6 +6,7 @@ export interface OnboardingData {
   selectedCountry: string;
   selectedNumber: string;
   senderSid: string;
+  whatsappActivated: boolean;
   activationStatus: string;
 }
 

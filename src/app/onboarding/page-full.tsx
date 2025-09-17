@@ -10,6 +10,7 @@ import {
   BusinessInfoStep,
   KnowledgeUploadStep,
   PhoneNumberStep,
+  WhatsAppActivationStep,
   ActivationStep,
   CompletionStep,
   OnboardingNavigation,
@@ -39,7 +40,7 @@ export default function OnboardingPageFull() {
 
   // Use polling query for activation status
   const { data: activationStatus, isLoading: statusLoading } =
-    useActivationStatus(data.senderSid, step === 4 && !!data.senderSid);
+    useActivationStatus(data.senderSid, step === 5 && !!data.senderSid);
 
   const webhookUrl = useMemo(() => {
     if (typeof window !== "undefined") {
@@ -62,6 +63,14 @@ export default function OnboardingPageFull() {
       return;
     }
     if (step === 4) {
+      setStep(5);
+      return;
+    }
+    if (step === 5) {
+      setStep(6);
+      return;
+    }
+    if (step === 6) {
       await completeOnboarding();
       return;
     }
@@ -249,10 +258,15 @@ export default function OnboardingPageFull() {
                 )}
                 {step === 4 && (
                   <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-                    <ActivationStep data={data} setData={setData} />
+                    <WhatsAppActivationStep data={data} setData={setData} />
                   </div>
                 )}
                 {step === 5 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <ActivationStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 6 && (
                   <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                     <CompletionStep />
                   </div>

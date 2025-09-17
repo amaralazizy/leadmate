@@ -6,6 +6,7 @@ import { Bot, Sparkles } from "lucide-react";
 import {
   BusinessInfoStep,
   KnowledgeUploadStep,
+  WhatsAppActivationStep,
   CompletionStep,
   type OnboardingData,
   INITIAL_ONBOARDING_DATA,
@@ -31,7 +32,12 @@ function SimplifiedOnboardingProgress({
       title: "Knowledge Base",
       description: "Upload your business knowledge",
     },
-    { number: 3, title: "Complete", description: "You're all set!" },
+    {
+      number: 3,
+      title: "WhatsApp Access",
+      description: "Activate your chatbot",
+    },
+    { number: 4, title: "Complete", description: "You're all set!" },
   ];
 
   return (
@@ -104,6 +110,8 @@ function SimplifiedOnboardingNavigation({
         return data.businessName.trim() && data.businessType.trim();
       case 2:
         return data.knowledgeContent?.trim();
+      case 3:
+        return data.whatsappActivated;
       default:
         return true;
     }
@@ -121,7 +129,7 @@ function SimplifiedOnboardingNavigation({
       </Button>
 
       <div className="flex items-center gap-2 text-sm text-foreground/60 order-1 sm:order-2">
-        Step {step} of 3
+        Step {step} of 4
       </div>
 
       <Button
@@ -129,7 +137,7 @@ function SimplifiedOnboardingNavigation({
         disabled={!canProceed() || loading}
         className="px-4 sm:px-6 w-full sm:w-auto order-3"
       >
-        {loading ? "Processing..." : step === 3 ? "Complete Setup" : "Continue"}
+        {loading ? "Processing..." : step === 4 ? "Complete Setup" : "Continue"}
       </Button>
     </div>
   );
@@ -156,6 +164,10 @@ export default function OnboardingPage() {
       return;
     }
     if (step === 3) {
+      setStep(4);
+      return;
+    }
+    if (step === 4) {
       await completeOnboarding();
       return;
     }
@@ -230,7 +242,7 @@ export default function OnboardingPage() {
             </div>
             <div className="flex items-center gap-2 text-xs sm:text-sm text-foreground/60">
               <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
-              Step {step} of 3
+              Step {step} of 4
             </div>
           </div>
         </div>
@@ -257,6 +269,11 @@ export default function OnboardingPage() {
                   </div>
                 )}
                 {step === 3 && (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <WhatsAppActivationStep data={data} setData={setData} />
+                  </div>
+                )}
+                {step === 4 && (
                   <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                     <CompletionStep />
                   </div>

@@ -21,6 +21,8 @@ export default function OnboardingNavigation({
       case 3:
         return !data.selectedNumber;
       case 4:
+        return !data.whatsappActivated;
+      case 5:
         return data.activationStatus !== "ONLINE";
       default:
         return false;
@@ -34,13 +36,13 @@ export default function OnboardingNavigation({
       return "Upload Knowledge";
     }
 
-    if (step === 4) {
+    if (step === 5) {
       return data.activationStatus === "ONLINE"
         ? "Complete Setup"
         : "Activating...";
     }
 
-    if (step === 5) {
+    if (step === 6) {
       return "Go to Dashboard";
     }
 
@@ -50,11 +52,11 @@ export default function OnboardingNavigation({
   const getNextButtonIcon = () => {
     if (loading) return <Loader2 className="h-4 w-4 animate-spin" />;
 
-    if (step === 4 && data.activationStatus === "ONLINE") {
+    if (step === 5 && data.activationStatus === "ONLINE") {
       return <CheckCircle className="h-4 w-4" />;
     }
 
-    if (step === 5) {
+    if (step === 6) {
       return <CheckCircle className="h-4 w-4" />;
     }
 
@@ -79,7 +81,7 @@ export default function OnboardingNavigation({
         <div className="flex items-center gap-3">
           {/* Step indicator */}
           <div className="hidden sm:flex items-center gap-2 text-sm text-foreground/60">
-            <span>Step {step} of 5</span>
+            <span>Step {step} of 6</span>
           </div>
 
           <Button
@@ -103,7 +105,9 @@ export default function OnboardingNavigation({
             {step === 1 && "Please enter your business name to continue"}
             {step === 2 && "Please add your business knowledge to continue"}
             {step === 3 && "Please select a phone number to continue"}
-            {step === 4 && "Waiting for WhatsApp activation..."}
+            {step === 4 &&
+              "Please confirm you've sent the WhatsApp message to continue"}
+            {step === 5 && "Waiting for WhatsApp activation..."}
           </p>
         </div>
       )}
