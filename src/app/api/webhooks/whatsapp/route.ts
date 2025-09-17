@@ -5,7 +5,7 @@ import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
 import { processLeadExtraction } from "@/lib/services/leads/extraction";
 import { createServiceClient } from "@/lib/supabase/service";
-import { checkWhatsAppRateLimit } from "@/lib/services/rateLimiting";
+import { checkWhatsAppRateLimit } from "@/lib/services/redisRateLimiting";
 
 // Use OpenAI directly for GPT-4o mini
 const openai = new OpenAI({
@@ -272,7 +272,7 @@ export async function POST(request: NextRequest) {
       .eq("user_id", user.id);
 
     const knowledgeBase =
-      knowledgeData?.map((k) => k.content).join("\n\n") ||
+      knowledgeData?.map((k: { content: string }) => k.content).join("\n\n") ||
       "No specific business knowledge available. Please provide general helpful customer service.";
 
     // Create dynamic system prompt based on business info and knowledge
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
 
     // Build conversation history
     const conversationHistory =
-      previousMessages?.map((msg) => ({
+      previousMessages?.map((msg: { content: string; sender: string }) => ({
         role:
           msg.sender === "customer"
             ? ("user" as const)

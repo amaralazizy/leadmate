@@ -244,7 +244,10 @@ export async function extractLeadInformation(
 
     // Build conversation context
     const conversationText = messages
-      .map((msg) => `${msg.sender}: ${msg.content}`)
+      .map(
+        (msg: { sender: string; content: string }) =>
+          `${msg.sender}: ${msg.content}`
+      )
       .join("\n");
 
     const extractionPrompt = createExtractionPrompt();

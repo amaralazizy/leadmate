@@ -2,33 +2,68 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getWhatsAppRateLimitStatus,
   resetWhatsAppRateLimit,
-} from "@/lib/services/rateLimiting";
+  getWhatsAppRateLimitStatistics,
+  testRedisConnection,
+} from "@/lib/services/redisRateLimiting";
 
-// GET - Check rate limit status
+// GET - Check rate limit status, get statistics, or test connection
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const targetNumber = searchParams.get("targetNumber");
     const fromNumber = searchParams.get("fromNumber");
+    const action = searchParams.get("action"); // 'status', 'stats', or 'test'
 
-    if (!targetNumber || !fromNumber) {
+    // Test Redis connection
+    if (action === "test") {
+      const testResult = await testRedisConnection();
+      return NextResponse.json({
+        success: testResult.success,
+        message: testResult.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    if (!targetNumber) {
       return NextResponse.json(
-        { error: "targetNumber and fromNumber are required" },
+        { error: "targetNumber is required" },
         { status: 400 }
       );
     }
 
-    const status = await getWhatsAppRateLimitStatus(targetNumber, fromNumber);
+    if (action === "stats") {
+      // Get detailed statistics for the target number
+      const stats = await getWhatsAppRateLimitStatistics(targetNumber);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        targetNumber,
-        fromNumber,
-        ...status,
-        resetTimeFormatted: new Date(status.resetTime).toISOString(),
-      },
-    });
+      return NextResponse.json({
+        success: true,
+        data: {
+          targetNumber,
+          ...stats,
+          resetTimeFormatted: new Date(stats.resetTime).toISOString(),
+        },
+      });
+    } else {
+      // Get status for specific from number
+      if (!fromNumber) {
+        return NextResponse.json(
+          { error: "fromNumber is required for status check" },
+          { status: 400 }
+        );
+      }
+
+      const status = await getWhatsAppRateLimitStatus(targetNumber, fromNumber);
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          targetNumber,
+          fromNumber,
+          ...status,
+          resetTimeFormatted: new Date(status.resetTime).toISOString(),
+        },
+      });
+    }
   } catch (error) {
     console.error("Rate limit status check error:", error);
     return NextResponse.json(

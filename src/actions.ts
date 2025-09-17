@@ -86,7 +86,9 @@ export const handleSignup = async (
     if (checkError) {
       throw checkError;
     } else if (existingUsers && existingUsers.length > 0) {
-      const emailExists = existingUsers.some((user) => user.email === email);
+      const emailExists = existingUsers.some(
+        (user: { email: string }) => user.email === email
+      );
 
       const errors: Partial<
         Record<keyof SignupFormData | "supabase", string[]>
@@ -198,27 +200,35 @@ export async function getChats(user_id: string) {
 
   // Transform the data to match what the UI expects
   return (
-    chats?.map((chat) => {
-      // Count unread customer messages
-      const unreadCount =
-        chat.messages?.filter(
-          (msg: { sender: string; is_read: boolean }) =>
-            msg.sender === "customer" && msg.is_read === false
-        ).length || 0;
+    chats?.map(
+      (chat: {
+        id: string;
+        customer_phone: string;
+        status: string;
+        updated_at: string;
+        messages: { sender: string; is_read: boolean; content: string }[];
+      }) => {
+        // Count unread customer messages
+        const unreadCount =
+          chat.messages?.filter(
+            (msg: { sender: string; is_read: boolean }) =>
+              msg.sender === "customer" && msg.is_read === false
+          ).length || 0;
 
-      return {
-        id: chat.id,
-        name: chat.customer_phone, // Use phone as name for now
-        lastMessage:
-          chat.messages?.[chat.messages.length - 1]?.content ||
-          "No messages yet",
-        time: new Date(chat.updated_at).toLocaleTimeString(),
-        timestamp: chat.updated_at, // Raw timestamp for activity checking
-        customer_phone: chat.customer_phone,
-        status: chat.status,
-        unreadCount,
-      };
-    }) || []
+        return {
+          id: chat.id,
+          name: chat.customer_phone, // Use phone as name for now
+          lastMessage:
+            chat.messages?.[chat.messages.length - 1]?.content ||
+            "No messages yet",
+          time: new Date(chat.updated_at).toLocaleTimeString(),
+          timestamp: chat.updated_at, // Raw timestamp for activity checking
+          customer_phone: chat.customer_phone,
+          status: chat.status,
+          unreadCount,
+        };
+      }
+    ) || []
   );
 }
 
@@ -484,7 +494,8 @@ export async function markMessagesAsRead(
     throw convError;
   }
 
-  const conversationIds = userConversations?.map((conv) => conv.id) || [];
+  const conversationIds =
+    userConversations?.map((conv: { id: string }) => conv.id) || [];
 
   // Update messages read status - only for messages in conversations owned by the user
   const { error } = await supabase
@@ -542,7 +553,7 @@ export async function markConversationAsRead(conversationId: string) {
   }
 
   // Mark all unread messages as read
-  const messageIds = unreadMessages.map((msg) => msg.id);
+  const messageIds = unreadMessages.map((msg: { id: string }) => msg.id);
   await markMessagesAsRead(messageIds, true);
 
   return { success: true, updated: messageIds.length };
