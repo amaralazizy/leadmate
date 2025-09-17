@@ -131,12 +131,12 @@ export async function POST(request: NextRequest) {
 
         // Send rate limit message back to customer
         const twiml = new twilio.twiml.MessagingResponse();
-        const resetTimeFormatted = new Date(
-          rateLimitResult.resetTime
-        ).toLocaleTimeString();
+        // const resetTimeFormatted = new Date(
+        //   rateLimitResult.resetTime
+        // ).toLocaleTimeString();
 
         twiml.message(
-          `⏰ You've reached the message limit for this hour. Please try again after ${resetTimeFormatted}. Thank you for your patience!`
+          `⏰ You've reached the message limit for this hour. Please try again after 1 hour from now. Thank you for your patience!`
         );
 
         return new Response(twiml.toString(), {

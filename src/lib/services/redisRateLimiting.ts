@@ -45,7 +45,6 @@ class RedisRateLimiter {
       // Redis keys for rate limiting
       const perNumberKey = `rate_limit:${targetNumber}:${fromNumber}:${window}`;
       const globalKey = `rate_limit:${targetNumber}:global:${window}`;
-
       // Use Redis pipeline for atomic operations
       const pipeline = redis.pipeline();
 
@@ -62,7 +61,7 @@ class RedisRateLimiter {
         return {
           allowed: false,
           remainingRequests: 0,
-          resetTime: Date.now() + this.WINDOW_SECONDS * 1000, // Convert back to milliseconds
+          resetTime: Date.now() + this.WINDOW_SECONDS * 1000 , // Convert back to milliseconds
           reason: `Rate limit exceeded: Maximum ${this.PER_NUMBER_LIMIT} messages per hour from the same number`,
         };
       }
