@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "npx --yes install --include=optional sharp"
+    "postinstall": "npm install --include=optional sharp"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
