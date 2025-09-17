@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 
+
 export async function updateSettings(
   prevState: TSettingsFormPrevState,
   formData: FormData
