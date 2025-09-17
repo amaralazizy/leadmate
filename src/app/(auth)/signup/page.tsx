@@ -1,56 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-// import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardDescription,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
+import { handleSignup, SignupFormData } from "@/actions";
+import { Label } from "@/components/ui/label";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  // const router = useRouter();
+  const [state, formAction, isPending] = useActionState(handleSignup, {
+    success: false,
+    errors: undefined,
+    inputs: {
+      email: "",
+      password: "",
+      businessName: "",
+      username: "",
+    },
+  });
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const supabase = createClient();
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            business_name: businessName,
-          },
-        },
-      });
-
-      if (signUpError) throw signUpError;
-
-      // Show verification modal instead of redirecting immediately
-      setShowVerificationModal(true);
-    } catch (error: unknown) {
-      setError(
-        error instanceof Error ? error.message : "An unknown error occurred"
-      );
-    } finally {
-      setLoading(false);
+  // Show verification modal when signup is successful
+  useEffect(() => {
+    if (state.success && state.needsVerification) {
+      // The modal will be shown based on state.success && state.needsVerification
     }
-  };
-
-  // const handleContinueToOnboarding = () => {
-  //   setShowVerificationModal(false);
-  //   router.push("/onboarding");
-  // };
+  }, [state.success, state.needsVerification]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -73,77 +54,117 @@ export default function SignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-          <form className="space-y-6" onSubmit={handleSignup}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
+              <form className="space-y-6" action={formAction}>
+                {/* Display server errors */}
+                {state.errors?.supabase && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+                    {state.errors.supabase.join(", ")}
+                  </div>
+                )}
 
-            <div>
-              <label
-                htmlFor="businessName"
-                className="block text-sm font-medium"
-              >
-                Business Name
-              </label>
-              <div className="mt-1">
-                <Input
-                  id="businessName"
-                  name="businessName"
-                  type="text"
-                  required
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="Your Business Name"
-                />
-              </div>
-            </div>
+                <div>
+                  <Label
+                    htmlFor="businessName"
+                    className="block text-sm font-medium"
+                  >
+                    Business Name
+                  </Label>
+                  <div className="mt-1">
+                    <Input
+                      id="businessName"
+                      name="businessName"
+                      type="text"
+                      required
+                      defaultValue={state.inputs.businessName}
+                      placeholder="Your Business Name"
+                    />
+                    {state.errors?.businessName && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {state.errors.businessName.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                Email address
-              </label>
-              <div className="mt-1">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="Your Email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
+                <div>
+                  <Label
+                    htmlFor="username"
+                    className="block text-sm font-medium"
+                  >
+                    Username
+                  </Label>
+                  <div className="mt-1">
+                    <Input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      defaultValue={state.inputs.username}
+                      placeholder="Choose a username"
+                    />
+                    {state.errors?.username && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {state.errors.username.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password
-              </label>
-              <div className="mt-1">
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 characters"
-                />
-              </div>
-            </div>
+                <div>
+                  <Label htmlFor="email" className="block text-sm font-medium">
+                    Email address
+                  </Label>
+                  <div className="mt-1">
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Your Email"
+                      required
+                      defaultValue={state.inputs.email}
+                    />
+                    {state.errors?.email && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {state.errors.email.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-            <div>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4  text-sm font-medium"
-              >
-                {loading ? "Creating account..." : "Create account"}
-              </Button>
+                <div>
+                  <Label
+                    htmlFor="password"
+                    className="block text-sm font-medium"
+                  >
+                    Password
+                  </Label>
+                  <div className="mt-1">
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      defaultValue={state.inputs.password}
+                      placeholder="Minimum 6 characters"
+                    />
+                    {state.errors?.password && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {state.errors.password.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full flex justify-center py-2 px-4 text-sm font-medium"
+                  >
+                    {isPending ? "Creating account..." : "Create account"}
+                  </Button>
                 </div>
               </form>
             </CardContent>
@@ -166,7 +187,7 @@ export default function SignupPage() {
       </div>
 
       {/* Email Verification Modal */}
-      {showVerificationModal && (
+      {state.success && state.needsVerification && (
         <div className="fixed inset-0 bg-background overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border border-border w-96 shadow-lg rounded-md bg-background">
             <div className="mt-3 text-center">
@@ -192,8 +213,8 @@ export default function SignupPage() {
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-main">
                   We&apos;ve sent a verification email to{" "}
-                  <strong>{email}</strong>. Please check your inbox and click
-                  the verification link to complete your registration.
+                  <strong>{state.inputs.email}</strong>. Please check your inbox
+                  and click the verification link to complete your registration.
                 </p>
               </div>
 
@@ -201,9 +222,9 @@ export default function SignupPage() {
                 <p className="text-xs text-main flex flex-col gap-2">
                   <span>Didn&apos;t receive the email?</span>
                   Check your spam folder or
-                  <Button onClick={() => setShowVerificationModal(false)}>
-                    try signing up again
-                  </Button>
+                  <Link href="/signup">
+                    <Button variant="neutral">Try signing up again</Button>
+                  </Link>
                 </p>
               </div>
             </div>

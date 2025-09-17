@@ -23,6 +23,153 @@ export const handleLogout = async () => {
   }
 };
 
+export type SignupFormData = {
+  email: string;
+  password: string;
+  businessName: string;
+  username: string;
+};
+
+export const handleSignup = async (
+  prevState: TprevSate<SignupFormData>,
+  formData: FormData
+): Promise<TprevSate<SignupFormData> & { needsVerification?: boolean }> => {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const businessName = formData.get("businessName") as string;
+  const username = formData.get("username") as string;
+
+  const inputs = { email, password, businessName, username };
+
+  // Basic validation
+  const errors: Partial<Record<keyof SignupFormData | "supabase", string[]>> =
+    {};
+
+  if (!email || !email.includes("@")) {
+    errors.email = ["Please enter a valid email address"];
+  }
+
+  if (!password || password.length < 6) {
+    errors.password = ["Password must be at least 6 characters"];
+  }
+
+  if (!businessName || businessName.trim().length < 2) {
+    errors.businessName = ["Business name must be at least 2 characters"];
+  }
+
+  if (!username || username.trim().length < 2) {
+    errors.username = ["Username must be at least 2 characters"];
+  } else if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+    errors.username = [
+      "Username can only contain letters, numbers, dots, dashes, and underscores",
+    ];
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      success: false,
+      errors,
+      inputs,
+    };
+  }
+
+  try {
+    const supabase = await createClient();
+
+    // Check if email or username already exists in public.users table
+    console.log("Checking if email and username already exist...");
+    const { data: existingUsers, error: checkError } = await supabase
+      .from("users")
+      .select("email")
+      .eq("email", email)
+      .limit(1);
+    if (checkError) {
+      throw checkError;
+    } else if (existingUsers && existingUsers.length > 0) {
+      const emailExists = existingUsers.some((user) => user.email === email);
+
+      const errors: Partial<
+        Record<keyof SignupFormData | "supabase", string[]>
+      > = {};
+
+      if (emailExists) {
+        errors.email = ["An account with this email already exists"];
+      }
+
+      if (Object.keys(errors).length > 0) {
+        return {
+          success: false,
+          errors,
+          inputs,
+        };
+      }
+    }
+
+    const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          business_name: businessName,
+          username: username,
+        },
+      },
+    });
+
+    console.log("signUpError", signUpError);
+
+    if (signUpError) {
+      // Handle specific error cases for duplicate emails
+      if (
+        signUpError.message.toLowerCase().includes("already registered") ||
+        signUpError.message.toLowerCase().includes("already exists") ||
+        signUpError.message.toLowerCase().includes("user already registered")
+      ) {
+        return {
+          success: false,
+          errors: {
+            email: [
+              "An account with this email already exists. Please try logging in instead.",
+            ],
+          },
+          inputs,
+        };
+      }
+
+      // Handle rate limiting
+      if (signUpError.message.toLowerCase().includes("rate limit")) {
+        return {
+          success: false,
+          errors: {
+            supabase: [
+              "Too many signup attempts. Please wait a moment and try again.",
+            ],
+          },
+          inputs,
+        };
+      }
+
+      return {
+        success: false,
+        errors: { supabase: [signUpError.message] },
+        inputs,
+      };
+    }
+
+    return {
+      success: true,
+      inputs,
+      needsVerification: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: { supabase: [getErrorMessage(error)] },
+      inputs,
+    };
+  }
+};
+
 export async function getChats(user_id: string) {
   const supabase = await createClient();
   const { data: chats, error } = await supabase
