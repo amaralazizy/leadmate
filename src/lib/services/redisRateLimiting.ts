@@ -62,7 +62,7 @@ class RedisRateLimiter {
         return {
           allowed: false,
           remainingRequests: 0,
-          resetTime: (window + this.WINDOW_SECONDS) * 1000, // Convert back to milliseconds
+          resetTime: Date.now() + this.WINDOW_SECONDS * 1000, // Convert back to milliseconds
           reason: `Rate limit exceeded: Maximum ${this.PER_NUMBER_LIMIT} messages per hour from the same number`,
         };
       }
