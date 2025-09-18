@@ -23,8 +23,8 @@ const redis = new Redis({
 
 class RedisRateLimiter {
   // Configuration
-  private readonly PER_NUMBER_LIMIT = 3;
-  private readonly GLOBAL_LIMIT = 20;
+  private readonly PER_NUMBER_LIMIT = 5;
+  private readonly GLOBAL_LIMIT = 30;
   private readonly WINDOW_SECONDS = 60 * 60; // 1 hour
 
   /**
@@ -61,7 +61,7 @@ class RedisRateLimiter {
         return {
           allowed: false,
           remainingRequests: 0,
-          resetTime: Date.now() + this.WINDOW_SECONDS * 1000 , // Convert back to milliseconds
+          resetTime: Date.now() + this.WINDOW_SECONDS * 1000, // Convert back to milliseconds
           reason: `Rate limit exceeded: Maximum ${this.PER_NUMBER_LIMIT} messages per hour from the same number`,
         };
       }
