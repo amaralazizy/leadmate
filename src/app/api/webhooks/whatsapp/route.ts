@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
 
     const existingConversation = existingConversations?.[0] || null;
 
-    if (existingConversation.status === "completed") {
+    if (existingConversation && existingConversation.status === "completed") {
       await supabase
         .from("conversations")
         .update({
