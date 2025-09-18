@@ -288,9 +288,9 @@ export async function POST(request: NextRequest) {
       .select("content, sender")
       .eq("conversation_id", conversation.id)
       .order("timestamp", { ascending: true })
-      .limit(10);
+      .limit(20);
 
-    // Build conversation history
+    // Build conversation history (includes the latest message that was just saved)
     const conversationHistory =
       previousMessages?.map((msg: { content: string; sender: string }) => ({
         role:
@@ -299,12 +299,6 @@ export async function POST(request: NextRequest) {
             : ("assistant" as const),
         content: msg.content,
       })) || [];
-
-    // Add current message
-    conversationHistory.push({
-      role: "user" as const,
-      content: messageBody,
-    });
 
     let aiResponse = "";
 
