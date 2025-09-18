@@ -142,6 +142,11 @@ export default function SettingsForm({
                   }
                   onUploadSuccess={handleProfilePicUploadSuccess}
                 />
+                {state?.errors?.file && (
+                  <p className="text-sm text-red-500">
+                    {state.errors.file.join(", ")}
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>

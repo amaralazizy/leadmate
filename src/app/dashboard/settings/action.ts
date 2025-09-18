@@ -4,7 +4,8 @@ import { TSettingsFormPrevState } from "@/app/dashboard/settings/schema";
 import { SettingsInputSchema } from "@/app/dashboard/settings/schema";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import sharp from "sharp";
+// import sharp from "sharp";
+
 
 export async function updateSettings(
   prevState: TSettingsFormPrevState,
@@ -85,29 +86,29 @@ export async function uploadProfilePic(formData: FormData) {
   if (file.size > 50 * 1024 * 1024) {
     return {
       success: false,
-      errors: { file: ["Original file size must be less than 50MB"] },
+      errors: { file: ["File size must be less than 50MB"] },
     };
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const webpBuffer = await sharp(buffer)
-    .resize(200, 200, { fit: "cover" })
-    .webp({ quality: 80 })
-    .toBuffer();
+  // const buffer = Buffer.from(await file.arrayBuffer());
+  // const webpBuffer = await sharp(buffer)
+  //   .resize(200, 200, { fit: "cover" })
+  //   .webp({ quality: 80 })
+  //   .toBuffer();
 
   // Validate compressed file size (max 5MB after compression)
-  if (webpBuffer.length > 5 * 1024 * 1024) {
-    return {
-      success: false,
-      errors: { file: ["Compressed file size must be less than 5MB"] },
-    };
-  }
+  // if (webpBuffer.length > 5 * 1024 * 1024) {
+  //   return {
+  //     success: false,
+  //     errors: { file: ["Compressed file size must be less than 5MB"] },
+  //   };
+  // }
 
   const fileName = `profile-pics/${user.id}-${Date.now()}.webp`;
 
   const { error: uploadError } = await supabase.storage
     .from("leadmate")
-    .upload(fileName, webpBuffer, {
+    .upload(fileName, file, {
       contentType: "image/webp",
       upsert: false,
     });
