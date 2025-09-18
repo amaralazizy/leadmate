@@ -1,5 +1,5 @@
 import AuthLayout from "@/components/auth/AuthLayout";
-import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+import ResetPasswordConfirmationForm from "@/components/auth/ResetPasswordConfirmationForm";
 
 export default function SignupPage() {
   return (
@@ -7,7 +7,7 @@ export default function SignupPage() {
       title="Reset your password"
       description="Enter your email below to reset your password"
     >
-      <ResetPasswordForm />
+      <ResetPasswordConfirmationForm />
     </AuthLayout>
   );
 }

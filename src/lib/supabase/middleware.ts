@@ -40,11 +40,20 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
+  const authRoutes = [
+    "/login",
+    "/signup",
+    "/reset-password",
+    "/reset-password-confirmation",
+    "/auth",
+  ];
+
   // Define public routes that don't require authentication
   const publicRoutes = [
     "/login",
     "/signup",
     "/reset-password",
+    "/reset-password-confirmation",
     "/whatsapp",
     "/",
     "/about",
@@ -79,6 +88,10 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/api/webhooks/whatsapp") ||
     request.nextUrl.pathname.startsWith("/api/onboarding") ||
     request.nextUrl.pathname.startsWith("/api/");
+
+  if(user && authRoutes.includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
   // Redirect to login only if user is not authenticated AND not on a public route
   if (!user && !isPublicRoute && !isPublicApiRoute) {

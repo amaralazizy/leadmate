@@ -19,6 +19,7 @@
   --chart-4: #FF4D50;
   --chart-5: #0099FF;
   --chart-active-dot: #000;
+  --destructive: red;
 }
 
 .dark {
@@ -36,6 +37,7 @@
   --chart-4: #FF6669;
   --chart-5: #008AE5;
   --chart-active-dot: #fff;
+  --destructive: red;
 }
 
 @theme inline {
@@ -61,6 +63,7 @@
   --shadow-shadow: var(--shadow);
   --font-weight-base: 500;
   --font-weight-heading: 700;
+  --color-destructive: var(--destructive);
 }
   
 @layer base {
