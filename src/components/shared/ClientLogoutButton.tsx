@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { handleLogout } from "@/actions";
 
 interface ClientLogoutButtonProps {
   children?: React.ReactNode;
@@ -28,10 +29,10 @@ export default function ClientLogoutButton({
 
   const handleClientLogout = async () => {
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      return { message: "User logged out successfully" };
+      const { message } = await handleLogout();
+      if (message === "User logged out successfully")
+        return { message: message };
+      else throw new Error(message);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : "Failed to logout"

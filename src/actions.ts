@@ -192,7 +192,8 @@ export async function getChats(user_id: string) {
     `
     )
     .eq("user_id", user_id)
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .order("timestamp", { referencedTable: "messages", ascending: true });
 
   if (error) {
     throw error;
@@ -252,6 +253,7 @@ export async function getChatById(id: string) {
     `
     )
     .eq("id", id)
+    .order("timestamp", { referencedTable: "messages", ascending: true })
     .single();
 
   if (error) {

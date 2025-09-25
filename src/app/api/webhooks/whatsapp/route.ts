@@ -116,39 +116,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Apply rate limiting specifically for the target number "+12182503154"
-    if (businessPhone === "+12182503154") {
-      const rateLimitResult = await checkWhatsAppRateLimit(
-        businessPhone,
-        customerPhone
-      );
+    // // Apply rate limiting specifically for the target number "+12182503154"
+    // if (businessPhone === "+12182503154") {
+    //   const rateLimitResult = await checkWhatsAppRateLimit(
+    //     businessPhone,
+    //     customerPhone
+    //   );
 
-      if (!rateLimitResult.allowed) {
-        console.log(
-          `Rate limit exceeded for ${customerPhone} -> ${businessPhone}:`,
-          rateLimitResult.reason
-        );
+    //   if (!rateLimitResult.allowed) {
+    //     console.log(
+    //       `Rate limit exceeded for ${customerPhone} -> ${businessPhone}:`,
+    //       rateLimitResult.reason
+    //     );
 
-        // Send rate limit message back to customer
-        const twiml = new twilio.twiml.MessagingResponse();
-        // const resetTimeFormatted = new Date(
-        //   rateLimitResult.resetTime
-        // ).toLocaleTimeString();
+    //     // Send rate limit message back to customer
+    //     const twiml = new twilio.twiml.MessagingResponse();
+    //     // const resetTimeFormatted = new Date(
+    //     //   rateLimitResult.resetTime
+    //     // ).toLocaleTimeString();
 
-        twiml.message(
-          `⏰ You've reached the message limit for this hour. Please try again after 1 hour from now. Thank you for your patience!`
-        );
+    //     twiml.message(
+    //       `⏰ You've reached the message limit for this hour. Please try again after 1 hour from now. Thank you for your patience!`
+    //     );
 
-        return new Response(twiml.toString(), {
-          headers: { "Content-Type": "text/xml" },
-        });
-      }
+    //     return new Response(twiml.toString(), {
+    //       headers: { "Content-Type": "text/xml" },
+    //     });
+    //   }
 
-      // Log successful rate limit check
-      console.log(
-        `Rate limit check passed for ${customerPhone} -> ${businessPhone}. Remaining: ${rateLimitResult.remainingRequests}`
-      );
-    }
+    //   // Log successful rate limit check
+    //   console.log(
+    //     `Rate limit check passed for ${customerPhone} -> ${businessPhone}. Remaining: ${rateLimitResult.remainingRequests}`
+    //   );
+    // }
 
     // Find the business user by WhatsApp number
     const { data: user, error: userError } = await supabase
@@ -287,18 +287,20 @@ export async function POST(request: NextRequest) {
       .from("messages")
       .select("content, sender")
       .eq("conversation_id", conversation.id)
-      .order("timestamp", { ascending: true })
-      .limit(20);
+      .order("timestamp", { ascending: false })
+      .limit(10);
 
     // Build conversation history (includes the latest message that was just saved)
     const conversationHistory =
-      previousMessages?.map((msg: { content: string; sender: string }) => ({
-        role:
-          msg.sender === "customer"
-            ? ("user" as const)
-            : ("assistant" as const),
-        content: msg.content,
-      })) || [];
+      previousMessages
+        ?.map((msg: { content: string; sender: string }) => ({
+          role:
+            msg.sender === "customer"
+              ? ("user" as const)
+              : ("assistant" as const),
+          content: msg.content,
+        }))
+        .reverse() || [];
 
     let aiResponse = "";
 
