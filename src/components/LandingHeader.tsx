@@ -1,12 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCurrentUser } from "@/lib/auth/server";
-import logo from "../../public/logo.png";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
 import MobileSidebar from "@/components/MobileSidebar";
 import ClientLogoutButton from "@/components/shared/ClientLogoutButton";
 
-export default async function LandingHeader() {
+type LandingHeaderProps = {
+  hideAuthButtons?: boolean;
+};
+
+export default async function LandingHeader({
+  hideAuthButtons = false,
+}: LandingHeaderProps) {
   const { user, isAuthenticated } = await getCurrentUser();
 
   return (
@@ -16,7 +21,7 @@ export default async function LandingHeader() {
           <Link href="/" className="flex-shrink-0">
             {/* make the logo responsive */}
             <Image
-              src={logo}
+              src="/logo-transparent.png"
               alt="LeadMate"
               width={150}
               height={150}
@@ -37,18 +42,24 @@ export default async function LandingHeader() {
             >
               Contact
             </Link>
-            {isAuthenticated && user ? (
+            {!hideAuthButtons && (
               <>
-                <span className="text-foreground px-3 py-2 text-sm">
-                  Welcome, {user.username}
-                </span>
-                <NavigationButton href="/dashboard">Dashboard</NavigationButton>
-                <ClientLogoutButton size="sm">Logout</ClientLogoutButton>
-              </>
-            ) : (
-              <>
-                <NavigationButton href="/login">Login</NavigationButton>
-                <NavigationButton href="/signup">Signup</NavigationButton>
+                {isAuthenticated && user ? (
+                  <>
+                    <span className="text-foreground px-3 py-2 text-sm">
+                      Welcome, {user.username}
+                    </span>
+                    <NavigationButton href="/dashboard">
+                      Dashboard
+                    </NavigationButton>
+                    <ClientLogoutButton size="sm">Logout</ClientLogoutButton>
+                  </>
+                ) : (
+                  <>
+                    <NavigationButton href="/login">Login</NavigationButton>
+                    <NavigationButton href="/signup">Signup</NavigationButton>
+                  </>
+                )}
               </>
             )}
           </div>

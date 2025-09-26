@@ -26,7 +26,7 @@ export default function AppSidebarLogo() {
         />
         ) : (
           <Image
-            src="/logo.png"
+            src="/logo-transparent.png"
             alt="LeadMate"
             fill
             className="object-contain transition-all duration-200 ease-in-out"

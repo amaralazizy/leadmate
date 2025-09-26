@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
 import { Button } from "@/components/ui/button";
-import logo from "../../public/logo.png";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { navLinks } from "@/lib/data/navLinks";
@@ -60,7 +59,7 @@ export default function MobileSidebar() {
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-border">
             <Link href="/" onClick={closeSidebar}>
-              <Image src={logo} alt="LeadMate" height={150} width={150} />
+              <Image src="/logo-transparent.png" alt="LeadMate" height={150} width={150} />
             </Link>
             <button
               onClick={closeSidebar}

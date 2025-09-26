@@ -1,8 +1,6 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { MessageSquare, Target, Shield, Users } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import logo from "../../../public/logo.png";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
 
 export const metadata: Metadata = {
@@ -23,15 +21,6 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 md:mb-16">
-          <div className="flex justify-center mb-6 md:mb-8">
-            <Image
-              src={logo}
-              alt="LeadMate"
-              height={80}
-              width={120}
-              className="h-16 w-auto md:h-20"
-            />
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
             About <span className="text-main">LeadMate</span>
           </h1>

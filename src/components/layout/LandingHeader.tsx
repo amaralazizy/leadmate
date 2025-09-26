@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import logo from "../../../public/logo.png";
 import { NavigationButton } from "@/components/JoinWaitlistButton";
 import { Button } from "@/components/ui/button";
 import MobileSidebar from "@/components/MobileSidebar";
@@ -54,7 +53,7 @@ export default function LandingHeader() {
         <div className="flex justify-between items-center py-4 md:py-6">
           <Link href="/" className="flex-shrink-0">
             <Image
-              src={logo}
+              src="/logo-transparent.png"
               alt="LeadMate"
               height={150}
               width={150}

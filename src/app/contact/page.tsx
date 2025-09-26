@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Mail, ClipboardList, Send, CheckCircle } from "lucide-react";
-import PageLayout from "@/components/PageLayout";
-import logo from "../../../public/logo.png";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
@@ -64,9 +61,6 @@ export default function ContactPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 md:mb-16">
-          <div className="flex justify-center mb-8">
-            <Image src={logo} alt="LeadMate" height={80} width={120} />
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
             <span className="text-main">Contact</span> Us
           </h1>
