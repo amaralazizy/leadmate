@@ -22,7 +22,7 @@ export default function CTASection() {
             {/* Urgency Badge */}
             <div className="inline-flex items-center px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-full text-red-400 font-medium mb-6 animate-pulse">
               <AlertTriangle className="h-4 w-4 mr-2" />
-              Don't Let Another Lead Slip Away
+              Don&apos;t Let Another Lead Slip Away
             </div>
 
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 text-center">
@@ -38,7 +38,7 @@ export default function CTASection() {
               <span className="text-main font-semibold">
                 2,847 smart businesses
               </span>{" "}
-              who've already automated their WhatsApp success.
+              who&apos;ve already automated their WhatsApp success.
             </p>
 
             {/* Value propositions */}
