@@ -1,0 +1,106 @@
+# LeadMate - AI WhatsApp Customer Support Automation
+
+## Product Overview
+LeadMate is an AI-powered WhatsApp customer support automation platform designed specifically for small and medium-sized businesses. The platform transforms how businesses handle customer inquiries on WhatsApp by providing intelligent, automated responses while capturing valuable leads.
+
+## Core Features
+- **AI-Powered Responses**: Uses GPT-4 and advanced language models to provide natural, contextual responses to customer inquiries
+- **Lead Capture**: Automatically detects and extracts customer information (name, phone, inquiry details) from conversations
+- **Knowledge Base Integration**: Businesses can upload their FAQ, menu, or service information to train the AI
+- **24/7 Availability**: Provides round-the-clock customer support without human intervention
+- **WhatsApp Business API**: Direct integration with Twilio WhatsApp Business API
+- **Real-time Dashboard**: Monitor conversations, leads, and usage analytics
+- **Multi-tenant Architecture**: Secure, isolated data for each business
+- **Lead Management**: Export leads to Google Sheets and receive email notifications
+
+## Target Audience
+- Small restaurants (menu-based ordering, reservations)
+- Service businesses (gyms, salons, clinics with appointment booking)
+- Local retailers (product inquiries, order processing)
+- Consultants (lead qualification, appointment scheduling)
+- Any small-medium business receiving customer inquiries via WhatsApp
+
+## Technical Stack
+- **Frontend & Backend**: Next.js 15 with TypeScript and App Router
+- **Database**: Supabase (PostgreSQL with vector extensions for embeddings)
+- **AI Services**: OpenAI GPT-4, text-embedding-3-small
+- **Messaging**: Twilio WhatsApp Business API
+- **Authentication**: Supabase Auth
+- **Payments**: Stripe integration
+- **Deployment**: Vercel
+- **Analytics**: Vercel Analytics
+
+## Key Benefits
+- **10x Faster Setup**: Compared to building custom chatbot solutions
+- **Cost-Effective**: Pay-per-use model affordable for small businesses
+- **Compliance-First**: Adheres to WhatsApp business policies and data protection standards
+- **Human-Centered**: AI enhances human connection rather than replacing it
+- **Purpose-Built**: Specifically designed for customer support, not generic chatbots
+
+## Use Cases
+1. **Restaurant Orders**: Customers can view menu, place orders, make reservations
+2. **Appointment Booking**: Service businesses can automate appointment scheduling
+3. **Product Inquiries**: Retailers can answer product questions and process orders
+4. **Lead Qualification**: Consultants can qualify leads and schedule consultations
+5. **FAQ Automation**: Any business can automate frequently asked questions
+
+## Pricing Model
+- Free trial available for new users
+- Subscription-based pricing with usage quotas
+- Affordable for small businesses starting at basic tiers
+- Scales with business growth and message volume
+
+## Company Information
+- **Founded**: 2024
+- **Mission**: Empower every business with intelligent customer engagement tools that feel natural, reliable, and genuinely helpful
+- **Focus**: Customer support automation (not marketing automation)
+- **Values**: Compliance-first, human-centered, purpose-built, privacy-focused
+
+## Contact & Support
+- **Website**: https://www.leadmate.app
+- **Support Email**: sherifelamir2003@gmail.com
+- **Response Time**: 24 hours during business days
+- **Business Hours**: Monday - Friday: 9:00 AM - 6:00 PM (UTC)
+
+## Social Media
+- **Twitter**: @leadmate_app
+- **LinkedIn**: /company/leadmate
+
+## Technical Implementation
+- **RAG Pipeline**: Retrieval-Augmented Generation with vector similarity search
+- **Lead Detection**: AI-native intent recognition without keyword rules
+- **Multi-language**: Currently supports English with plans for expansion
+- **Security**: Row Level Security (RLS), JWT authentication, webhook signature verification
+- **Performance**: Sub-3-second response time critical for WhatsApp UX
+
+## Compliance & Privacy
+- **WhatsApp Policy Compliant**: Designed for legitimate customer support only
+- **Data Protection**: Enterprise-grade security, never shares customer data
+- **GDPR Ready**: Privacy-focused architecture with data retention controls
+- **No Spam**: Strictly customer support focused, not mass messaging
+
+## API Endpoints
+- POST /api/webhook/whatsapp - Receive WhatsApp messages
+- POST /api/knowledge - Upload and process business knowledge
+- GET /api/conversations - Fetch chat history
+- POST /api/chat/test - Test bot responses
+- GET/POST /api/leads - Manage captured leads
+- POST /api/integrations/google-sheets - Sync lead data
+
+## Competitive Advantages
+- **WhatsApp-First**: Built specifically for WhatsApp Business API
+- **Small Business Focus**: Designed for SMBs, not enterprise complexity
+- **AI-Native**: Uses latest LLM technology for natural conversations
+- **Quick Setup**: Less than 10 minutes to get started
+- **Affordable**: Accessible pricing for growing businesses
+
+## Future Roadmap
+- **Multi-Platform Support**: Expansion to other messaging platforms based on demand
+- **Advanced Analytics**: Enhanced reporting and business intelligence
+- **Integration Ecosystem**: More CRM and business tool integrations
+- **Multi-language Support**: Support for additional languages
+- **Voice Integration**: Voice message processing capabilities
+
+---
+
+This information is current as of January 2025 and represents LeadMate's AI WhatsApp customer support automation platform. For the most up-to-date information, please visit https://www.leadmate.app

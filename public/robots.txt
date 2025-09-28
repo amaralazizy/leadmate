@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Disallow private/sensitive pages
+Disallow: /dashboard/
+Disallow: /onboarding/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /*.json$
+Disallow: /admin/
+
+# Allow important pages for SEO
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /features
+Allow: /privacy
+Allow: /terms
+Allow: /blog/
+
+# Sitemap location
+Sitemap: https://www.leadmate.app/sitemap.xml
