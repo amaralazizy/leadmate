@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -129,17 +129,18 @@ export const metadata: Metadata = {
   },
   applicationName: "LeadMate",
   referrer: "origin-when-cross-origin",
-  colorScheme: "dark",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   verification: {
     // Add these when you get them from Google Search Console, Bing, etc.
     // google: 'your-google-verification-code',
     // bing: 'your-bing-verification-code',
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
