@@ -17,6 +17,10 @@ Allow: /features
 Allow: /privacy
 Allow: /terms
 Allow: /blog/
+Allow: /llms.txt
 
 # Sitemap location
 Sitemap: https://www.leadmate.app/sitemap.xml
+
+# LLM information
+# llms.txt: https://www.leadmate.app/llms.txt
