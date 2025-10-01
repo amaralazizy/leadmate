@@ -61,6 +61,9 @@ export async function updateSession(request: NextRequest) {
     "/privacy",
     "/terms",
     "/blog",
+    "/sitemap.xml",
+    "/llms.txt",
+    "/robots.txt",
   ];
 
   // Routes that don't require onboarding completion

@@ -29,27 +29,6 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(posts);
   const [isLoading, setIsLoading] = useState(posts.length === 0);
 
-  useEffect(() => {
-    if (posts.length === 0) {
-      // If no posts provided as props, fetch them client-side
-      const fetchPosts = async () => {
-        try {
-          const response = await fetch("/api/blog/latest");
-          if (response.ok) {
-            const data = await response.json();
-            setBlogPosts(data.posts.slice(0, 3)); // Only show 3 latest posts
-          }
-        } catch (error) {
-          console.error("Error fetching blog posts:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchPosts();
-    }
-  }, [posts]);
-
   const formatDate = (date: Date | null) => {
     if (!date) return "Recent";
     return date.toLocaleDateString("en-US", {
