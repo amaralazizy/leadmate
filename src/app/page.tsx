@@ -11,8 +11,11 @@ import FAQSection from "@/components/home/FAQSection";
 import CTASection from "@/components/home/CTASection";
 import TrustSignals from "@/components/home/TrustSignals";
 import PricingPlans from "@/components/home/PricingPlans";
+import BlogSection, { BlogPost } from "@/components/home/BlogSection";
+import { wisp } from "@/lib/wisp";
 
-export default function Home() {
+export default async function Home() {
+  const result = await wisp.getPosts({ limit: 3 });
   return (
     <PageLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 page">
@@ -23,8 +26,9 @@ export default function Home() {
         <TestimonialsSection />
         <FAQSection />
         <TrustSignals />
+        <BlogSection posts={result.posts  } />
         <CTASection />
-        <PricingPlans/>
+        <PricingPlans />
       </div>
     </PageLayout>
   );

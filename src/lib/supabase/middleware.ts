@@ -60,6 +60,7 @@ export async function updateSession(request: NextRequest) {
     "/contact",
     "/privacy",
     "/terms",
+    "/blog",
   ];
 
   // Routes that don't require onboarding completion
@@ -89,7 +90,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/api/onboarding") ||
     request.nextUrl.pathname.startsWith("/api/");
 
-  if(user && authRoutes.includes(request.nextUrl.pathname)) {
+  if (user && authRoutes.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
