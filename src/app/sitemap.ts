@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { wisp } from "@/lib/wisp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.leadmate.app";
+  const baseUrl = "https://www.leadmate.app";
   const currentDate = new Date();
 
   // Get blog posts for dynamic sitemap entries
