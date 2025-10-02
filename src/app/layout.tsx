@@ -101,7 +101,7 @@ export const metadata: Metadata = {
       "Transform your WhatsApp customer support with AI automation. Capture leads, provide 24/7 responses, and automate customer service for small businesses. Start free trial today.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "LeadMate - AI WhatsApp Customer Support Automation Platform",
