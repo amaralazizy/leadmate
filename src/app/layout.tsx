@@ -120,6 +120,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/twitter-image.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
         alt: "LeadMate - AI WhatsApp Customer Support Automation",
       },
     ],
