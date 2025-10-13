@@ -5,10 +5,12 @@ import {
   getWhatsAppRateLimitStatistics,
   testRedisConnection,
 } from "@/lib/services/redisRateLimiting";
+import { requireAdmin } from "@/lib/auth/admin";
 
 // GET - Check rate limit status, get statistics, or test connection
 export async function GET(request: NextRequest) {
   try {
+    await requireAdmin();
     const { searchParams } = new URL(request.url);
     const targetNumber = searchParams.get("targetNumber");
     const fromNumber = searchParams.get("fromNumber");
@@ -65,17 +67,16 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Rate limit status check error:", error);
-    return NextResponse.json(
-      { error: "Failed to check rate limit status" },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Failed";
+    const status = message === "Admin only" ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }
 
 // POST - Reset rate limits
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const { targetNumber, fromNumber } = body;
 
@@ -98,17 +99,16 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Rate limit reset error:", error);
-    return NextResponse.json(
-      { error: "Failed to reset rate limits" },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Failed";
+    const status = message === "Admin only" ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }
 
 // DELETE - Reset all rate limits for a target number
 export async function DELETE(request: NextRequest) {
   try {
+    await requireAdmin();
     const { searchParams } = new URL(request.url);
     const targetNumber = searchParams.get("targetNumber");
 
@@ -131,10 +131,8 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Rate limit bulk reset error:", error);
-    return NextResponse.json(
-      { error: "Failed to reset all rate limits" },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Failed";
+    const status = message === "Admin only" ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

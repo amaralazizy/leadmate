@@ -22,7 +22,7 @@ const redis = new Redis({
 });
 
 class RedisRateLimiter {
-  // Configuration
+  // Default configuration (will be overridden by dynamic settings when provided)
   private readonly PER_NUMBER_LIMIT = 5;
   private readonly GLOBAL_LIMIT = 30;
   private readonly WINDOW_SECONDS = 60 * 60; // 1 hour
@@ -35,12 +35,20 @@ class RedisRateLimiter {
    */
   async checkRateLimit(
     targetNumber: string,
-    fromNumber: string
+    fromNumber: string,
+    cfg?: {
+      perNumberLimit?: number;
+      globalLimit?: number;
+      windowSeconds?: number;
+    }
   ): Promise<RateLimitResult> {
     try {
+      const perLimit = cfg?.perNumberLimit ?? this.PER_NUMBER_LIMIT;
+      const globalLimit = cfg?.globalLimit ?? this.GLOBAL_LIMIT;
+      const windowSeconds = cfg?.windowSeconds ?? this.WINDOW_SECONDS;
+
       const now = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
-      const window =
-        Math.floor(now / this.WINDOW_SECONDS) * this.WINDOW_SECONDS;
+      const window = Math.floor(now / windowSeconds) * windowSeconds;
 
       // Redis keys for rate limiting
       const perNumberKey = `rate_limit:${targetNumber}:${fromNumber}:${window}`;
@@ -57,22 +65,22 @@ class RedisRateLimiter {
       const globalCount = (results[1] as number) || 0;
 
       // Check per-number limit
-      if (perNumberCount >= this.PER_NUMBER_LIMIT) {
+      if (perNumberCount >= perLimit) {
         return {
           allowed: false,
           remainingRequests: 0,
-          resetTime: Date.now() + this.WINDOW_SECONDS * 1000, // Convert back to milliseconds
-          reason: `Rate limit exceeded: Maximum ${this.PER_NUMBER_LIMIT} messages per hour from the same number`,
+          resetTime: Date.now() + windowSeconds * 1000, // Convert back to milliseconds
+          reason: `Rate limit exceeded: Maximum ${perLimit} messages per hour from the same number`,
         };
       }
 
       // Check global limit
-      if (globalCount >= this.GLOBAL_LIMIT) {
+      if (globalCount >= globalLimit) {
         return {
           allowed: false,
           remainingRequests: 0,
-          resetTime: (window + this.WINDOW_SECONDS) * 1000,
-          reason: `Rate limit exceeded: Maximum ${this.GLOBAL_LIMIT} messages per hour for this number`,
+          resetTime: (window + windowSeconds) * 1000,
+          reason: `Rate limit exceeded: Maximum ${globalLimit} messages per hour for this number`,
         };
       }
 
@@ -81,21 +89,21 @@ class RedisRateLimiter {
 
       // Increment per-number counter
       incrementPipeline.incr(perNumberKey);
-      incrementPipeline.expire(perNumberKey, this.WINDOW_SECONDS);
+      incrementPipeline.expire(perNumberKey, windowSeconds);
 
       // Increment global counter
       incrementPipeline.incr(globalKey);
-      incrementPipeline.expire(globalKey, this.WINDOW_SECONDS);
+      incrementPipeline.expire(globalKey, windowSeconds);
 
       await incrementPipeline.exec();
 
       return {
         allowed: true,
         remainingRequests: Math.min(
-          this.PER_NUMBER_LIMIT - perNumberCount - 1,
-          this.GLOBAL_LIMIT - globalCount - 1
+          perLimit - perNumberCount - 1,
+          globalLimit - globalCount - 1
         ),
-        resetTime: (window + this.WINDOW_SECONDS) * 1000,
+        resetTime: (window + windowSeconds) * 1000,
       };
     } catch (error) {
       console.error("Redis rate limiting error:", error);
@@ -114,12 +122,20 @@ class RedisRateLimiter {
    */
   async getRateLimitStatus(
     targetNumber: string,
-    fromNumber: string
+    fromNumber: string,
+    cfg?: {
+      perNumberLimit?: number;
+      globalLimit?: number;
+      windowSeconds?: number;
+    }
   ): Promise<RateLimitResult> {
     try {
+      const perLimit = cfg?.perNumberLimit ?? this.PER_NUMBER_LIMIT;
+      const globalLimit = cfg?.globalLimit ?? this.GLOBAL_LIMIT;
+      const windowSeconds = cfg?.windowSeconds ?? this.WINDOW_SECONDS;
+
       const now = Math.floor(Date.now() / 1000);
-      const window =
-        Math.floor(now / this.WINDOW_SECONDS) * this.WINDOW_SECONDS;
+      const window = Math.floor(now / windowSeconds) * windowSeconds;
 
       const perNumberKey = `rate_limit:${targetNumber}:${fromNumber}:${window}`;
       const globalKey = `rate_limit:${targetNumber}:global:${window}`;
@@ -132,18 +148,15 @@ class RedisRateLimiter {
       const perNumberCount = (results[0] as number) || 0;
       const globalCount = (results[1] as number) || 0;
 
-      const perNumberRemaining = Math.max(
-        0,
-        this.PER_NUMBER_LIMIT - perNumberCount
-      );
-      const globalRemaining = Math.max(0, this.GLOBAL_LIMIT - globalCount);
+      const perNumberRemaining = Math.max(0, perLimit - perNumberCount);
+      const globalRemaining = Math.max(0, globalLimit - globalCount);
 
       const isAllowed = perNumberRemaining > 0 && globalRemaining > 0;
 
       return {
         allowed: isAllowed,
         remainingRequests: Math.min(perNumberRemaining, globalRemaining),
-        resetTime: (window + this.WINDOW_SECONDS) * 1000,
+        resetTime: (window + windowSeconds) * 1000,
         reason: !isAllowed ? "Rate limit would be exceeded" : undefined,
       };
     } catch (error) {
@@ -306,7 +319,12 @@ const redisRateLimiter = new RedisRateLimiter();
  */
 export async function checkWhatsAppRateLimit(
   targetNumber: string,
-  fromNumber: string
+  fromNumber: string,
+  cfg?: {
+    perNumberLimit?: number;
+    globalLimit?: number;
+    windowSeconds?: number;
+  }
 ): Promise<RateLimitResult> {
   try {
     // Normalize phone numbers (remove any prefixes like "whatsapp:")
@@ -315,7 +333,8 @@ export async function checkWhatsAppRateLimit(
 
     return await redisRateLimiter.checkRateLimit(
       cleanTargetNumber,
-      cleanFromNumber
+      cleanFromNumber,
+      cfg
     );
   } catch (error) {
     console.error("Rate limiting error:", error);
@@ -337,7 +356,12 @@ export async function checkWhatsAppRateLimit(
  */
 export async function getWhatsAppRateLimitStatus(
   targetNumber: string,
-  fromNumber: string
+  fromNumber: string,
+  cfg?: {
+    perNumberLimit?: number;
+    globalLimit?: number;
+    windowSeconds?: number;
+  }
 ): Promise<RateLimitResult> {
   try {
     const cleanTargetNumber = targetNumber.replace(/^whatsapp:/, "");
@@ -345,7 +369,8 @@ export async function getWhatsAppRateLimitStatus(
 
     return await redisRateLimiter.getRateLimitStatus(
       cleanTargetNumber,
-      cleanFromNumber
+      cleanFromNumber,
+      cfg
     );
   } catch (error) {
     console.error("Rate limiting status error:", error);

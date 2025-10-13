@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scheduledLeadProcessing } from "@/lib/services/leads";
+import { getEffectiveSettings } from "@/lib/services/settings";
+import { createServiceClient } from "@/lib/supabase/service";
 
 /**
  * Batch processing endpoint for abandoned conversations
@@ -13,6 +15,34 @@ export async function POST(request: NextRequest) {
 
     if (expectedToken && authHeader !== `Bearer ${expectedToken}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Optional tenant scoping via query string
+    const { searchParams } = new URL(request.url);
+    const tenantId = searchParams.get("tenantId") || undefined;
+
+    // When tenantId provided, ensure it exists
+    if (tenantId) {
+      const supabase = createServiceClient();
+      const { data: tenant, error } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", tenantId)
+        .single();
+      if (error || !tenant) {
+        return NextResponse.json(
+          { error: "Tenant not found" },
+          { status: 404 }
+        );
+      }
+    }
+
+    const settings = await getEffectiveSettings(tenantId);
+    if (!settings.scheduling.enabled) {
+      return NextResponse.json(
+        { success: false, error: "Scheduling disabled" },
+        { status: 403 }
+      );
     }
 
     console.log("🔄 Starting batch lead processing from API endpoint");

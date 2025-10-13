@@ -10,7 +10,6 @@ export async function PUT(request: NextRequest) {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    console.log(user);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,12 +17,8 @@ export async function PUT(request: NextRequest) {
 
     // Parse the request body
     const body = await request.json();
-    const {
-      business_name,
-      business_type,
-      whatsapp_number,
-      business_logo_url,
-    } = body;
+    const { business_name, business_type, whatsapp_number, business_logo_url } =
+      body;
 
     // Validate required fields
     if (!business_name) {
@@ -45,7 +40,6 @@ export async function PUT(request: NextRequest) {
       .eq("id", user.id)
       .select()
       .single();
-
 
     if (error) {
       console.error("Error updating user settings:", error);
@@ -87,7 +81,6 @@ export async function GET() {
       .from("users")
       .select("*")
       .eq("id", user.id);
-    console.log("user", user.id);
 
     if (error) {
       console.error("Error fetching user settings:", error);
@@ -97,10 +90,7 @@ export async function GET() {
       );
     }
 
-
-    console.log("data", data);
-
-    return NextResponse.json({data});
+    return NextResponse.json({ data });
   } catch (error) {
     console.error("Error in settings fetch:", error);
     return NextResponse.json(

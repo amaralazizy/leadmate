@@ -2,6 +2,8 @@
 
 This document describes the settings management functionality for the AI WhatsApp Chatbot application.
 
+Supports both app-wide defaults and per-tenant overrides via the admin dashboard.
+
 ## Overview
 
 The settings system allows users to manage their business profile, WhatsApp configuration, and account information through a user-friendly interface.
@@ -26,6 +28,30 @@ The settings system allows users to manage their business profile, WhatsApp conf
 
 - **WhatsApp Status**: Current WhatsApp Business API status
 - **Twilio Phone Number**: Associated Twilio phone number
+
+## Configuration Schema
+
+All settings are stored as JSON in two tables:
+
+- `app_settings.config` (global defaults, single row)
+- `tenant_settings.config` (per-tenant overrides keyed by `tenant_id`)
+
+Shape:
+
+```json
+{
+  "webhook": { "enabled": true },
+  "llm": { "provider": "openai", "model": "gpt-4o-mini", "temperature": 0.3 },
+  "rateLimit": {
+    "perNumberLimit": 5,
+    "globalLimit": 30,
+    "windowSeconds": 3600
+  },
+  "scheduling": { "enabled": true, "intervalMinutes": 10 }
+}
+```
+
+Effective settings are computed as: defaults <- app_settings <- tenant_settings.
 
 ## API Endpoints
 
@@ -53,6 +79,17 @@ Retrieves the current user's settings.
   }
 }
 ```
+
+### Admin
+
+- `GET /api/admin/app-settings` – fetch global config (admin only)
+- `PUT /api/admin/app-settings` – update global config (admin only)
+- `GET /api/admin/tenant-settings?tenantId=...` – fetch tenant override (admin only)
+- `GET /api/admin/tenant-settings?q=...` – list/search tenants (admin only)
+- `PUT /api/admin/tenant-settings` – update tenant override `{ tenantId, config }` (admin only)
+- `GET /api/admin/rate-limits` – status/stats/test (admin only)
+- `POST|DELETE /api/admin/rate-limits` – reset limits (admin only)
+- `GET /api/admin/cron-info` – cron URL and token suffix (admin only)
 
 ### PUT /api/settings
 

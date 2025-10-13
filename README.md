@@ -11,6 +11,7 @@ A complete SaaS platform that enables businesses to create AI-powered WhatsApp c
 - **Real-time Dashboard**: Monitor conversations, leads, and usage
 - **Multi-tenant**: Secure, isolated data for each business
 - **Subscription Billing**: Stripe integration for recurring payments
+- **Admin Dashboard**: App-wide and per-tenant controls (webhook, LLM, rate limits, scheduling)
 
 ## 🚀 Quick Start
 
@@ -66,6 +67,11 @@ SMTP_PASS=your_email_password
 # Application
 NEXTAUTH_SECRET=your_nextauth_secret
 NEXTAUTH_URL=http://localhost:3000
+
+# Admin
+ADMIN_EMAILS=you@example.com,other@example.com
+BATCH_PROCESSING_TOKEN=your_secure_token
+NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
 ```
 
 ### 3. Database Setup

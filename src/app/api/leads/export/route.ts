@@ -75,7 +75,6 @@ export async function GET(request: Request) {
 
         // Clean details by removing the structured parts we've extracted
 
-        console.log(details);
         const cleanDetails = details
           .replace(/Email:\s*[^\n]+\n?/g, "")
           .replace(/Location:\s*[^\n]+\n?/g, "")
@@ -84,7 +83,6 @@ export async function GET(request: Request) {
           .replace(/Preferences:\s*[^\n]+\n?/g, "")
           .replace(/Urgency:\s*[^\n]+\n?/g, "")
           .trim();
-        console.log(cleanDetails);
 
         // Ensure phone number has + prefix and format it properly for Excel
         // Add a space after + to prevent Excel from treating it as a formula

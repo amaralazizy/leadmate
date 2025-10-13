@@ -10,7 +10,6 @@ export async function PUT(request: NextRequest) {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    console.log(user);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

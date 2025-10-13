@@ -6,6 +6,13 @@ import { Conversation } from "@/lib/types/chat";
 import { processLeadExtraction } from "@/lib/services/leads/extraction";
 import { createServiceClient } from "@/lib/supabase/service";
 import { checkWhatsAppRateLimit } from "@/lib/services/redisRateLimiting";
+import { getEffectiveSettings } from "@/lib/services/settings";
+import {
+  autoTemplateKey,
+  buildClinicPrompt,
+  buildGymPrompt,
+  OUT_OF_SCOPE_RULE,
+} from "@/lib/config/promptTemplates";
 
 // Use OpenAI directly for GPT-4o mini
 const openai = new OpenAI({
@@ -13,7 +20,7 @@ const openai = new OpenAI({
 });
 
 // Create dynamic system prompt based on business knowledge with enhanced information gathering
-function createSystemPrompt(
+function createDefaultSystemPrompt(
   businessName: string,
   businessType: string,
   knowledgeBase: string
@@ -85,6 +92,8 @@ function createSystemPrompt(
 **BUSINESS KNOWLEDGE BASE:**
 ${knowledgeBase}
 
+${OUT_OF_SCOPE_RULE}
+
 **Remember**: You ARE this business. Be genuinely helpful first, then naturally curious about how you can serve them better. Every question should feel like it comes from wanting to provide better service, not just collecting data.`;
 }
 
@@ -116,11 +125,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Apply rate limiting specifically for the target number "+12182503154"
-    if (businessPhone === "+12182503154") {
+    // Find the business user by WhatsApp number
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("whatsapp_number", businessPhone)
+      .single();
+
+    if (userError || !user) {
+      console.error("Business user not found:", userError);
+      return NextResponse.json(
+        { error: "Business not found", details: userError },
+        { status: 404 }
+      );
+    }
+
+    // Load effective settings (tenant overrides -> app -> defaults)
+    const settings = await getEffectiveSettings(user.id);
+
+    // If webhook disabled for this tenant/app, short-circuit with 200
+    if (!settings.webhook.enabled) {
+      const twiml = new twilio.twiml.MessagingResponse();
+      twiml.message("Service temporarily unavailable. Please try again later.");
+      return new Response(twiml.toString(), {
+        headers: { "Content-Type": "text/xml" },
+      });
+    }
+
+    // Apply rate limiting using dynamic config
+    {
+      const rlCfg = settings.rateLimit;
       const rateLimitResult = await checkWhatsAppRateLimit(
-        businessPhone,
-        customerPhone
+        businessPhone!,
+        customerPhone!,
+        {
+          perNumberLimit: rlCfg.perNumberLimit,
+          globalLimit: rlCfg.globalLimit,
+          windowSeconds: rlCfg.windowSeconds,
+        }
       );
 
       if (!rateLimitResult.allowed) {
@@ -147,21 +189,6 @@ export async function POST(request: NextRequest) {
       // Log successful rate limit check
       console.log(
         `Rate limit check passed for ${customerPhone} -> ${businessPhone}. Remaining: ${rateLimitResult.remainingRequests}`
-      );
-    }
-
-    // Find the business user by WhatsApp number
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("whatsapp_number", businessPhone)
-      .single();
-
-    if (userError || !user) {
-      console.error("Business user not found:", userError);
-      return NextResponse.json(
-        { error: "Business not found", details: userError },
-        { status: 404 }
       );
     }
 
@@ -275,12 +302,39 @@ export async function POST(request: NextRequest) {
       knowledgeData?.map((k: { content: string }) => k.content).join("\n\n") ||
       "No specific business knowledge available. Please provide general helpful customer service.";
 
-    // Create dynamic system prompt based on business info and knowledge
-    const systemPrompt = createSystemPrompt(
-      user.business_name || "our business",
-      user.business_type || "",
-      knowledgeBase
-    );
+    // Choose system prompt template
+    const effectiveTemplateKey = (() => {
+      const key = settings.llm.promptTemplateKey;
+      if (!key || key === "auto") {
+        return autoTemplateKey(user.business_type, user.business_industry);
+      }
+      return key;
+    })();
+
+    let systemPrompt = "";
+    if (effectiveTemplateKey === "clinic") {
+      systemPrompt = buildClinicPrompt(
+        user.business_name || "our clinic",
+        knowledgeBase
+      );
+    } else if (effectiveTemplateKey === "gym") {
+      systemPrompt = buildGymPrompt(
+        user.business_name || "our gym",
+        knowledgeBase
+      );
+    } else if (
+      settings.llm.promptTemplateKey === "custom" &&
+      settings.llm.customPrompt &&
+      settings.llm.customPrompt.trim().length > 0
+    ) {
+      systemPrompt = `${settings.llm.customPrompt.trim()}\n\n${OUT_OF_SCOPE_RULE}\n\nBUSINESS KNOWLEDGE:\n${knowledgeBase}`;
+    } else {
+      systemPrompt = createDefaultSystemPrompt(
+        user.business_name || "our business",
+        user.business_type || "",
+        knowledgeBase
+      );
+    }
 
     // Get previous messages for conversation context
     const { data: previousMessages } = await supabase
@@ -307,7 +361,7 @@ export async function POST(request: NextRequest) {
     try {
       // Generate AI response using GPT-4o mini with dynamic context
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: settings.llm.model || "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -316,7 +370,7 @@ export async function POST(request: NextRequest) {
           ...conversationHistory,
         ],
         max_tokens: 400,
-        temperature: 0.7,
+        temperature: settings.llm.temperature ?? 0.3,
       });
 
       aiResponse =

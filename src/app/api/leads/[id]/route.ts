@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const id = req.nextUrl.pathname;
-    console.log(id);
     const { error } = await supabase.from("leads").select("*").eq("id", id);
 
     if (error) {

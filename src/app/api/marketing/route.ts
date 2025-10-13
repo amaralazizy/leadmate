@@ -7,7 +7,6 @@ import { readFile } from "fs/promises";
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
-    console.log("email", email);
 
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });

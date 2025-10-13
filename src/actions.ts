@@ -309,7 +309,6 @@ export async function getActiveChatsCount() {
     .from("conversations")
     .select("id", { count: "exact", head: true })
     .eq("user_id", user.id);
-  console.log(count);
   if (error) {
     throw error;
   }

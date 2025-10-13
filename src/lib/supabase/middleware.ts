@@ -2,8 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Prepare augmented request headers to carry the pathname without breaking cookies
+  const path = request.nextUrl.pathname;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", path);
+
   let supabaseResponse = NextResponse.next({
-    request,
+    request: { headers: requestHeaders },
   });
 
   // With Fluid compute, don't put this client in a global environment
@@ -21,7 +26,7 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
-            request,
+            request: { headers: requestHeaders },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -74,34 +79,34 @@ export async function updateSession(request: NextRequest) {
   ];
 
   const isPublicRoute = publicRoutes.some(
-    (route) =>
-      request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(route + "/")
+    (route) => path === route || path.startsWith(route + "/")
   );
 
   const isOnboardingExempt = onboardingExemptRoutes.some(
-    (route) =>
-      request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(route + "/")
+    (route) => path === route || path.startsWith(route + "/")
   );
 
   // Also allow API routes that should be public (webhooks, external integrations)
   const isPublicApiRoute =
-    request.nextUrl.pathname.startsWith("/api/waitlist") ||
-    request.nextUrl.pathname.startsWith("/api/whatsapp") ||
-    request.nextUrl.pathname.startsWith("/api/webhooks/whatsapp") ||
-    request.nextUrl.pathname.startsWith("/api/onboarding") ||
-    request.nextUrl.pathname.startsWith("/api/");
+    path.startsWith("/api/waitlist") ||
+    path.startsWith("/api/whatsapp") ||
+    path.startsWith("/api/webhooks/whatsapp") ||
+    path.startsWith("/api/onboarding") ||
+    path.startsWith("/api/");
 
-  if (user && authRoutes.includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (user && authRoutes.includes(path)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url), {
+      headers: requestHeaders,
+    });
   }
 
   // Redirect to login only if user is not authenticated AND not on a public route
   if (!user && !isPublicRoute && !isPublicApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url, {
+      headers: requestHeaders,
+    });
   }
 
   // Check onboarding status for authenticated users on protected routes
@@ -118,7 +123,9 @@ export async function updateSession(request: NextRequest) {
         // User hasn't completed onboarding, redirect to onboarding
         const url = request.nextUrl.clone();
         url.pathname = "/onboarding";
-        return NextResponse.redirect(url);
+        return NextResponse.redirect(url, {
+          headers: requestHeaders,
+        });
       }
     } catch (error) {
       console.error("Error checking onboarding status:", error);
