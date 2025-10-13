@@ -10,13 +10,7 @@ import { handleLogout } from "@/actions";
 interface ClientLogoutButtonProps {
   children?: React.ReactNode;
   size?: "sm" | "default" | "lg";
-  variant?:
-    | "default"
-    | "noShadow"
-    | "neutral"
-    | "reverse"
-    | "neutral"
-    | "reverse";
+  variant?: "default" | "noShadow" | "neutral" | "reverse" | "glass";
 }
 
 export default function ClientLogoutButton({

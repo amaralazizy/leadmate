@@ -44,26 +44,31 @@ export default function MobileSidebar() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 lg:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-screen w-80 bg-dark-bg border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-screen w-80 bg-black  border-l border-white/20 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-border">
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
             <Link href="/" onClick={closeSidebar}>
-              <Image src="/logo-transparent.png" alt="LeadMate" height={150} width={150} />
+              <Image
+                src="/logo-transparent.png"
+                alt="LeadMate"
+                height={150}
+                width={150}
+              />
             </Link>
             <button
               onClick={closeSidebar}
-              className="p-2 rounded-md text-main hover:text-white hover:bg-dark-card transition-colors"
+              className="p-2 rounded-md text-main hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Close menu"
             >
               <X className="h-6 w-6" />
@@ -78,9 +83,8 @@ export default function MobileSidebar() {
                 href="/dashboard"
                 onClick={closeSidebar}
                 className={cn(
-                  "flex items-center px-4 py-3 text-foreground hover:text-main hover:bg-dark-card rounded-lg transition-colors duration-300",
-                  pathname.startsWith("/dashboard") &&
-                    "text-main-foreground bg-main hover:text-main-foreground hover:bg-main"
+                  "flex items-center px-4 py-3 text-foreground hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300",
+                  pathname.startsWith("/dashboard") && "text-white bg-white/10"
                 )}
               >
                 <LayoutDashboard className="h-5 w-5 mr-3" />
@@ -95,9 +99,8 @@ export default function MobileSidebar() {
                 href={link.href}
                 onClick={closeSidebar}
                 className={cn(
-                  "flex items-center px-4 py-3 text-foreground hover:text-main hover:bg-dark-card rounded-lg transition-colors duration-300",
-                  pathname === link.href &&
-                    "text-main-foreground bg-main hover:text-main-foreground hover:bg-main"
+                  "flex items-center px-4 py-3 text-foreground hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-300",
+                  pathname === link.href && "text-white bg-white/10"
                 )}
               >
                 <link.icon className="h-5 w-5 mr-3" />
@@ -107,12 +110,12 @@ export default function MobileSidebar() {
           </nav>
 
           {/* Auth Section */}
-          <div className="p-6 border-t border-border">
+          <div className="p-6 border-t border-white/10">
             {loading ? (
               <div className="text-center text-foreground">Loading...</div>
             ) : user ? (
               <div className="space-y-4">
-                <div className="flex items-center gap-3 p-3 bg-secondary-background/30 rounded-lg border border-border/50">
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
                   <div className="w-8 h-8 bg-main/10 rounded-full flex items-center justify-center">
                     <span className="text-main font-semibold text-sm">
                       {user.email?.charAt(0).toUpperCase() || "U"}
