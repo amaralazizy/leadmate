@@ -7,17 +7,16 @@ export default function HeroSection() {
       <div className="text-center flex flex-col items-center gap-6 md:gap-8">
         <AnimatedSection delay={0.4}>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-white leading-tight">
-            <span className="block">Never Lose Another Customer</span>
-            <span className="block text-main">to Slow WhatsApp Responses</span>
+            <span className="block">Make Whatsapp Your</span>
+            <span className="block text-main">24/7 sales machine</span>
           </h1>
         </AnimatedSection>
 
         <AnimatedSection delay={0.6}>
-          <p className="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl text-foreground leading-relaxed px-4">
-            LeadMate's AI responds to your WhatsApp customers in{" "}
-            <span className="text-main font-semibold">under 3 seconds</span>,
-            24/7. Capture every lead, close more sales, and never miss a
-            business opportunity again.
+          <p className="max-w-2xl mx-auto text-lg md:text-xl lg:text-2xl text-foreground leading-snug px-4">
+            AI-powered WhatsApp responses in{" "}
+            <span className="text-main font-semibold">under 3 seconds</span>
+            <span>. Capture every lead, 24/7.</span>
           </p>
         </AnimatedSection>
 
