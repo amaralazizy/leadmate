@@ -21,15 +21,15 @@ export default function AnimatedSection({
   const getInitialPosition = () => {
     switch (direction) {
       case "up":
-        return { opacity: 0, y: 50 };
+        return { opacity: 0, y: 30, filter: "blur(10px)" };
       case "down":
-        return { opacity: 0, y: -50 };
+        return { opacity: 0, y: -30, filter: "blur(10px)" };
       case "left":
-        return { opacity: 0, x: 50 };
+        return { opacity: 0, x: 30, filter: "blur(10px)" };
       case "right":
-        return { opacity: 0, x: -50 };
+        return { opacity: 0, x: -30, filter: "blur(10px)" };
       default:
-        return { opacity: 0, y: 50 };
+        return { opacity: 0, y: 30, filter: "blur(10px)" };
     }
   };
 
@@ -37,12 +37,12 @@ export default function AnimatedSection({
     switch (direction) {
       case "up":
       case "down":
-        return { opacity: 1, y: 0 };
+        return { opacity: 1, y: 0, filter: "blur(0px)" };
       case "left":
       case "right":
-        return { opacity: 1, x: 0 };
+        return { opacity: 1, x: 0, filter: "blur(0px)" };
       default:
-        return { opacity: 1, y: 0 };
+        return { opacity: 1, y: 0, filter: "blur(0px)" };
     }
   };
 
@@ -51,11 +51,11 @@ export default function AnimatedSection({
       initial={getInitialPosition()}
       whileInView={getFinalPosition()}
       transition={{
-        duration,
+        duration: 0.8,
         delay,
-        ease: "easeOut",
+        ease: [0.21, 0.47, 0.32, 0.98], // Spring-like ease
       }}
-      viewport={{ once: true, margin: "-30px" }}
+      viewport={{ once: true, margin: "-100px" }}
       className={className}
     >
       {children}

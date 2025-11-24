@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Smartphone, Brain, MessageCircle, TrendingUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const iconMap = {
   smartphone: Smartphone,
@@ -16,50 +16,49 @@ interface HowItWorksStepProps {
   title: string;
   description: string;
   iconName: string;
+  isLast?: boolean;
 }
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
 
 export default function HowItWorksStep({
   step,
   title,
   description,
   iconName,
+  isLast,
 }: HowItWorksStepProps) {
   const Icon = iconMap[iconName as keyof typeof iconMap];
+  
   return (
-    <motion.div variants={itemVariants}>
-      <Card className="p-6 flex flex-col items-center hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300 h-full relative group">
-        {/* Step Number */}
-        <div className="absolute -top-3 -right-3 inline-flex items-center justify-center w-8 h-8 bg-main text-black font-bold text-sm rounded-full border-2 border-background">
-          {step}
+    <div className="relative flex flex-col items-center text-center group z-10">
+      {/* Connecting Line (Desktop) */}
+      {!isLast && (
+        <div className="hidden lg:block absolute top-8 left-1/2 w-full h-[2px] bg-border -z-10">
+           <div className="h-full bg-main origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out" />
         </div>
+      )}
 
-        {/* Icon */}
-        <div className="flex items-center justify-center w-16 h-16 bg-main/20 border border-main/30 rounded-2xl mx-auto mb-6 group-hover:bg-main/30 transition-colors">
-          <Icon className="h-8 w-8 text-main" />
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, delay: step * 0.2 }}
+        viewport={{ once: true }}
+        className="relative mb-6"
+      >
+        <div className="w-16 h-16 rounded-2xl bg-background border-2 border-border flex items-center justify-center shadow-lg group-hover:border-main group-hover:shadow-main/25 transition-all duration-300">
+            <Icon className="w-8 h-8 text-muted-foreground group-hover:text-main transition-colors" />
         </div>
+        <div className="absolute -top-2 -right-2 w-7 h-7 bg-main text-black font-bold text-sm rounded-full flex items-center justify-center border-3 border-background">
+            {step}
+        </div>
+      </motion.div>
 
-        {/* Content */}
-        <h3 className="text-xl font-semibold text-white mb-3 text-center group-hover:text-main transition-colors">
-          {title}
-        </h3>
-        <p className="text-foreground leading-relaxed text-center text-sm">
-          {description}
-        </p>
-
-        <div className="absolute inset-0 bg-gradient-to-br from-main/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" />
-      </Card>
-    </motion.div>
+      <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-main transition-colors">
+        {title}
+      </h3>
+      
+      <p className="text-muted-foreground text-base leading-relaxed max-w-[260px]">
+        {description}
+      </p>
+    </div>
   );
 }

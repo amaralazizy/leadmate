@@ -33,8 +33,8 @@ export default async function PricingPlan({
   priceId,
 }: PricingPlanProps) {
   const cardClasses = isPopular
-    ? "bg-secondary-background rounded-2xl shadow-xl border-2 border-main p-8 relative transform"
-    : "bg-secondary-background rounded-2xl shadow-lg border border-border p-8 relative";
+    ? "bg-secondary-background rounded-3xl shadow-xl border-2 border-main p-8 relative transform scale-105 z-10"
+    : "bg-secondary-background rounded-3xl shadow-lg border border-border p-8 relative";
 
   const supabase = await createClient();
   const {
@@ -49,8 +49,8 @@ export default async function PricingPlan({
     <div className={cardClasses}>
       {isPopular && popularText && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <span className="bg-main text-main-foreground px-4 py-2 rounded-full text-sm font-semibold flex items-center">
-            <Star className="h-4 w-4 mr-1" />
+          <span className="bg-main text-main-foreground px-5 py-2 rounded-full text-sm font-bold flex items-center shadow-lg">
+            <Star className="h-4 w-4 mr-1.5" />
             {popularText}
           </span>
         </div>
@@ -58,16 +58,16 @@ export default async function PricingPlan({
 
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-foreground mb-2">{title}</h3>
-        <p className="text-foreground/70 mb-6">{description}</p>
+        <p className="text-base text-foreground/70 mb-6">{description}</p>
         <div className="mb-6">
           <span className="text-5xl font-bold text-foreground">{price}</span>
-          <span className="text-foreground/70 ml-2">{period}</span>
+          <span className="text-lg text-foreground/70 ml-2">{period}</span>
           {savings && (
-            <div className="text-sm text-foreground/60 mt-1">{savings}</div>
+            <div className="text-sm text-foreground/60 mt-1 font-medium">{savings}</div>
           )}
         </div>
         <Link href={href + (user ? "?prefilled_email="+user.email : "")}>
-          <Button className="w-full">{buttonText}</Button>
+          <Button className="w-full text-base py-6 rounded-xl font-bold">{buttonText}</Button>
         </Link>
       </div>
 
@@ -79,12 +79,12 @@ export default async function PricingPlan({
             : isPopular
               ? "text-main"
               : "text-chart-1";
-          const textWeight = isHighlight ? "font-medium" : "";
+          const textWeight = isHighlight ? "font-semibold" : "";
 
           return (
-            <div key={index} className="flex items-center">
-              <Check className={`h-5 w-5 ${iconColor} mr-3 flex-shrink-0`} />
-              <span className={`text-foreground/70 ${textWeight}`}>
+            <div key={index} className="flex items-start">
+              <Check className={`h-5 w-5 ${iconColor} mr-3 flex-shrink-0 mt-0.5`} />
+              <span className={`text-base text-foreground/80 ${textWeight}`}>
                 {feature}
               </span>
             </div>

@@ -53,20 +53,20 @@ export default function PricingPlans() {
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-xl text-foreground/70 mb-8">
+          <p className="text-lg md:text-xl text-foreground/70 mb-8 max-w-3xl mx-auto">
             Choose the plan that works best for your business
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
           {pricingData.map((plan, index) => (
             <PricingPlan
               key={index}
@@ -88,9 +88,9 @@ export default function PricingPlans() {
 
         {/* FAQ or Additional Info */}
         <div className="text-center mt-16">
-          <p className="text-sm text-foreground/60">
+          <p className="text-base text-foreground/60">
             Questions?{" "}
-            <a href="/contact" className="text-main hover:text-main/80">
+            <a href="/contact" className="text-main hover:text-main/80 font-medium">
               Contact our sales team
             </a>
           </p>

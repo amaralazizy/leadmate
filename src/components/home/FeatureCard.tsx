@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Shield,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const iconMap = {
   zap: Zap,
@@ -29,48 +30,47 @@ interface FeatureCardProps {
   title: string;
   description: string;
   impact?: string;
+  className?: string;
+  delay?: number;
 }
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
 
 export default function FeatureCard({
   iconName,
   title,
   description,
   impact,
+  className,
+  delay = 0,
 }: FeatureCardProps) {
   const Icon = iconMap[iconName as keyof typeof iconMap];
+  
   return (
-    <motion.div variants={itemVariants}>
-      <Card className="p-6 flex flex-col items-start hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300 h-full relative overflow-hidden group">
-        <div className="flex items-center justify-center h-12 w-12 rounded-full bg-main text-black mb-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className={cn("h-full", className)}
+    >
+      <Card className="h-full p-6 md:p-8 flex flex-col items-start bg-secondary/5 border-border/40 hover:border-main/50 transition-colors duration-500 overflow-hidden relative group">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-main/10 blur-[50px] rounded-full -mr-10 -mt-10 transition-all duration-500 group-hover:bg-main/20" />
+        
+        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-secondary/50 border border-border/50 text-main mb-6 group-hover:scale-110 transition-transform duration-300">
           <Icon className="h-6 w-6" />
         </div>
 
         {impact && (
-          <div className="absolute top-4 right-4 bg-main/20 text-main text-xs font-bold px-2 py-1 rounded-full">
+          <div className="absolute top-6 right-6 bg-main/10 text-main text-xs font-bold px-3 py-1 rounded-full border border-main/20">
             {impact}
           </div>
         )}
 
-        <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-main transition-colors">
+        <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
           {title}
         </h3>
-        <p className="text-foreground leading-relaxed flex-grow">
+        <p className="text-base text-muted-foreground leading-relaxed flex-grow">
           {description}
         </p>
-
-        <div className="absolute inset-0 bg-gradient-to-br from-main/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       </Card>
     </motion.div>
   );

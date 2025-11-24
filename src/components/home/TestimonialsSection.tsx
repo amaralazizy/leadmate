@@ -1,4 +1,6 @@
 import TestimonialCard from "./TestimonialCard";
+import AnimatedSection from "@/components/animations/AnimatedSection";
+import StaggeredContainer from "@/components/animations/StaggeredContainer";
 
 const testimonials = [
   {
@@ -29,17 +31,23 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-16 md:py-24">
-      <div className="text-center mb-12 md:mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Loved by Business Owners
-        </h2>
-        <p className="text-lg md:text-xl text-foreground max-w-2xl mx-auto">
-          See how LeadMate is helping businesses provide better customer support
-        </p>
-      </div>
+    <section className="py-24 relative">
+      {/* Background Decoration */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[100px] rounded-full -z-10" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <AnimatedSection delay={0.2}>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            Loved by <span className="text-main">Business Owners</span>
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            See how LeadMate is helping businesses provide better customer
+            support around the clock.
+          </p>
+        </div>
+      </AnimatedSection>
+
+      <StaggeredContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {testimonials.map((testimonial, index) => (
           <TestimonialCard
             key={index}
@@ -50,7 +58,7 @@ export default function TestimonialsSection() {
             rating={testimonial.rating}
           />
         ))}
-      </div>
+      </StaggeredContainer>
     </section>
   );
 }

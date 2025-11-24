@@ -73,10 +73,11 @@ export default function DesktopNav({
               </>
             ) : (
               <>
-                <NavigationButton href="/login" variant="neutral" size="sm">
-                  Login
-                </NavigationButton>
-                <NavigationButton href="/signup" size="sm">
+                <NavigationButton
+                  href="/signup"
+                  size="lg"
+                  className="text-lg !px-6 "
+                >
                   Get Started
                 </NavigationButton>
               </>

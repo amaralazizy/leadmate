@@ -50,18 +50,18 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
   const showPlaceholder = !isLoading && blogPosts.length === 0;
 
   return (
-    <AnimatedSection className="py-16 md:py-24">
-      <div className="text-center mb-12 md:mb-16">
+    <AnimatedSection className="py-24">
+      <div className="text-center mb-16">
         <div className="flex items-center justify-center gap-2 mb-4">
           <BookOpen className="h-6 w-6 text-main" />
           <span className="text-main font-semibold text-sm tracking-wide uppercase">
             Knowledge Hub
           </span>
         </div>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4">
           Latest from Our <span className="text-main">Blog</span>
         </h2>
-        <p className="text-lg md:text-xl text-foreground max-w-3xl mx-auto">
+        <p className="text-lg md:text-xl text-foreground max-w-4xl mx-auto">
           Expert insights, practical guides, and proven strategies for WhatsApp
           automation, AI customer support, and small business growth.
         </p>
@@ -116,23 +116,23 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
             >
               <Badge
                 variant="neutral"
-                className="bg-dark-bg text-main border-main/20 mb-4"
+                className="bg-dark-bg text-main border-main/20 mb-4 text-xs px-2.5 py-0.5"
               >
                 {post.tag}
               </Badge>
               <h3 className="text-xl font-bold text-white mb-3 line-clamp-2">
                 {post.title}
               </h3>
-              <p className="text-foreground mb-4 text-sm leading-relaxed line-clamp-3">
+              <p className="text-foreground mb-4 text-base leading-relaxed line-clamp-3">
                 {post.description}
               </p>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" />
                   <span>Coming Soon</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
                   <span>{post.readTime} read</span>
                 </div>
               </div>
@@ -145,16 +145,16 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
           {blogPosts.slice(0, 3).map((post) => (
             <article
               key={post.id}
-              className="bg-dark-card rounded-2xl p-6 border border-border hover:border-main/50 transition-all duration-300 group"
+              className="bg-dark-card rounded-2xl p-6 border border-border hover:border-main/50 transition-all duration-300 group flex flex-col h-full"
             >
               <div className="flex flex-wrap items-center gap-2 mb-3 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" />
                   <span>{formatDate(post.publishedAt)}</span>
                 </div>
                 <span>•</span>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
                   <span>{getReadingTime(post.content)}</span>
                 </div>
               </div>
@@ -162,26 +162,29 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
               {post.tags && post.tags.length > 0 && (
                 <Badge
                   variant="neutral"
-                  className="bg-dark-bg text-main border-main/20 text-xs mb-4"
+                  className="bg-dark-bg text-main border-main/20 text-xs px-2.5 py-0.5 mb-4 w-fit"
                 >
                   {post.tags[0].name}
                 </Badge>
               )}
 
-              <Link href={`/blog/${post.slug}`}>
+              <Link href={`/blog/${post.slug}`} className="block flex-grow">
                 <h3 className="text-xl font-bold text-white mb-3 group-hover:text-main transition-colors line-clamp-2">
                   {post.title}
                 </h3>
                 {post.description && (
-                  <p className="text-foreground mb-4 text-sm leading-relaxed line-clamp-3">
+                  <p className="text-foreground/80 mb-4 text-base leading-relaxed line-clamp-3">
                     {post.description}
                   </p>
                 )}
-                <div className="flex items-center gap-2 text-main font-semibold group-hover:gap-3 transition-all text-sm">
-                  <span>Read Article</span>
-                  <ArrowRight className="h-3 w-3" />
-                </div>
               </Link>
+
+              <div className="mt-auto pt-4">
+                <Link href={`/blog/${post.slug}`} className="flex items-center gap-2 text-main font-bold group-hover:gap-3 transition-all text-sm">
+                  <span>Read Article</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </article>
           ))}
         </div>
@@ -191,7 +194,7 @@ export default function BlogSection({ posts = [] }: BlogSectionProps) {
       <div className="text-center">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-dark-card border border-main/20 hover:border-main text-main hover:text-white font-semibold rounded-xl transition-all duration-300 group"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-dark-card border border-main/20 hover:border-main text-main hover:text-white font-bold rounded-xl text-base transition-all duration-300 group"
         >
           <span>View All Articles</span>
           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
