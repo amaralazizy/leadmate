@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, CheckCircle2, MapPin, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface TestimonialCardProps {
@@ -7,6 +7,10 @@ interface TestimonialCardProps {
   company: string;
   content: string;
   rating: number;
+  location?: string;
+  date?: string;
+  platform?: string;
+  verified?: boolean;
   avatar?: string;
 }
 
@@ -16,6 +20,10 @@ export default function TestimonialCard({
   company,
   content,
   rating,
+  location,
+  date,
+  platform,
+  verified = true,
 }: TestimonialCardProps) {
   return (
     <Card className="p-6 flex flex-col items-center hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all duration-300 h-full">

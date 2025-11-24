@@ -24,32 +24,32 @@ export default function HeroSection() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-main to-emerald-400">
                   Slow Responses
                 </span>
-          </h1>
-        </AnimatedSection>
+              </h1>
+            </AnimatedSection>
 
             <AnimatedSection delay={0.4}>
               <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto lg:mx-0">
-            LeadMate's AI responds to your WhatsApp customers in{" "}
+                LeadMate's AI responds to your WhatsApp customers in{" "}
                 <span className="text-foreground font-semibold">
                   under 3 seconds
                 </span>
                 , 24/7. Capture every lead, close more sales, and automate your
                 customer support effortlessly.
-          </p>
-        </AnimatedSection>
+              </p>
+            </AnimatedSection>
 
-        <AnimatedSection
+            <AnimatedSection
               delay={0.6}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-4"
-        >
-          <NavigationButton
-            href="/signup"
+            >
+              <NavigationButton
+                href="/signup"
                 className="bg-main hover:bg-main/90 text-black font-bold px-8 py-6 rounded-2xl text-lg lg:text-xl shadow-lg shadow-main/25 hover:shadow-main/40 transition-all duration-300 flex items-center justify-center gap-2 group"
-          >
-            Start Free Trial
+              >
+                Start Free Trial
                 <ArrowRight className="!w-5 !h-5 group-hover:translate-x-1 transition-transform" />
-          </NavigationButton>
-        </AnimatedSection>
+              </NavigationButton>
+            </AnimatedSection>
 
             <AnimatedSection
               delay={0.8}
@@ -72,19 +72,19 @@ export default function HeroSection() {
                   </div>
                   <div className="text-sm md:text-base text-muted-foreground">
                     Availability
-              </div>
-            </div>
+                  </div>
+                </div>
                 <div className="flex flex-col items-center lg:items-start">
                   <div className="flex items-center gap-2 text-foreground font-bold text-2xl md:text-3xl">
                     <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-main" />
                     95%
-            </div>
+                  </div>
                   <div className="text-sm md:text-base text-muted-foreground">
                     Satisfaction
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </AnimatedSection>
+            </AnimatedSection>
           </div>
 
           {/* Right Visual */}

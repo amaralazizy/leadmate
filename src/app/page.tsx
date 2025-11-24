@@ -14,7 +14,6 @@ import BlogSection from "@/components/home/BlogSection";
 import { wisp } from "@/lib/wisp";
 
 export default async function Home() {
-  const result = await wisp.getPosts({ limit: 3 });
   return (
     <PageLayout>
       <div className="max-w-7xl mx-auto">
