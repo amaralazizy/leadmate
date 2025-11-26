@@ -133,7 +133,9 @@ export const ChatMessageItem = ({
           >
             {/* Only show time for non-header messages */}
             {!showHeader && (
-              <span className="text-xs">{formatTime(message.timestamp)}</span>
+              <span className="text-xs" suppressHydrationWarning>
+                {formatTime(message.timestamp)}
+              </span>
             )}
 
             {/* Read status indicators for customer messages */}

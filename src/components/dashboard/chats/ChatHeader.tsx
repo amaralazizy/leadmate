@@ -81,7 +81,7 @@ export default function ChatHeader({
 
           <div className="flex items-center gap-3">
             {/* Customer Avatar */}
-            <div className="relative">
+            <div className="relative" suppressHydrationWarning>
               <Avatar className="w-10 h-10 border-2 border-border shadow-sm">
                 <AvatarFallback className="bg-main/10 text-main font-semibold text-sm">
                   <User className="w-5 h-5" />
@@ -96,7 +96,7 @@ export default function ChatHeader({
 
             {/* Customer info */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" suppressHydrationWarning>
                 <h1 className="font-semibold text-foreground">{displayName}</h1>
                 {showOnlineStatus && (
                   <Badge
@@ -121,17 +121,19 @@ export default function ChatHeader({
       </div>
 
       {/* Status bar for mobile */}
-      {showOnlineStatus && (
-        <div className="sm:hidden px-4 pb-3">
-          <Badge
-            variant="default"
-            className={cn("text-xs px-2 py-1 gap-1", statusInfo.color)}
-          >
-            {statusInfo.icon}
-            {statusInfo.label}
-          </Badge>
-        </div>
-      )}
+      <div suppressHydrationWarning>
+        {showOnlineStatus && (
+          <div className="sm:hidden px-4 pb-3">
+            <Badge
+              variant="default"
+              className={cn("text-xs px-2 py-1 gap-1", statusInfo.color)}
+            >
+              {statusInfo.icon}
+              {statusInfo.label}
+            </Badge>
+          </div>
+        )}
+      </div>
     </header>
   );
 }
