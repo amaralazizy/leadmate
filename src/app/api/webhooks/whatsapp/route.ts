@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import { Conversation } from "@/lib/types/chat";
 import { processLeadExtraction } from "@/lib/services/leads/extraction";
 import { createServiceClient } from "@/lib/supabase/service";
+import { createClient } from "@supabase/supabase-js";
 import { checkWhatsAppRateLimit } from "@/lib/services/redisRateLimiting";
 import { getEffectiveSettings } from "@/lib/services/settings";
 import {
@@ -100,6 +101,13 @@ ${OUT_OF_SCOPE_RULE}
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServiceClient();
+
+    // Create anon client for message inserts (so Realtime can broadcast)
+    const supabaseAnon = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     const body = await request.text();
     const params = new URLSearchParams(body);
 
@@ -274,23 +282,25 @@ export async function POST(request: NextRequest) {
       throw new Error("Conversation not found or created properly");
     }
 
-    // Save customer message with schema validation
-    const parsedMessage = messageSchema
-      .omit({ id: true, timestamp: true })
-      .parse({
-        conversation_id: conversation.id,
-        content: messageBody,
-        sender: "customer",
-        is_read: false, // Customer messages start as unread
+    // Save customer message using RPC with anon client (so Realtime broadcasts work)
+    console.log("💾 Inserting customer message via RPC:", {
+      conversation_id: conversation.id,
+      content: messageBody.substring(0, 50),
+    });
+
+    const { data: insertedMessage, error: messageError } =
+      await supabaseAnon.rpc("insert_customer_message", {
+        p_conversation_id: conversation.id,
+        p_content: messageBody,
+        p_sender: "customer",
       });
 
-    const { error: messageError } = await supabase
-      .from("messages")
-      .insert(parsedMessage);
-
     if (messageError) {
+      console.error("❌ Failed to insert customer message:", messageError);
       throw messageError;
     }
+
+    console.log("✅ Customer message inserted via anon RPC:", insertedMessage);
 
     // Get business knowledge base for context
     const { data: knowledgeData } = await supabase
@@ -405,16 +415,12 @@ export async function POST(request: NextRequest) {
     const twiml = new twilio.twiml.MessagingResponse();
     twiml.message(aiResponse);
 
-    // Save bot response message
-    const botMessageParsed = messageSchema
-      .omit({ id: true, timestamp: true })
-      .parse({
-        conversation_id: conversation.id,
-        content: aiResponse,
-        sender: "bot",
-      });
-
-    await supabase.from("messages").insert(botMessageParsed);
+    // Save bot response message using RPC with anon client (so Realtime broadcasts work)
+    await supabaseAnon.rpc("insert_customer_message", {
+      p_conversation_id: conversation.id,
+      p_content: aiResponse,
+      p_sender: "bot",
+    });
 
     // Update usage count
     await supabase

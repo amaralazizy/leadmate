@@ -72,6 +72,7 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
       } = await supabase.auth.getUser();
 
       if (authError || !user) {
+        console.log("authError", authError);
         setIsConnected(false);
         return null;
       }
@@ -93,8 +94,9 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
             filter: `conversation_id=eq.${roomName}`,
           },
           (payload) => {
+            console.log("🔥 REALTIME CALLBACK FIRED!", payload); // Change this line
             const newMessage = payload.new as ChatMessage;
-
+            console.log("newMessage", newMessage);
             // Verify this message belongs to a conversation owned by the current user
             if (newMessage.conversation_id === roomName) {
               const formattedMessage: ChatMessage = {
@@ -116,9 +118,12 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
           }
         )
         .subscribe(async (status, err) => {
+          console.log("status", status);
+          console.log("err", err);
           if (status === "SUBSCRIBED") {
             setIsConnected(true);
           } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+            console.log("setting isConnected to false");
             setIsConnected(false);
           }
         });
